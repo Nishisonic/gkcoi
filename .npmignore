@@ -4,3 +4,4 @@ tslint.json
 test/
 src/
 static/
+*test*
