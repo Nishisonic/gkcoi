@@ -34,11 +34,35 @@ export class Ship {
   /** 速力 */
   sp = 0;
   /** スロット数 */
-  slotnum = 0;
+  slotNum = 0;
   /** 搭載機数 */
   slots = [0, 0, 0, 0, 0];
   /** 装備 */
   items: Item[] = [];
+  /** Lv */
+  lv = 0;
+
+  constructor(
+    id: number,
+    name: string,
+    lv: number,
+    items: Item[],
+    slotNum: number,
+    slots: number[],
+    hp?: number,
+    asw?: number,
+    lk?: number
+  ) {
+    this.id = id;
+    this.name = name;
+    this.lv = lv;
+    this.items = items;
+    this.slotNum = slotNum;
+    this.slots = slots;
+    this.hp = hp ? hp : 0;
+    this.as = asw ? asw : 0;
+    this.lk = lk ? lk : 0;
+  }
 }
 
 export class Item {
@@ -58,9 +82,9 @@ export class Item {
   ar = 0;
   /** 対空 */
   aa = 0;
-  /** 回避 */
+  /** 回避/迎撃 */
   ev = 0;
-  /** 命中 */
+  /** 命中/対爆 */
   ac = 0;
   /** 対潜 */
   as = 0;
@@ -76,4 +100,36 @@ export class Item {
   rf = 0;
   /** 熟練度 */
   mas = 0;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fromMasterData(start2: any): void {
+    this.id = start2.api_id;
+    this.name = start2.api_name;
+    this.type = start2.api_type;
+    this.fp = start2.api_houg;
+    this.tp = start2.api_raig;
+    this.bp = start2.api_baku;
+    this.ar = start2.api_souk;
+    this.aa = start2.api_tyku;
+    this.ev = start2.api_houk;
+    this.ac = start2.api_houm;
+    this.as = start2.api_tais;
+    this.ls = start2.api_saku;
+    this.rn = start2.api_distance;
+    this.rd = start2.api_cost;
+  }
+
+  constructor(
+    id: number,
+    name: string,
+    type: [number, number, number, number, number],
+    rf?: number,
+    mas?: number
+  ) {
+    this.id = id;
+    this.name = name;
+    this.type = type;
+    this.rf = rf ? rf : 0;
+    this.mas = mas ? mas : 0;
+  }
 }
