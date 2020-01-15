@@ -1,6 +1,5 @@
 import { Canvas, Image, loadImage } from "canvas";
 import axios from "axios";
-import { rejects } from "assert";
 
 export class Language {
   /** 日本語 */
@@ -295,18 +294,9 @@ export function toTranslateEquipmentName(
   return name;
 }
 
-export function resize(
-  image: Image,
-  width: number,
-  height: number
-): Promise<Image> {
+export function resize(image: Image, width: number, height: number): Canvas {
   const canvas = new Canvas(width, height);
   const ctx = canvas.getContext("2d");
   ctx.drawImage(image, 0, 0, width, height);
-  return new Promise((resolve, rejects) => {
-    const img = new Image();
-    img.src = canvas.toDataURL();
-    img.onload = (): void => resolve(img);
-    img.onerror = (err: Error): void => rejects(err);
-  });
+  return canvas;
 }
