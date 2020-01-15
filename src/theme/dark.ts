@@ -20,7 +20,7 @@ async function generateDarkShipInfoCanvasAsync(
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
   const image = await loadImage(
-    `https://nishikuma.net/ImgKCbuilder/static/ship/remodel/${ship.id}.png`
+    `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
   );
   const parameterIcons = await loadOriginalParameterIcons();
   const equipmentIcons = await loadOriginalEquipmentIcons();

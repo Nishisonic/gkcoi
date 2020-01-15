@@ -110,7 +110,7 @@ export async function loadOriginalParameterIcons(): Promise<{
   const results = await Promise.all(
     ["as.png", "los.png", "luck.png", "hp.png", "air.png", "soku.png"].map(
       async (fileName: string) => {
-        const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/${fileName}`;
+        const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/dark/${fileName}`;
         const img = await loadImage(src);
         return new Img(fileName.replace(/(.*).png/g, "$1"), img);
       }
