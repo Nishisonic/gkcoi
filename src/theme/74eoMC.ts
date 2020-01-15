@@ -1,16 +1,13 @@
 import {
   fetchLangData,
-  MyCanvas,
   load74eoParameterIcons,
   load74eoEquipmentIcons,
   toTranslateShipName,
   toTranslateEquipmentName,
-  FLEET,
-  SPEED,
   NONE,
   resize
 } from "../utils";
-import { Canvas, Image, loadImage } from "canvas";
+import { Canvas, loadImage } from "canvas";
 import { Ship } from "../type";
 
 const AirPower = {
@@ -29,7 +26,7 @@ const LoS = {
   tcn: "索敵容量"
 };
 
-export async function generate74eoMiddleCutinShipCanvasAsync(
+async function generate74eoMiddleCutinShipCanvasAsync(
   shipIdx: number,
   ship: Ship,
   has5slot: boolean,
