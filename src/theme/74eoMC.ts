@@ -160,7 +160,7 @@ async function generate74eoMiddleCutinShipCanvasAsync(
   ctx.textAlign = "left";
   ctx.font = "12px Meiryo";
   ctx.fillStyle = "#008888";
-  ctx.fillText("----------------------------------------------", 421, 149);
+  ctx.fillText("-------------------------------------------------", 421, 149);
   return canvas;
 }
 
@@ -171,7 +171,8 @@ export async function generate74eoMiddleCutinFleetCanvasAsync(
   airPower: { min: number; max: number },
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
-  const canvas = new Canvas(677, ships.length < 7 ? 1083 : 1250);
+  // const canvas = new Canvas(677, ships.length < 7 ? 1083 : 1250);
+  const canvas = new Canvas(1346, ships.length < 7 ? 567 : 734);
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -194,7 +195,13 @@ export async function generate74eoMiddleCutinFleetCanvasAsync(
           };
         })
     )
-  ).forEach(data => ctx.drawImage(data.image, 0, data.index * 172 + 43));
+  ).forEach(data =>
+    ctx.drawImage(
+      data.image,
+      (data.index % 2) * 669,
+      Math.floor(data.index / 2) * 172 + 43
+    )
+  );
   const equipmentIcons = await load74eoEquipmentIcons();
 
   ctx.fillStyle = "#0f0f0f";
@@ -220,11 +227,11 @@ export async function generate74eoMiddleCutinFleetCanvasAsync(
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(8, 37.5);
-  ctx.lineTo(670, 37.5);
+  ctx.lineTo(canvas.width - 7, 37.5);
   ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(8, canvas.height - 9.5);
-  ctx.lineTo(670, canvas.height - 9.5);
+  ctx.lineTo(canvas.width - 7, canvas.height - 9.5);
   ctx.stroke();
   ctx.font = "12px Meiryo";
   ctx.drawImage(equipmentIcons[6], 317, 18); // fixed
