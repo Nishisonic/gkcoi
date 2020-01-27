@@ -27,12 +27,53 @@ export const NONE = new Language("なし", "None", "없음", "没有", "沒有")
 export const FLEET = new Language("艦隊", "", "함대", "舰队", "艦隊");
 
 export const SPEED = {
-  NONE: new Language("陸上", "Land", "육상", "土地", "土地"),
-  SLOW: new Language("低速", "Slow", "저속", "低速", "低速"),
-  FAST: new Language("高速", "Fast", "고속", "高速", "高速"),
-  FASTER: new Language("高速+", "Fast+", "고속+", "高速+", "高速+"),
-  FASTEST: new Language("最速", "Fastest", "초고속", "最速", "最速")
+  0: new Language("陸上", "Land", "육상", "土地", "土地"),
+  5: new Language("低速", "Slow", "저속", "低速", "低速"),
+  10: new Language("高速", "Fast", "고속", "高速", "高速"),
+  15: new Language("高速+", "Fast+", "고속+", "高速+", "高速+"),
+  20: new Language("最速", "Fastest", "초고속", "最速", "最速")
 };
+
+export const RANGE = {
+  0: new Language("無", "N", "무", "无", "無"),
+  1: new Language("短", "S", "단", "短", "短"),
+  2: new Language("中", "M", "중", "中", "中"),
+  3: new Language("長", "L", "장", "长", "長"),
+  4: new Language("超長", "VL", "초장", "超长", "超長")
+};
+
+export const LABEL = {
+  HP: new Language("耐久", "HP", "내구", "耐力", "耐力"),
+  FIREPOWER: new Language("火力", "FP", "화력", "火力", "火力"),
+  TORPEDO: new Language("雷装", "TP", "뇌장", "雷装", "雷裝"),
+  AA: new Language("対空", "AA", "대공", "对空", "對空"),
+  ARMOR: new Language("装甲", "AR", "장갑", "装甲", "裝甲"),
+  ASW: new Language("対潜", "ASW", "대잠", "对潜", "對潛"),
+  EVASION: new Language("回避", "EVS", "회피", "回避", "迴避"),
+  LOS: new Language("索敵", "LOS", "색적", "索敌", "索敵"),
+  ACCURACY: new Language("命中", "ACC", "명중", "命中", "命中"),
+  BOMB: new Language("爆装", "BOM", "폭장", "爆装", "爆裝"),
+  RANGE: new Language("射程", "RNG", "사거리", "射程", "射程"),
+  LUCK: new Language("運", "LK", "운", "运气", "運氣"),
+  SPEED: new Language("速力", "SP", "속력", "速度", "速度"),
+  AIRPOWER: new Language("制空", "AIR", "제공", "制空", "制空")
+};
+
+export const AIR_POWER = new Language(
+  "制空戦力",
+  "Air Power",
+  "제공전력",
+  "制空戦力",
+  "制空戦力"
+);
+
+export const LOS = new Language(
+  "索敵能力",
+  "LoS(1)",
+  "색적능력",
+  "索敵容量",
+  "索敵容量"
+);
 
 class Img {
   id: string;
@@ -125,12 +166,50 @@ export async function loadOriginalParameterIcons(): Promise<{
   }, {});
 }
 
+export async function load74eoAircraftLevelIcons(): Promise<{
+  [key: string]: Image;
+}> {
+  const results = await Promise.all(
+    [0, 1, 2, 3, 4, 5, 6, 7].map(async (level: number) => {
+      const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/74eo/AircraftLevel/AircraftLevel${level}.png`;
+      const img = await loadImage(src);
+      return new Img(String(level), img);
+    })
+  );
+
+  return results.reduce((p, c) => {
+    if (c instanceof Img) {
+      return Object.assign(p, { [c.id]: c.img });
+    }
+    return p;
+  }, {});
+}
+
 export async function load74eoParameterIcons(): Promise<{
   [key: string]: Image;
 }> {
   const results = await Promise.all(
-    ["ASW.png", "HP.png", "Luck.png"].map(async (fileName: string) => {
-      const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/74eo/${fileName}`;
+    [
+      "AA",
+      "Accuracy",
+      "Aircraft",
+      "AircraftCost",
+      "AircraftDistance",
+      "AntiBomber",
+      "Armor",
+      "ASW",
+      "Bomber",
+      "Evasion",
+      "Firepower",
+      "HP",
+      "Interception",
+      "LOS",
+      "Luck",
+      "Range",
+      "Speed",
+      "Torpedo"
+    ].map(async (fileName: string) => {
+      const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/74eo/${fileName}.png`;
       const img = await loadImage(src);
       return new Img(fileName.replace(/(.*).png/g, "$1"), img);
     })
@@ -189,7 +268,7 @@ export async function loadOriginalEquipmentIcons(
 }
 
 export async function load74eoEquipmentIcons(
-  imgSize = 30
+  imgSize = 54
 ): Promise<{ [key: string]: Image }> {
   const results = await Promise.all(
     Object.values(EQUIPMENT_ICON_SOURCE).map(
@@ -201,11 +280,7 @@ export async function load74eoEquipmentIcons(
         // offset
         const oc = new Canvas(54, 54);
         const octx = oc.getContext("2d");
-        octx.drawImage(
-          img,
-          img.width === 54 ? 0 : 3,
-          img.height === 54 ? 0 : 3
-        );
+        octx.drawImage(img, 0, 0);
         // resize
         // step 1
         const rc = new Canvas(imgSize, imgSize);
@@ -258,11 +333,11 @@ export function toTranslateShipName(
   langData: {
     suffixes: { [key: string]: string };
     [key: string]: string | { [key: string]: string };
-  } | null
+  }
 ): string {
   let shipName = name;
   let shipSuffix = null;
-  if (langData) {
+  if (langData && langData.suffixes) {
     Object.keys(langData.suffixes)
       .sort((a, b) => b.length - a.length)
       .some(suffix => {

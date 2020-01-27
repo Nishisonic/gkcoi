@@ -155,12 +155,22 @@ async function generateDarkShipCanvasAsync(
   return canvas;
 }
 
+/**
+ * 【オリジナル】ダークバージョンを出力する
+ * @param fleetIdx 艦隊番号
+ * @param ships 艦
+ * @param los 索敵
+ * @param airPower 制空値
+ * @param speed 艦速(0=陸上、5=低速、10=高速、15=高速+、20=最速)
+ * @param lang 言語
+ * @return 画像
+ */
 export async function generateDarkFleetCanvasAsync(
   fleetIdx: number,
   ships: Ship[],
   los: { 1: number; 2: number; 3: number; 4: number; 5: number },
   airPower: { min: number; max: number },
-  speed: "NONE" | "SLOW" | "FAST" | "FASTER" | "FASTEST",
+  speed: 0 | 5 | 10 | 15 | 20,
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
   const parameterIcons = await loadOriginalParameterIcons();

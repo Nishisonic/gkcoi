@@ -2,7 +2,6 @@ import {
   fetchLangData,
   load74eoParameterIcons,
   load74eoEquipmentIcons,
-  toTranslateShipName,
   toTranslateEquipmentName,
   NONE,
   AIR_POWER,
@@ -12,108 +11,72 @@ import {
 import { Canvas, loadImage } from "canvas";
 import { Ship } from "../type";
 
-async function generate74eoMediumCutinShipCanvasAsync(
-  shipIdx: number,
+async function generate74eoSmallBannerShipCanvasAsync(
   ship: Ship,
   has5slot: boolean,
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
-  const { ships, items } =
-    lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
+  const items = lang === "jp" ? null : (await fetchLangData(lang)).items;
   const shipImage = resize(
     await loadImage(
-      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
+      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/banner/${ship.id}.png`
     ),
-    665,
-    121
-  );
-  const albumStatusImage = await resize(
-    await loadImage(
-      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/album_status/${ship.id}.png`
-    ),
-    436,
-    63
+    160,
+    40
   );
   const parameterIcons = await load74eoParameterIcons();
   const equipmentIcons = await load74eoEquipmentIcons();
-  const canvas = new Canvas(677, 172);
+  const offset = has5slot ? 0 : 18;
+  const canvas = new Canvas(213, 151 - offset);
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(shipImage, 1, 1);
 
-  // 5スロ位置基準
-  const offset = has5slot ? 0 : 25;
-  const itemOffset = has5slot ? 0 : 23;
-  ctx.drawImage(shipImage, 4, 46);
-  if (lang === "jp") {
-    ctx.drawImage(albumStatusImage, -50, 0);
-  } else {
-    ctx.fillStyle = `#0f0f0f`;
-    ctx.font = "24px Meiryo";
-    ctx.fillText(toTranslateShipName(ship.name, ships), 46, 32);
-  }
-  let grd = ctx.createLinearGradient(370, 98, 630, 98);
-  grd.addColorStop(0, "rgba(255,255,255,0)");
-  grd.addColorStop(0.2, "rgba(255,255,255,0.9)");
-  grd.addColorStop(1, "rgba(255,255,255,0.9)");
-  ctx.fillStyle = grd;
-  ctx.fillRect(370, 0, 730, 166);
   ctx.strokeStyle = ctx.fillStyle = "#008888";
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(10, 168.5);
-  ctx.lineTo(668, 168.5);
+  ctx.moveTo(5, 149.5 - offset);
+  ctx.lineTo(209, 149.5 - offset);
   ctx.stroke();
-  ctx.font = "16px Meiryo";
-  ctx.fillText(`#${shipIdx + 1}:`, 9, 29);
   ctx.font = "12px Meiryo";
-  ctx.fillText("L", 360, 18 + offset);
-  ctx.fillText("v", 367, 18 + offset);
-  ctx.fillText(".", 374, 18 + offset);
-  ctx.drawImage(parameterIcons["HP"], 432, 3 + offset);
-  ctx.drawImage(parameterIcons["ASW"], 500, 3 + offset);
-  ctx.drawImage(parameterIcons["Luck"], 568, 3 + offset);
-  ctx.font = "16px Meiryo";
+  ctx.fillText("L", 163, 14);
+  ctx.fillText("v", 170, 14);
+  ctx.fillText(".", 177, 14);
+  ctx.drawImage(parameterIcons["Luck"], 161, 18);
   ctx.fillStyle = "#0f0f0f";
   ctx.textAlign = "right";
-  ctx.fillText(String(ship.lv), 414, 17 + offset);
-  ctx.fillText(String(ship.hp), 482, 17 + offset);
-  ctx.fillText(String(ship.as), 549, 17 + offset);
-  ctx.fillText(String(ship.lk), 617, 17 + offset);
+  ctx.fillText(String(ship.lv), 208, 14);
+  ctx.fillText(String(ship.lk), 208, 31);
   for (let i = 0; i < ship.slotNum + 1; i++) {
-    ctx.font = "16px Meiryo";
-    ctx.textAlign = "left";
     const itemIdx = i < ship.slotNum ? i : 5 + (offset > 0 ? -1 : 0);
+    ctx.textAlign = "left";
     if (ship.items[i]) {
       const name = toTranslateEquipmentName(ship.items[i].name, items);
-      ctx.fillText(name, 463, 48 + 23 * itemIdx + itemOffset);
+      const nameWidth = ctx.measureText(name).width;
+      ctx.fillText(name, 40, 55 + 18 * itemIdx);
       ctx.drawImage(
         equipmentIcons[ship.items[i].type[3]],
-        444,
-        34 + 23 * itemIdx + itemOffset
+        22,
+        42 + 18 * itemIdx
       );
-      if (ctx.measureText(name).width > 200) {
-        grd = ctx.createLinearGradient(
-          660,
-          30 + 23 * itemIdx + itemOffset,
-          677,
-          30 + 23 * itemIdx + itemOffset
-        );
+      if (nameWidth > 170) {
+        const grd = ctx.createLinearGradient(205, 0, 215, 0);
         grd.addColorStop(0, "rgba(255,255,255,0)");
         grd.addColorStop(0.6, "rgba(255,255,255,1)");
         grd.addColorStop(1, "rgba(255,255,255,1)");
         ctx.fillStyle = grd;
-        ctx.fillRect(667, 30 + 23 * itemIdx + itemOffset, 10, 21);
+        ctx.fillRect(205, 42 + 18 * itemIdx, 10, 17);
       }
       if (ship.items[i].rf > 0) {
-        if (ctx.measureText(name).width > 185) {
+        if (nameWidth > 145) {
           // オーバーレイ
-          grd = ctx.createLinearGradient(640, 0, 685, 0);
+          const grd = ctx.createLinearGradient(180, 0, 215, 0);
           grd.addColorStop(0, "rgba(255,255,255,0)");
           grd.addColorStop(0.3, "rgba(255,255,255,1)");
           grd.addColorStop(1, "rgba(255,255,255,1)");
           ctx.fillStyle = grd;
-          ctx.fillRect(640, 30 + 23 * itemIdx + itemOffset, 37, 21);
+          ctx.fillRect(180, 42 + 18 * itemIdx, 35, 17);
         }
         // 改修値
         ctx.font = "12px Meiryo";
@@ -121,13 +84,13 @@ async function generate74eoMediumCutinShipCanvasAsync(
         ctx.textAlign = "right";
         ctx.fillText(
           `+${ship.items[i].rf}`,
-          667,
-          46 + 23 * itemIdx + itemOffset
+          Math.min(nameWidth + 72, 210),
+          55 + 18 * itemIdx
         );
       }
     } else {
-      ctx.fillText(`(${NONE[lang]})`, 463, 48 + 23 * itemIdx + itemOffset);
-      ctx.fillText("-", 448, 48 + 23 * itemIdx + itemOffset);
+      ctx.fillText(`(${NONE[lang]})`, 40, 55 + 18 * itemIdx);
+      ctx.fillText("-", 28, 54 + 18 * itemIdx);
     }
     if (ship.slots[i] > 0) {
       if (ship.items[i] && ship.items[i].type[4] > 0) {
@@ -137,21 +100,19 @@ async function generate74eoMediumCutinShipCanvasAsync(
       }
       ctx.textAlign = "right";
       ctx.font = "12px Meiryo";
-      ctx.fillText(String(ship.slots[i]), 443, 46 + 23 * itemIdx + itemOffset);
-      ctx.font = "16px Meiryo";
-      ctx.textAlign = "left";
+      ctx.fillText(String(ship.slots[i]), 20, 55 + 18 * i);
     }
     ctx.fillStyle = "#0f0f0f";
   }
   ctx.textAlign = "left";
   ctx.font = "12px Meiryo";
   ctx.fillStyle = "#008888";
-  ctx.fillText("-------------------------------------------------", 421, 149);
+  ctx.fillText("----------------------------------------", 6, 135 - offset);
   return canvas;
 }
 
 /**
- * 【七四式】カットイン(中型)バージョンを出力する
+ * 【七四式】バナー(小型)バージョンを出力する
  * @param fleetName 艦隊名
  * @param ships 艦
  * @param los 索敵
@@ -159,18 +120,21 @@ async function generate74eoMediumCutinShipCanvasAsync(
  * @param lang 言語
  * @return 画像
  */
-export async function generate74eoMediumCutinFleetCanvasAsync(
+export async function generate74eoSmallBannerFleetCanvasAsync(
   fleetName: string,
   ships: Ship[],
   los: { 1: number; 2: number; 3: number; 4: number; 5: number },
   airPower: { min: number; max: number },
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
-  const canvas = new Canvas(1346, ships.length < 7 ? 567 : 734);
+  const has5slot = ships.filter(ship => ship).some(ship => ship.slotNum === 5);
+  const canvas = new Canvas(
+    434,
+    ships.length > 6 ? 785 - (has5slot ? 0 : 72) : 533 - (has5slot ? 0 : 54)
+  );
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const has5slot = ships.filter(ship => ship).some(ship => ship.slotNum === 5);
 
   (
     await Promise.all(
@@ -180,8 +144,7 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
         .map(async data => {
           return {
             ...data,
-            image: await generate74eoMediumCutinShipCanvasAsync(
-              data.index,
+            image: await generate74eoSmallBannerShipCanvasAsync(
               data.ship,
               has5slot,
               lang
@@ -192,53 +155,53 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
   ).forEach(data =>
     ctx.drawImage(
       data.image,
-      (data.index % 2) * 669,
-      Math.floor(data.index / 2) * 172 + 43
+      (data.index % 2) * 213 + 5,
+      Math.floor(data.index / 2) * (152 - (has5slot ? 0 : 18)) + 64
     )
   );
   const equipmentIcons = await load74eoEquipmentIcons();
 
   ctx.fillStyle = "#0f0f0f";
   ctx.font = "24px Meiryo";
-  ctx.fillText(fleetName, 8, 28);
+  ctx.fillText(fleetName, 8, 29);
   ctx.font = "12px Meiryo";
   const airPowerStringWidth = ctx.measureText(AIR_POWER[lang]).width;
   const losValueStringWidth = ctx.measureText(LOS[lang]).width;
   ctx.font = "16px Meiryo";
   const { min, max } = airPower ? airPower : { min: 0, max: 0 };
   const airPowerString = min === max ? String(min) : `${min}~${max}`;
-  ctx.fillText(airPowerString, 335 + airPowerStringWidth + 6, 32); // fixed
+  ctx.fillText(airPowerString, 30 + airPowerStringWidth + 6, 54); // fixed
   ctx.fillText(
     (Math.floor(los[1] * 100) / 100).toFixed(2),
-    335 +
+    30 +
       ctx.measureText(airPowerString).width +
       airPowerStringWidth +
       losValueStringWidth +
       49,
-    32
+    54
   );
   ctx.strokeStyle = ctx.fillStyle = "#008888";
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(8, 37.5);
-  ctx.lineTo(canvas.width - 7, 37.5);
+  ctx.moveTo(8, 59.5);
+  ctx.lineTo(canvas.width - 7, 59.5);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(8, canvas.height - 9.5);
+  ctx.moveTo(4, canvas.height - 9.5);
   ctx.lineTo(canvas.width - 7, canvas.height - 9.5);
   ctx.stroke();
   ctx.font = "12px Meiryo";
-  ctx.drawImage(equipmentIcons[6], 317, 18); // fixed
-  ctx.fillText(AIR_POWER[lang], 335, 30);
+  ctx.drawImage(equipmentIcons[6], 12, 40);
+  ctx.fillText(AIR_POWER[lang], 30, 52);
   ctx.drawImage(
     equipmentIcons[9],
-    335 + ctx.measureText(airPowerString).width + airPowerStringWidth + 33,
-    18
+    25 + ctx.measureText(airPowerString).width + airPowerStringWidth + 33,
+    40
   );
   ctx.fillText(
     LOS[lang],
-    335 + ctx.measureText(airPowerString).width + airPowerStringWidth + 51,
-    30
+    25 + ctx.measureText(airPowerString).width + airPowerStringWidth + 51,
+    52
   );
   return canvas;
 }

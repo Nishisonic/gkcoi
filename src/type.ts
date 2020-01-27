@@ -1,3 +1,6 @@
+/**
+ * 艦
+ */
 export class Ship {
   /** 艦ID */
   id = 0;
@@ -28,11 +31,11 @@ export class Ship {
   /** 索敵 */
   ls = 0;
   /** 射程 */
-  rn = 0;
+  rn: 0 | 1 | 2 | 3 | 4 = 0;
   /** 運 */
   lk = 0;
   /** 速力 */
-  sp = 0;
+  sp: 0 | 5 | 10 | 15 | 20 = 0;
   /** スロット数 */
   slotNum = 0;
   /** 搭載機数 */
@@ -41,7 +44,71 @@ export class Ship {
   items: Item[] = [];
   /** Lv */
   lv = 0;
+  /** 制空値 */
+  airpower = 0;
 
+  /**
+   * パラメータを設定する
+   * ※この値が表示されるので、装備パラメータも一緒に含めること
+   * @param hp HP
+   * @param firepower 火力
+   * @param torpedo 雷装
+   * @param bomb 爆装
+   * @param armor 装甲
+   * @param aa 対空
+   * @param evasion 回避
+   * @param accuracy 命中
+   * @param asw 対潜
+   * @param los 索敵
+   * @param range 射程
+   * @param luck 運
+   * @param speed 速力
+   * @param airpower 制空値
+   */
+  public setParameter(
+    hp: number,
+    firepower: number,
+    torpedo: number,
+    bomb: number,
+    armor: number,
+    aa: number,
+    evasion: number,
+    accuracy: number,
+    asw: number,
+    los: number,
+    range: 0 | 1 | 2 | 3 | 4,
+    luck: number,
+    speed: 0 | 5 | 10 | 15 | 20,
+    airpower: number
+  ): void {
+    this.hp = hp;
+    this.fp = firepower;
+    this.tp = torpedo;
+    this.bp = bomb;
+    this.ar = armor;
+    this.aa = aa;
+    this.ev = evasion;
+    this.ac = accuracy;
+    this.as = asw;
+    this.ls = los;
+    this.rn = range;
+    this.lk = luck;
+    this.sp = speed;
+    this.airpower = airpower;
+  }
+
+  /**
+   * ※この値が表示されるので、装備パラメータも一緒に含めること
+   * @param id 艦ID
+   * @param name 艦名
+   * @param lv 艦Lv
+   * @param items 装備
+   * @param slotNum 装備スロット数
+   * @param slots 装備スロット
+   * @param hp HP
+   * @param asw 対潜
+   * @param luck 運
+   */
   constructor(
     id: number,
     name: string,
@@ -51,7 +118,7 @@ export class Ship {
     slots: number[],
     hp?: number,
     asw?: number,
-    lk?: number
+    luck?: number
   ) {
     this.id = id;
     this.name = name;
@@ -59,12 +126,15 @@ export class Ship {
     this.items = items;
     this.slotNum = slotNum;
     this.slots = slots;
-    this.hp = hp ? hp : 0;
-    this.as = asw ? asw : 0;
-    this.lk = lk ? lk : 0;
+    this.hp = hp || 0;
+    this.as = asw || 0;
+    this.lk = luck || 0;
   }
 }
 
+/**
+ * 装備
+ */
 export class Item {
   /** 装備ID */
   id = 0;
@@ -119,6 +189,13 @@ export class Item {
     this.rd = start2.api_cost;
   }
 
+  /**
+   * @param id 装備ID
+   * @param name 装備名
+   * @param type 装備タイプ
+   * @param rf 改修
+   * @param mas 熟練度
+   */
   constructor(
     id: number,
     name: string,
@@ -129,7 +206,7 @@ export class Item {
     this.id = id;
     this.name = name;
     this.type = type;
-    this.rf = rf ? rf : 0;
-    this.mas = mas ? mas : 0;
+    this.rf = rf || 0;
+    this.mas = mas || 0;
   }
 }
