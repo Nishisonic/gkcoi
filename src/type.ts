@@ -171,6 +171,10 @@ export class Item {
   /** 熟練度 */
   mas = 0;
 
+  /**
+   * マスターデータから装備データを設定する
+   * @param start2 マスターデータ
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fromMasterData(start2: any): void {
     this.id = start2.api_id;
@@ -187,6 +191,55 @@ export class Item {
     this.ls = start2.api_saku;
     this.rn = start2.api_distance;
     this.rd = start2.api_cost;
+  }
+
+  /**
+   * パラメータを設定する
+   * @param id 装備ID
+   * @param name 装備名
+   * @param type 装備タイプ
+   * @param firepower 火力
+   * @param torpedo 雷装
+   * @param bomb 爆装
+   * @param armor 装甲
+   * @param aa 対空
+   * @param evasion 回避
+   * @param accuracy 命中
+   * @param asw 対潜
+   * @param los 索敵
+   * @param range 射程
+   * @param distance 航続距離
+   */
+  public setParameter(
+    id: number,
+    name: string,
+    type: number[],
+    firepower: number,
+    torpedo: number,
+    bomb: number,
+    armor: number,
+    aa: number,
+    evasion: number,
+    accuracy: number,
+    asw: number,
+    los: number,
+    range: number,
+    distance: number
+  ): void {
+    this.id = id;
+    this.name = name;
+    this.type = type;
+    this.fp = firepower;
+    this.tp = torpedo;
+    this.bp = bomb;
+    this.ar = armor;
+    this.aa = aa;
+    this.ev = evasion;
+    this.ac = accuracy;
+    this.as = asw;
+    this.ls = los;
+    this.rn = range;
+    this.rd = distance;
   }
 
   /**
