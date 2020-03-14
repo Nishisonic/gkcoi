@@ -1,5 +1,6 @@
 import { Canvas, Image, loadImage } from "canvas";
 import axios from "axios";
+import { Ship } from "./type";
 
 export class Language {
   /** 日本語 */
@@ -26,7 +27,9 @@ export const NONE = new Language("なし", "None", "없음", "没有", "沒有")
 
 export const FLEET = new Language("艦隊", "", "함대", "舰队", "艦隊");
 
-export const SPEED = {
+export const SPEED: {
+  [key: number]: Language;
+} = {
   0: new Language("陸上", "Land", "육상", "土地", "土地"),
   5: new Language("低速", "Slow", "저속", "低速", "低速"),
   10: new Language("高速", "Fast", "고속", "高速", "高速"),
@@ -34,7 +37,9 @@ export const SPEED = {
   20: new Language("最速", "Fastest", "초고속", "最速", "最速")
 };
 
-export const RANGE = {
+export const RANGE: {
+  [key: number]: Language;
+} = {
   0: new Language("無", "N", "무", "无", "無"),
   1: new Language("短", "S", "단", "短", "短"),
   2: new Language("中", "M", "중", "中", "中"),
@@ -42,7 +47,9 @@ export const RANGE = {
   4: new Language("超長", "VL", "초장", "超长", "超長")
 };
 
-export const LABEL = {
+export const LABEL: {
+  [key: string]: Language;
+} = {
   HP: new Language("耐久", "HP", "내구", "耐力", "耐力"),
   FIREPOWER: new Language("火力", "FP", "화력", "火力", "火力"),
   TORPEDO: new Language("雷装", "TP", "뇌장", "雷装", "雷裝"),
@@ -316,10 +323,19 @@ export async function load74eoEquipmentIcons(
 export async function fetchLangData(
   lang: "en" | "ko" | "tcn" | "scn"
 ): Promise<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ships: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any;
+  ships: {
+    [key: string]:
+      | string
+      | {
+          [key: string]: string;
+        };
+    suffixes: {
+      [key: string]: string;
+    };
+  };
+  items: {
+    [key: string]: string;
+  };
 }> {
   const shipsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/ships-${lang}.json`;
   const itemsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/items-${lang}.json`;
@@ -333,7 +349,7 @@ export function toTranslateShipName(
   langData: {
     suffixes: { [key: string]: string };
     [key: string]: string | { [key: string]: string };
-  }
+  } | null
 ): string {
   let shipName = name;
   let shipSuffix = null;
@@ -374,4 +390,61 @@ export function resize(image: Image, width: number, height: number): Canvas {
   const ctx = canvas.getContext("2d");
   ctx.drawImage(image, 0, 0, width, height);
   return canvas;
+}
+
+export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
+  const itemBonus = (ship: Ship): number => {
+    return ship.items
+      .filter(item => item.id > 0)
+      .map(item => {
+        // SG レーダー(初期型)
+        if ([65, 69, 83, 87, 84, 91, 93, 95, 99].includes(ship.ctype)) {
+          if (item.id === 315) {
+            return item.los + 4;
+          }
+        }
+        return item.los;
+      })
+      .reduce((previous, current) => {
+        return previous + current;
+      }, 0);
+  };
+
+  return (
+    ships
+      .filter(ship => ship.id > 0)
+      .map(ship => {
+        return (
+          ship.items
+            .filter(item => item.id > 0)
+            .map(item => {
+              switch (item.type[2]) {
+                case 8: // 艦上攻撃機
+                  return 0.8 * item.los; // 改修不可
+                case 9: // 艦上偵察機
+                case 94: // 艦上偵察機(II)
+                  return 1.0 * (item.los + 1.2 * Math.sqrt(item.lv));
+                case 10: // 水上偵察機
+                  return 1.2 * (item.los + 1.2 * Math.sqrt(item.lv));
+                case 11: // 水上爆撃機
+                  return 1.1 * (item.los + 1.15 * Math.sqrt(item.lv));
+                case 12: // 小型電探
+                  return 0.6 * (item.los + 1.25 * Math.sqrt(item.lv));
+                case 13: // 大型電探
+                case 93: // 大型電探(II)
+                  return 0.6 * (item.los + 1.4 * Math.sqrt(item.lv));
+                default:
+                  // その他
+                  return 0.6 * item.los;
+              }
+            })
+            .reduce((p, v) => p + v, 0) *
+            cn +
+          Math.sqrt(ship.los - itemBonus(ship))
+        );
+      })
+      .reduce((p, v) => p + v, 0) -
+    Math.ceil(0.4 * hqLv) +
+    2 * (6 - ships.filter(ship => ship.id > 0).length)
+  );
 }

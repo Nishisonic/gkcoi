@@ -19,9 +19,6 @@ async function generateDarkShipInfoCanvasAsync(
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
-  const image = await loadImage(
-    `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
-  );
   const parameterIcons = await loadOriginalParameterIcons();
   const equipmentIcons = await loadOriginalEquipmentIcons();
   const canvas = new Canvas(650, 176);
@@ -29,18 +26,23 @@ async function generateDarkShipInfoCanvasAsync(
   // overlay
   ctx.fillStyle = "#1A1A1A";
   ctx.fillRect(0, 0, 650, 176);
-  // ship
-  ctx.drawImage(
-    image,
-    0,
-    3,
-    image.width,
-    image.height,
-    -100,
-    0,
-    image.width,
-    image.height
-  );
+  if (ship.id > 0) {
+    const image = await loadImage(
+      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
+    );
+    // ship
+    ctx.drawImage(
+      image,
+      0,
+      3,
+      image.width,
+      image.height,
+      -100,
+      0,
+      image.width,
+      image.height
+    );
+  }
   // overlay
   const grd2 = ctx.createLinearGradient(0, 65, 998, 65);
   grd2.addColorStop(0.2, "rgba(26,26,26,0)");
@@ -79,14 +81,14 @@ async function generateDarkShipInfoCanvasAsync(
   ctx.drawImage(parameterIcons["as"], 532, 13);
   ctx.drawImage(parameterIcons["luck"], 588, 13);
   ctx.fillText(String(ship.hp), 529, 28);
-  ctx.fillText(String(ship.as), 585, 28);
-  ctx.fillText(String(ship.lk), 638, 28);
+  ctx.fillText(String(ship.asw), 585, 28);
+  ctx.fillText(String(ship.luck), 638, 28);
   // equipment
   ctx.font = "14px Meiryo";
   ctx.fillStyle = "#fff";
   ctx.textAlign = "left";
   for (let i = 0; i < 6; i++) {
-    if (ship.items[i]) {
+    if (ship.items[i].id > 0) {
       ctx.fillText(
         toTranslateEquipmentName(ship.items[i].name, items),
         420,
@@ -126,11 +128,11 @@ async function generateDarkShipInfoCanvasAsync(
   ctx.fillStyle = "#49A7A2";
   const LV_STRING = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "m"];
   for (let i = 0; i < 6; i++) {
-    if (ship.items[i] && ship.items[i].rf > 0) {
+    if (ship.items[i] && ship.items[i].lv > 0) {
       ctx.textAlign = "left";
       ctx.fillText("★", 611, 53 + 23 * i);
       ctx.textAlign = "center";
-      ctx.fillText(LV_STRING[ship.items[i].rf], 635, 53 + 23 * i);
+      ctx.fillText(LV_STRING[ship.items[i].lv], 635, 53 + 23 * i);
     }
   }
   return canvas;
@@ -174,15 +176,21 @@ export async function generateDarkFleetCanvasAsync(
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
   const parameterIcons = await loadOriginalParameterIcons();
-  const canvas = new Canvas(1310, ships.length < 7 ? 586 : 768);
+  const canvas = new Canvas(
+    1310,
+    ships.filter(ship => ship.id > 0).length < 7 ? 586 : 768
+  );
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#212121";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   const shipCanvases = await Promise.all(
-    ships.map(async (ship, shipIdx) => {
-      const shipCanvas = await generateDarkShipCanvasAsync(shipIdx, ship, lang);
-      return new MyCanvas(String(shipIdx), shipCanvas);
-    })
+    ships
+      .map((ship, shipIdx) => ({ ship: ship, idx: shipIdx }))
+      .filter(({ ship }) => ship.id > 0)
+      .map(async ({ ship, idx }) => {
+        const shipCanvas = await generateDarkShipCanvasAsync(idx, ship, lang);
+        return new MyCanvas(String(idx), shipCanvas);
+      })
   );
 
   shipCanvases.forEach(shipCanvas => {
@@ -197,7 +205,7 @@ export async function generateDarkFleetCanvasAsync(
   ctx.fillStyle = "#fff";
   ctx.fillText(`Fleet #${Number(fleetIdx) + 1}`, 20, 30);
   ctx.drawImage(parameterIcons["air"], 172, 11);
-  const { min, max } = airPower ? airPower : { min: 0, max: 0 };
+  const { min, max } = airPower || { min: 0, max: 0 };
   ctx.fillText(min === max ? String(min) : `${min}~${max}`, 200, 30);
   ctx.drawImage(parameterIcons["los"], 346, 12);
   ctx.fillText((Math.floor(los[1] * 100) / 100).toFixed(2), 380, 30);

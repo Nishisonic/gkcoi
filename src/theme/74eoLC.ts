@@ -37,13 +37,6 @@ async function generate74eoLargeCardShipCanvasAsync(
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
-  const shipImage = resize(
-    await loadImage(
-      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/card/${ship.id}.png`
-    ),
-    218,
-    300
-  );
   const parameterIcons = await load74eoParameterIcons();
   const equipmentIcons = await load74eoEquipmentIcons(54);
   const aircraftLevelIcons = await load74eoAircraftLevelIcons();
@@ -105,28 +98,28 @@ async function generate74eoLargeCardShipCanvasAsync(
   ctx.textAlign = "right";
   ctx.fillText(String(ship.lv), 247, 29);
   ctx.fillText(String(ship.hp), 113, 187);
-  ctx.fillText(String(ship.ar), 113, 209);
-  ctx.fillText(String(ship.ev), 113, 231);
-  ctx.fillText(String(ship.airpower), 113, 253);
-  ctx.fillText(SPEED[ship.sp][lang], 113, 275);
-  ctx.fillText(RANGE[ship.rn][lang], 113, 297);
-  ctx.fillText(String(ship.fp), 226, 187);
-  ctx.fillText(String(ship.tp), 226, 209);
+  ctx.fillText(String(ship.armor), 113, 209);
+  ctx.fillText(String(ship.evasion), 113, 231);
+  ctx.fillText(String(ship.airPower.min), 113, 253);
+  ctx.fillText(SPEED[ship.speed][lang], 113, 275);
+  ctx.fillText(RANGE[ship.range][lang], 113, 297);
+  ctx.fillText(String(ship.firepower), 226, 187);
+  ctx.fillText(String(ship.torpedo), 226, 209);
   ctx.fillText(String(ship.aa), 226, 231);
-  ctx.fillText(String(ship.as), 226, 253);
-  ctx.fillText(String(ship.ls), 226, 275);
-  ctx.fillText(String(ship.lk), 226, 297);
+  ctx.fillText(String(ship.asw), 226, 253);
+  ctx.fillText(String(ship.los), 226, 275);
+  ctx.fillText(String(ship.luck), 226, 297);
   for (let i = 0; i < ship.slotNum + 1; i++) {
     ctx.font = "16px Meiryo";
     ctx.textAlign = "left";
-    const itemIdx = i;
-    if (ship.items[i]) {
+    const itemIdx = i === ship.slotNum ? 5 : i;
+    if (ship.items[i].id > 0) {
       const name = toTranslateEquipmentName(ship.items[i].name, items);
-      ctx.fillText(name, 46, 53 + 23 * itemIdx);
+      ctx.fillText(name, 45, 53 + 22 * itemIdx);
       ctx.drawImage(
         equipmentIcons[ship.items[i].type[3]],
-        23,
-        36 + 23 * itemIdx
+        26,
+        39 + 22 * itemIdx
       );
       if (ctx.measureText(name).width > 200) {
         const grd = ctx.createLinearGradient(222, 0, 247, 0);
@@ -134,9 +127,9 @@ async function generate74eoLargeCardShipCanvasAsync(
         grd.addColorStop(0.65, "rgba(255,255,255,1)");
         grd.addColorStop(1, "rgba(255,255,255,1)");
         ctx.fillStyle = grd;
-        ctx.fillRect(222, 36 + 23 * itemIdx, 27, 21);
+        ctx.fillRect(222, 36 + 22 * itemIdx, 27, 21);
       }
-      if (ship.items[i].mas > 0) {
+      if (ship.items[i].alv > 0) {
         if (ctx.measureText(name).width > 150) {
           // オーバーレイ
           const grd = ctx.createLinearGradient(148, 0, 247, 0);
@@ -144,34 +137,34 @@ async function generate74eoLargeCardShipCanvasAsync(
           grd.addColorStop(0.55, "rgba(255,255,255,1)");
           grd.addColorStop(1, "rgba(255,255,255,1)");
           ctx.fillStyle = grd;
-          ctx.fillRect(148, 36 + 23 * itemIdx, 100, 21);
+          ctx.fillRect(148, 36 + 22 * itemIdx, 100, 21);
         }
         // 熟練度
         ctx.drawImage(
-          aircraftLevelIcons[ship.items[i].mas],
+          aircraftLevelIcons[ship.items[i].alv],
           204,
-          39 + 23 * itemIdx
+          39 + 22 * itemIdx
         );
       }
-      if (ship.items[i].rf > 0) {
-        if (ship.items[i].mas === 0 && ctx.measureText(name).width > 185) {
+      if (ship.items[i].lv > 0) {
+        if (ship.items[i].alv === 0 && ctx.measureText(name).width > 185) {
           // オーバーレイ
           const grd = ctx.createLinearGradient(188, 0, 247, 0);
           grd.addColorStop(0, "rgba(255,255,255,0)");
           grd.addColorStop(0.6, "rgba(255,255,255,1)");
           grd.addColorStop(1, "rgba(255,255,255,1)");
           ctx.fillStyle = grd;
-          ctx.fillRect(188, 36 + 23 * itemIdx, 52, 21);
+          ctx.fillRect(188, 36 + 22 * itemIdx, 52, 21);
         }
         // 改修値
         ctx.font = "12px Meiryo";
         ctx.fillStyle = "#007F7F";
         ctx.textAlign = "right";
-        ctx.fillText(`+${ship.items[i].rf}`, 247, 51 + 23 * itemIdx);
+        ctx.fillText(`+${ship.items[i].lv}`, 247, 51 + 22 * itemIdx);
       }
     } else {
-      ctx.fillText(`(${NONE[lang]})`, 46, 53 + 22.5 * itemIdx);
-      ctx.fillText("-", 30, 53 + 22.5 * itemIdx);
+      ctx.fillText(`(${NONE[lang]})`, 45, 53 + 22 * itemIdx);
+      ctx.fillText("-", 30, 53 + 22 * itemIdx);
     }
     if (ship.slots[i] > 0) {
       if (ship.items[i] && ship.items[i].type[4] > 0) {
@@ -181,13 +174,22 @@ async function generate74eoLargeCardShipCanvasAsync(
       }
       ctx.textAlign = "right";
       ctx.font = "12px Meiryo";
-      ctx.fillText(String(ship.slots[i]), 25, 51 + 23 * itemIdx);
+      ctx.fillText(String(ship.slots[i]), 25, 51 + 22 * itemIdx);
       ctx.font = "16px Meiryo";
       ctx.textAlign = "left";
     }
     ctx.fillStyle = "#0f0f0f";
   }
-  ctx.drawImage(shipImage, 249, 1);
+  if (ship.id > 0) {
+    const shipImage = resize(
+      await loadImage(
+        `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/card/${ship.id}.png`
+      ),
+      218,
+      300
+    );
+    ctx.drawImage(shipImage, 249, 1);
+  }
   return canvas;
 }
 
@@ -207,7 +209,10 @@ export async function generate74eoLargeCardFleetCanvasAsync(
   airPower: { min: number; max: number },
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
-  const canvas = new Canvas(952, ships.length < 7 ? 972 : 1279);
+  const canvas = new Canvas(
+    952,
+    ships.filter(ship => ship.id > 0).length < 7 ? 972 : 1279
+  );
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -216,7 +221,7 @@ export async function generate74eoLargeCardFleetCanvasAsync(
     await Promise.all(
       ships
         .map((ship, index) => ({ index, ship }))
-        .filter(data => data.ship)
+        .filter(data => data.ship.id > 0)
         .map(async data => {
           return {
             ...data,
@@ -231,8 +236,8 @@ export async function generate74eoLargeCardFleetCanvasAsync(
   ).forEach(data =>
     ctx.drawImage(
       data.image,
-      8 + (data.index % 2) * 472,
-      Math.floor(data.index / 2) * 307 + 41
+      7 + (data.index % 2) * 472,
+      Math.floor(data.index / 2) * 307 + 42
     )
   );
   const equipmentIcons = await load74eoEquipmentIcons(54);
@@ -244,40 +249,39 @@ export async function generate74eoLargeCardFleetCanvasAsync(
   const airPowerStringWidth = ctx.measureText(AirPower[lang]).width;
   const losValueStringWidth = ctx.measureText(LoS[lang]).width;
   ctx.font = "16px Meiryo";
-  const { min, max } = airPower ? airPower : { min: 0, max: 0 };
+  const { min, max } = airPower || { min: 0, max: 0 };
   const airPowerString = min === max ? String(min) : `${min}~${max}`;
-  ctx.fillText(airPowerString, 336 + airPowerStringWidth + 6, 31); // fixed
+  ctx.fillText(airPowerString, 336 + airPowerStringWidth + 5, 32); // fixed
   ctx.fillText(
     (Math.floor(los[1] * 100) / 100).toFixed(2),
-    336 +
+    383 +
       ctx.measureText(airPowerString).width +
       airPowerStringWidth +
-      losValueStringWidth +
-      49,
-    31
+      losValueStringWidth,
+    32
   );
   ctx.strokeStyle = ctx.fillStyle = "#008888";
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(9, 36.5);
-  ctx.lineTo(canvas.width - 6, 36.5);
+  ctx.moveTo(8, 37.5);
+  ctx.lineTo(canvas.width - 7, 37.5);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(5, canvas.height - 10.5);
-  ctx.lineTo(canvas.width - 4.5, canvas.height - 10.5);
+  ctx.moveTo(4, canvas.height - 9.5);
+  ctx.lineTo(canvas.width - 4.5, canvas.height - 9.5);
   ctx.stroke();
   ctx.font = "12px Meiryo";
-  ctx.drawImage(equipmentIcons[6], 315, 14); // fixed
-  ctx.fillText(AirPower[lang], 336, 29);
+  ctx.drawImage(equipmentIcons[6], 317, 18); // fixed
+  ctx.fillText(AirPower[lang], 335, 30);
   ctx.drawImage(
     equipmentIcons[9],
-    334 + ctx.measureText(airPowerString).width + airPowerStringWidth + 33,
-    14
+    363 + ctx.measureText(airPowerString).width + airPowerStringWidth,
+    18
   );
   ctx.fillText(
     LoS[lang],
-    337 + ctx.measureText(airPowerString).width + airPowerStringWidth + 51,
-    29
+    381 + ctx.measureText(airPowerString).width + airPowerStringWidth,
+    30
   );
   return canvas;
 }

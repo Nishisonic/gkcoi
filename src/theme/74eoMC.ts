@@ -20,14 +20,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
-  const shipImage = resize(
-    await loadImage(
-      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
-    ),
-    665,
-    121
-  );
-  const albumStatusImage = await resize(
+  const albumStatusImage = resize(
     await loadImage(
       `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/album_status/${ship.id}.png`
     ),
@@ -44,7 +37,16 @@ async function generate74eoMediumCutinShipCanvasAsync(
   // 5スロ位置基準
   const offset = has5slot ? 0 : 25;
   const itemOffset = has5slot ? 0 : 23;
-  ctx.drawImage(shipImage, 4, 46);
+  if (ship.id > 0) {
+    const shipImage = resize(
+      await loadImage(
+        `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
+      ),
+      665,
+      121
+    );
+    ctx.drawImage(shipImage, 4, 46);
+  }
   if (lang === "jp") {
     ctx.drawImage(albumStatusImage, -50, 0);
   } else {
@@ -78,13 +80,13 @@ async function generate74eoMediumCutinShipCanvasAsync(
   ctx.textAlign = "right";
   ctx.fillText(String(ship.lv), 414, 17 + offset);
   ctx.fillText(String(ship.hp), 482, 17 + offset);
-  ctx.fillText(String(ship.as), 549, 17 + offset);
-  ctx.fillText(String(ship.lk), 617, 17 + offset);
+  ctx.fillText(String(ship.asw), 549, 17 + offset);
+  ctx.fillText(String(ship.luck), 617, 17 + offset);
   for (let i = 0; i < ship.slotNum + 1; i++) {
     ctx.font = "16px Meiryo";
     ctx.textAlign = "left";
     const itemIdx = i < ship.slotNum ? i : 5 + (offset > 0 ? -1 : 0);
-    if (ship.items[i]) {
+    if (ship.items[i].id > 0) {
       const name = toTranslateEquipmentName(ship.items[i].name, items);
       ctx.fillText(name, 463, 48 + 23 * itemIdx + itemOffset);
       ctx.drawImage(
@@ -105,7 +107,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
         ctx.fillStyle = grd;
         ctx.fillRect(667, 30 + 23 * itemIdx + itemOffset, 10, 21);
       }
-      if (ship.items[i].rf > 0) {
+      if (ship.items[i].lv > 0) {
         if (ctx.measureText(name).width > 185) {
           // オーバーレイ
           grd = ctx.createLinearGradient(640, 0, 685, 0);
@@ -120,7 +122,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
         ctx.fillStyle = "#007F7F";
         ctx.textAlign = "right";
         ctx.fillText(
-          `+${ship.items[i].rf}`,
+          `+${ship.items[i].lv}`,
           667,
           46 + 23 * itemIdx + itemOffset
         );
@@ -157,6 +159,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
  * @param los 索敵
  * @param airPower 制空値
  * @param lang 言語
+ * @pram has5slot 5スロット目は存在するか
  * @return 画像
  */
 export async function generate74eoMediumCutinFleetCanvasAsync(
@@ -164,19 +167,22 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
   ships: Ship[],
   los: { 1: number; 2: number; 3: number; 4: number; 5: number },
   airPower: { min: number; max: number },
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp",
+  has5slot = false
 ): Promise<Canvas> {
-  const canvas = new Canvas(1346, ships.length < 7 ? 567 : 734);
+  const canvas = new Canvas(
+    1346,
+    ships.filter(ship => ship.id > 0).length < 7 ? 567 : 734
+  );
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const has5slot = ships.filter(ship => ship).some(ship => ship.slotNum === 5);
 
   (
     await Promise.all(
       ships
         .map((ship, index) => ({ index, ship }))
-        .filter(data => data.ship)
+        .filter(data => data.ship.id > 0)
         .map(async data => {
           return {
             ...data,
@@ -205,7 +211,7 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
   const airPowerStringWidth = ctx.measureText(AIR_POWER[lang]).width;
   const losValueStringWidth = ctx.measureText(LOS[lang]).width;
   ctx.font = "16px Meiryo";
-  const { min, max } = airPower ? airPower : { min: 0, max: 0 };
+  const { min, max } = airPower || { min: 0, max: 0 };
   const airPowerString = min === max ? String(min) : `${min}~${max}`;
   ctx.fillText(airPowerString, 335 + airPowerStringWidth + 6, 32); // fixed
   ctx.fillText(

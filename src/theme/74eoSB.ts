@@ -17,13 +17,6 @@ async function generate74eoSmallBannerShipCanvasAsync(
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
   const items = lang === "jp" ? null : (await fetchLangData(lang)).items;
-  const shipImage = resize(
-    await loadImage(
-      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/banner/${ship.id}.png`
-    ),
-    160,
-    40
-  );
   const parameterIcons = await load74eoParameterIcons();
   const equipmentIcons = await load74eoEquipmentIcons();
   const offset = has5slot ? 0 : 18;
@@ -31,7 +24,16 @@ async function generate74eoSmallBannerShipCanvasAsync(
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(shipImage, 1, 1);
+  if (ship.id > 0) {
+    const shipImage = resize(
+      await loadImage(
+        `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/banner/${ship.id}.png`
+      ),
+      160,
+      40
+    );
+    ctx.drawImage(shipImage, 1, 1);
+  }
 
   ctx.strokeStyle = ctx.fillStyle = "#008888";
   ctx.lineWidth = 1;
@@ -47,11 +49,11 @@ async function generate74eoSmallBannerShipCanvasAsync(
   ctx.fillStyle = "#0f0f0f";
   ctx.textAlign = "right";
   ctx.fillText(String(ship.lv), 208, 14);
-  ctx.fillText(String(ship.lk), 208, 31);
+  ctx.fillText(String(ship.luck), 208, 31);
   for (let i = 0; i < ship.slotNum + 1; i++) {
     const itemIdx = i < ship.slotNum ? i : 5 + (offset > 0 ? -1 : 0);
     ctx.textAlign = "left";
-    if (ship.items[i]) {
+    if (ship.items[i].id > 0) {
       const name = toTranslateEquipmentName(ship.items[i].name, items);
       const nameWidth = ctx.measureText(name).width;
       ctx.fillText(name, 40, 55 + 18 * itemIdx);
@@ -68,7 +70,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
         ctx.fillStyle = grd;
         ctx.fillRect(205, 42 + 18 * itemIdx, 10, 17);
       }
-      if (ship.items[i].rf > 0) {
+      if (ship.items[i].lv > 0) {
         if (nameWidth > 145) {
           // オーバーレイ
           const grd = ctx.createLinearGradient(180, 0, 215, 0);
@@ -83,7 +85,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
         ctx.fillStyle = "#007F7F";
         ctx.textAlign = "right";
         ctx.fillText(
-          `+${ship.items[i].rf}`,
+          `+${ship.items[i].lv}`,
           Math.min(nameWidth + 72, 210),
           55 + 18 * itemIdx
         );
@@ -118,6 +120,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
  * @param los 索敵
  * @param airPower 制空値
  * @param lang 言語
+ * @pram has5slot 5スロット目は存在するか
  * @return 画像
  */
 export async function generate74eoSmallBannerFleetCanvasAsync(
@@ -125,12 +128,14 @@ export async function generate74eoSmallBannerFleetCanvasAsync(
   ships: Ship[],
   los: { 1: number; 2: number; 3: number; 4: number; 5: number },
   airPower: { min: number; max: number },
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp",
+  has5slot = false
 ): Promise<Canvas> {
-  const has5slot = ships.filter(ship => ship).some(ship => ship.slotNum === 5);
   const canvas = new Canvas(
     434,
-    ships.length > 6 ? 785 - (has5slot ? 0 : 72) : 533 - (has5slot ? 0 : 54)
+    ships.filter(ship => ship.id > 0).length > 6
+      ? 785 - (has5slot ? 0 : 72)
+      : 533 - (has5slot ? 0 : 54)
   );
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
@@ -140,7 +145,7 @@ export async function generate74eoSmallBannerFleetCanvasAsync(
     await Promise.all(
       ships
         .map((ship, index) => ({ index, ship }))
-        .filter(data => data.ship)
+        .filter(data => data.ship.id > 0)
         .map(async data => {
           return {
             ...data,
@@ -168,7 +173,7 @@ export async function generate74eoSmallBannerFleetCanvasAsync(
   const airPowerStringWidth = ctx.measureText(AIR_POWER[lang]).width;
   const losValueStringWidth = ctx.measureText(LOS[lang]).width;
   ctx.font = "16px Meiryo";
-  const { min, max } = airPower ? airPower : { min: 0, max: 0 };
+  const { min, max } = airPower || { min: 0, max: 0 };
   const airPowerString = min === max ? String(min) : `${min}~${max}`;
   ctx.fillText(airPowerString, 30 + airPowerStringWidth + 6, 54); // fixed
   ctx.fillText(
