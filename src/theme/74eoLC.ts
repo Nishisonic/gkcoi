@@ -244,7 +244,7 @@ export async function generate74eoLargeCardFleetCanvasAsync(
 
   ctx.fillStyle = "#0f0f0f";
   ctx.font = "24px Meiryo";
-  ctx.fillText(fleetName, 8, 28);
+  ctx.fillText(fleetName, 8, 29);
   ctx.font = "12px Meiryo";
   const airPowerStringWidth = ctx.measureText(AirPower[lang]).width;
   const losValueStringWidth = ctx.measureText(LoS[lang]).width;
