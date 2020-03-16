@@ -3,9 +3,13 @@
   "version": "0.0.5",
   "description": "Generate KanColle Organization Image",
   "main": "dist/index.js",
+  "module": "esm/index.js",
+  "sideEffects": false,
   "scripts": {
     "prepare": "npm run build",
-    "build": "tsc"
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p tsconfig.json",
+    "build:esm": "tsc -p tsconfig.esm.json"
   },
   "files": [
     "dist"
