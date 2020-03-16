@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const SKILLED_BONUS_LIST: {
   [key: number]: number[];
 } = {
@@ -570,7 +568,8 @@ interface DeckBuilderAirbase {
 
 export async function loadStart2(): Promise<MasterData> {
   const url = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/START2.json`;
-  return (await axios.get(url)).data;
+  const res = await fetch(url);
+  return res.json();
 }
 
 export function parse(

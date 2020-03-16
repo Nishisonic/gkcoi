@@ -11,7 +11,7 @@ import {
   RANGE,
   SPEED
 } from "../utils";
-import { Canvas, loadImage } from "canvas";
+import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
 
 const AirPower = {
@@ -40,8 +40,9 @@ async function generate74eoLargeCardShipCanvasAsync(
   const parameterIcons = await load74eoParameterIcons();
   const equipmentIcons = await load74eoEquipmentIcons(54);
   const aircraftLevelIcons = await load74eoAircraftLevelIcons();
-  const canvas = new Canvas(470, 305);
-  const ctx = canvas.getContext("2d");
+
+  const { canvas, ctx } = createCanvas2D(470, 305);
+
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -209,11 +210,11 @@ export async function generate74eoLargeCardFleetCanvasAsync(
   airPower: { min: number; max: number },
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
-  const canvas = new Canvas(
+  const { canvas, ctx } = createCanvas2D(
     952,
     ships.filter(ship => ship.id > 0).length < 7 ? 972 : 1279
   );
-  const ctx = canvas.getContext("2d");
+
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 

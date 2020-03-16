@@ -1,4 +1,4 @@
-import { Canvas } from "canvas";
+import { Canvas, createCanvas2D } from "./canvas";
 
 /**
  * 画像をくっつけます
@@ -9,11 +9,10 @@ import { Canvas } from "canvas";
  * @return くっつけた画像
  */
 export function stick(images: Canvas[], rowNum = 2): Canvas {
-  const canvas = new Canvas(
+  const { canvas, ctx } = createCanvas2D(
     images[0].width * Math.min(images.length, rowNum),
     images[0].height * Math.ceil(images.length / rowNum)
   );
-  const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
