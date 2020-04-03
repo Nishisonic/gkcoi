@@ -131,3 +131,44 @@ generate(deck); // return Canvas
 ## Licence
 
 [MIT Licence](https://github.com/Nishisonic/gkcoi/blob/master/LICENCE)
+
+```
+{
+  lang: "jp" | "en" | "ko" | "scn" | "tcn";
+  theme: "dark" | "74lc" | "74mc" | "74sb";
+  hqlv: 提督Lv;
+  f1~f4:{
+    name: 艦隊名,
+    s1~s7:{
+      id: ID
+      lv: Lv
+      hp: 耐久
+      fp: 火力
+      tp: 雷装
+      aa: 対空
+      ar: 装甲
+      asw: 対潜
+      ev: 回避
+      los: 索敵
+      luck: 運
+      items: {
+        i1~ix: {
+          id: ID
+          rf: 改修
+          mas: 熟練度
+        }
+      }
+    }
+  },
+  a1~a3: {
+    mode: 基地状態
+    items: {
+      i1~i4: {
+        id: ID
+        rf: 改修
+        mas: 熟練度
+      }
+    }
+  }
+}
+```
