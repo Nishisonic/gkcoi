@@ -4,7 +4,7 @@ import { getLoSValue } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
-import { Canvas } from "canvas";
+import { createCanvas, Canvas } from "./canvas";
 import { stick } from "./stick";
 
 export { DeckBuilder } from "./type";
@@ -85,7 +85,7 @@ export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
                 has5slot
               );
           }
-          return new Canvas(0, 0);
+          return createCanvas(0, 0);
         }
       )
     ),

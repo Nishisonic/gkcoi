@@ -3,9 +3,13 @@
   "version": "0.0.5",
   "description": "Generate KanColle Organization Image",
   "main": "dist/index.js",
+  "module": "esm/index.js",
+  "sideEffects": false,
   "scripts": {
-    "prepare": "tsc",
-    "build": "tsc"
+    "prepare": "npm run build",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p tsconfig.json",
+    "build:esm": "tsc -p tsconfig.esm.json"
   },
   "files": [
     "dist"
@@ -23,12 +27,6 @@
     "url": "https://github.com/Nishisonic/gkcoi/issues"
   },
   "homepage": "https://github.com/Nishisonic/gkcoi#readme",
-  "dependencies": {
-    "axios": "^0.19.2",
-    "canvas": "^2.6.1",
-    "minimist": ">=1.2.2",
-    "acorn": ">=7.1.1"
-  },
   "devDependencies": {
     "@types/node": "^13.9.1",
     "@typescript-eslint/eslint-plugin": "^2.23.0",

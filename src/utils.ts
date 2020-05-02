@@ -1,5 +1,4 @@
-import { Canvas, Image, loadImage } from "canvas";
-import axios from "axios";
+import { createCanvas2D, loadImage, Canvas, Image } from "./canvas";
 import { Ship } from "./type";
 
 export class Language {
@@ -237,16 +236,13 @@ export async function loadOriginalEquipmentIcons(
     Object.keys(EQUIPMENT_ICON_SOURCE).map(async (id: string) => {
       const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/common_icon_weapon/common_icon_weapon_id_${id}.png`;
       const img = await loadImage(src);
-      const canvas = new Canvas(imgSize, imgSize);
-      const ctx = canvas.getContext("2d");
+      const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
       // offset
-      const oc = new Canvas(54, 54);
-      const octx = oc.getContext("2d");
+      const { canvas: oc, ctx: octx } = createCanvas2D(54, 54);
       octx.drawImage(img, img.width === 54 ? 0 : 3, img.height === 54 ? 0 : 3);
       // resize
       // step 1
-      const rc = new Canvas(imgSize, imgSize);
-      const rctx = rc.getContext("2d");
+      const { canvas: rc, ctx: rctx } = createCanvas2D(imgSize, imgSize);
       rctx.drawImage(oc, 0, 0, rc.width, rc.height);
       // step 2
       rctx.drawImage(rc, 0, 0, imgSize, imgSize);
@@ -282,16 +278,13 @@ export async function load74eoEquipmentIcons(
       async (id: string, idx: number) => {
         const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/74eo/Equipment/${id}.png`;
         const img = await loadImage(src);
-        const canvas = new Canvas(imgSize, imgSize);
-        const ctx = canvas.getContext("2d");
+        const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
         // offset
-        const oc = new Canvas(54, 54);
-        const octx = oc.getContext("2d");
+        const { canvas: oc, ctx: octx } = createCanvas2D(54, 54);
         octx.drawImage(img, 0, 0);
         // resize
         // step 1
-        const rc = new Canvas(imgSize, imgSize);
-        const rctx = rc.getContext("2d");
+        const { canvas: rc, ctx: rctx } = createCanvas2D(imgSize, imgSize);
         rctx.drawImage(oc, 0, 0, rc.width, rc.height);
         // step 2
         rctx.drawImage(rc, 0, 0, imgSize, imgSize);
@@ -339,8 +332,8 @@ export async function fetchLangData(
 }> {
   const shipsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/ships-${lang}.json`;
   const itemsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/items-${lang}.json`;
-  const ships = (await axios.get(shipsUrl)).data;
-  const items = (await axios.get(itemsUrl)).data;
+  const ships = await fetch(shipsUrl).then(res => res.json());
+  const items = await fetch(itemsUrl).then(res => res.json());
   return { ships, items };
 }
 
@@ -386,8 +379,7 @@ export function toTranslateEquipmentName(
 }
 
 export function resize(image: Image, width: number, height: number): Canvas {
-  const canvas = new Canvas(width, height);
-  const ctx = canvas.getContext("2d");
+  const { canvas, ctx } = createCanvas2D(width, height);
   ctx.drawImage(image, 0, 0, width, height);
   return canvas;
 }

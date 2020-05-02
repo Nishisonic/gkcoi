@@ -9,7 +9,7 @@ import {
   SPEED,
   NONE
 } from "../utils";
-import { Canvas, loadImage } from "canvas";
+import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
 
 async function generateDarkShipInfoCanvasAsync(
@@ -21,8 +21,7 @@ async function generateDarkShipInfoCanvasAsync(
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
   const parameterIcons = await loadOriginalParameterIcons();
   const equipmentIcons = await loadOriginalEquipmentIcons();
-  const canvas = new Canvas(650, 176);
-  const ctx = canvas.getContext("2d");
+  const { canvas, ctx } = createCanvas2D(650, 176);
   // overlay
   ctx.fillStyle = "#1A1A1A";
   ctx.fillRect(0, 0, 650, 176);
@@ -143,8 +142,7 @@ async function generateDarkShipCanvasAsync(
   ship: Ship,
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
-  const canvas = new Canvas(654, 180);
-  const ctx = canvas.getContext("2d");
+  const { canvas, ctx } = createCanvas2D(654, 180);
   const shipInfoCanvas = await generateDarkShipInfoCanvasAsync(
     shipIdx,
     ship,
@@ -176,11 +174,10 @@ export async function generateDarkFleetCanvasAsync(
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
 ): Promise<Canvas> {
   const parameterIcons = await loadOriginalParameterIcons();
-  const canvas = new Canvas(
+  const { canvas, ctx } = createCanvas2D(
     1310,
     ships.filter(ship => ship.id > 0).length < 7 ? 586 : 768
   );
-  const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#212121";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   const shipCanvases = await Promise.all(

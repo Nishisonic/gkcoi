@@ -8,7 +8,7 @@ import {
   LOS,
   resize
 } from "../utils";
-import { Canvas, loadImage } from "canvas";
+import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
 
 async function generate74eoSmallBannerShipCanvasAsync(
@@ -20,8 +20,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
   const parameterIcons = await load74eoParameterIcons();
   const equipmentIcons = await load74eoEquipmentIcons();
   const offset = has5slot ? 0 : 18;
-  const canvas = new Canvas(213, 151 - offset);
-  const ctx = canvas.getContext("2d");
+  const { canvas, ctx } = createCanvas2D(213, 151 - offset);
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   if (ship.id > 0) {
@@ -131,13 +130,12 @@ export async function generate74eoSmallBannerFleetCanvasAsync(
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp",
   has5slot = false
 ): Promise<Canvas> {
-  const canvas = new Canvas(
+  const { canvas, ctx } = createCanvas2D(
     434,
     ships.filter(ship => ship.id > 0).length > 6
       ? 785 - (has5slot ? 0 : 72)
       : 533 - (has5slot ? 0 : 54)
   );
-  const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 

@@ -9,7 +9,7 @@ import {
   LOS,
   resize
 } from "../utils";
-import { Canvas, loadImage } from "canvas";
+import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
 
 async function generate74eoMediumCutinShipCanvasAsync(
@@ -29,8 +29,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
   );
   const parameterIcons = await load74eoParameterIcons();
   const equipmentIcons = await load74eoEquipmentIcons();
-  const canvas = new Canvas(677, 172);
-  const ctx = canvas.getContext("2d");
+  const { canvas, ctx } = createCanvas2D(677, 172);
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -170,11 +169,11 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
   lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp",
   has5slot = false
 ): Promise<Canvas> {
-  const canvas = new Canvas(
+  const { canvas, ctx } = createCanvas2D(
     1346,
     ships.filter(ship => ship.id > 0).length < 7 ? 567 : 734
   );
-  const ctx = canvas.getContext("2d");
+
   ctx.fillStyle = "#FFF";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
