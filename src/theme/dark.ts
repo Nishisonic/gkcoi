@@ -7,7 +7,7 @@ import {
   toTranslateEquipmentName,
   FLEET,
   SPEED,
-  NONE
+  NONE,
 } from "../utils";
 import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
@@ -176,7 +176,7 @@ export async function generateDarkFleetCanvasAsync(
   const parameterIcons = await loadOriginalParameterIcons();
   const { canvas, ctx } = createCanvas2D(
     1310,
-    ships.filter(ship => ship.id > 0).length < 7 ? 586 : 768
+    ships.filter((ship) => ship.id > 0).length < 7 ? 586 : 768
   );
   ctx.fillStyle = "#212121";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -190,7 +190,7 @@ export async function generateDarkFleetCanvasAsync(
       })
   );
 
-  shipCanvases.forEach(shipCanvas => {
+  shipCanvases.forEach((shipCanvas) => {
     ctx.drawImage(
       shipCanvas.canvas,
       (Number(shipCanvas.id) % 2) * 656,

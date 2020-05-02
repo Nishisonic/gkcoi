@@ -7,7 +7,7 @@ import {
   NONE,
   AIR_POWER,
   LOS,
-  resize
+  resize,
 } from "../utils";
 import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
@@ -171,7 +171,7 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(
     1346,
-    ships.filter(ship => ship.id > 0).length < 7 ? 567 : 734
+    ships.filter((ship) => ship.id > 0).length < 7 ? 567 : 734
   );
 
   ctx.fillStyle = "#FFF";
@@ -181,8 +181,8 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
     await Promise.all(
       ships
         .map((ship, index) => ({ index, ship }))
-        .filter(data => data.ship.id > 0)
-        .map(async data => {
+        .filter((data) => data.ship.id > 0)
+        .map(async (data) => {
           return {
             ...data,
             image: await generate74eoMediumCutinShipCanvasAsync(
@@ -190,11 +190,11 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
               data.ship,
               has5slot,
               lang
-            )
+            ),
           };
         })
     )
-  ).forEach(data =>
+  ).forEach((data) =>
     ctx.drawImage(
       data.image,
       (data.index % 2) * 669,

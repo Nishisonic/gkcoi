@@ -9,7 +9,7 @@ import {
   LABEL,
   load74eoAircraftLevelIcons,
   RANGE,
-  SPEED
+  SPEED,
 } from "../utils";
 import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
@@ -19,7 +19,7 @@ const AirPower = {
   en: "Air Power",
   ko: "제공전력",
   scn: "制空戦力",
-  tcn: "制空戦力"
+  tcn: "制空戦力",
 };
 
 const LoS = {
@@ -27,7 +27,7 @@ const LoS = {
   en: "LoS(1)",
   ko: "색적능력",
   scn: "索敵容量",
-  tcn: "索敵容量"
+  tcn: "索敵容量",
 };
 
 async function generate74eoLargeCardShipCanvasAsync(
@@ -212,7 +212,7 @@ export async function generate74eoLargeCardFleetCanvasAsync(
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(
     952,
-    ships.filter(ship => ship.id > 0).length < 7 ? 972 : 1279
+    ships.filter((ship) => ship.id > 0).length < 7 ? 972 : 1279
   );
 
   ctx.fillStyle = "#FFF";
@@ -222,19 +222,19 @@ export async function generate74eoLargeCardFleetCanvasAsync(
     await Promise.all(
       ships
         .map((ship, index) => ({ index, ship }))
-        .filter(data => data.ship.id > 0)
-        .map(async data => {
+        .filter((data) => data.ship.id > 0)
+        .map(async (data) => {
           return {
             ...data,
             image: await generate74eoLargeCardShipCanvasAsync(
               data.index,
               data.ship,
               lang
-            )
+            ),
           };
         })
     )
-  ).forEach(data =>
+  ).forEach((data) =>
     ctx.drawImage(
       data.image,
       7 + (data.index % 2) * 472,

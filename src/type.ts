@@ -18,12 +18,12 @@ const SKILLED_BONUS_LIST: {
   /** 噴式戦闘爆撃機 */
   57: [0, 0, 0, 0, 0, 0, 0, 0],
   /** 噴式攻撃機 */
-  58: [0, 0, 0, 0, 0, 0, 0, 0]
+  58: [0, 0, 0, 0, 0, 0, 0, 0],
 };
 
 const SKILLED_BONUS = {
   MIN: [0, 10, 25, 40, 55, 70, 85, 100],
-  MAX: [9, 24, 39, 54, 69, 84, 99, 120]
+  MAX: [9, 24, 39, 54, 69, 84, 99, 120],
 };
 
 /**
@@ -98,14 +98,14 @@ export class Ship {
             Math.sqrt(this.slots[i]) * (item.aa + getImprovementBonus(item));
           return {
             min: bonus + Math.sqrt(SKILLED_BONUS.MIN[7] / 10),
-            max: bonus + Math.sqrt(SKILLED_BONUS.MAX[7] / 10)
+            max: bonus + Math.sqrt(SKILLED_BONUS.MAX[7] / 10),
           };
         }
         return { min: 0, max: 0 };
       })
       .map(({ min, max }) => ({
         min: Math.floor(min),
-        max: Math.floor(max)
+        max: Math.floor(max),
       }))
       .reduce(
         (p, v) => {
@@ -115,7 +115,7 @@ export class Ship {
         },
         {
           min: 0,
-          max: 0
+          max: 0,
         }
       );
   }
@@ -214,9 +214,9 @@ export class Ship {
   }
 
   get speed(): 0 | 5 | 10 | 15 | 20 {
-    const turbine = this.items.filter(item => item.id === 33).length;
-    const boiler = this.items.filter(item => item.id === 34).length;
-    const newBoiler = this.items.filter(item => item.id === 87).length;
+    const turbine = this.items.filter((item) => item.id === 33).length;
+    const boiler = this.items.filter((item) => item.id === 34).length;
+    const newBoiler = this.items.filter((item) => item.id === 87).length;
     if (!turbine) return this.sp;
     // 高速グループ
     if (this.sp === 10) {
@@ -626,8 +626,8 @@ export function parse(
       ship.items.i3,
       ship.items.i4,
       ship.items.i5,
-      ship.items.ix
-    ].map(item => parseItem(item));
+      ship.items.ix,
+    ].map((item) => parseItem(item));
     return new Ship(
       id,
       masterShip[id].api_name,
@@ -660,8 +660,8 @@ export function parse(
     theme,
     hqlv,
     fleets: [deckbuilder.f1, deckbuilder.f2, deckbuilder.f3, deckbuilder.f4]
-      .filter(fleet => fleet)
-      .map(fleet => {
+      .filter((fleet) => fleet)
+      .map((fleet) => {
         // 意味ないが、こうしないとtsが誤検知する
         if (fleet) {
           return new Fleet(
@@ -672,26 +672,26 @@ export function parse(
               fleet.s4,
               fleet.s5,
               fleet.s6,
-              fleet.s7
-            ].map(ship => parseShip(ship)),
+              fleet.s7,
+            ].map((ship) => parseShip(ship)),
             fleet.name || ""
           );
         }
         return new Fleet([]);
       }),
     airbases: [deckbuilder.a1, deckbuilder.a2, deckbuilder.a3]
-      .filter(airbase => airbase)
-      .map(airbase => {
+      .filter((airbase) => airbase)
+      .map((airbase) => {
         // 意味ないが、こうしないとtsが誤検知する
         if (airbase) {
           const items = airbase.items;
           return new Airbase(
-            [items.i1, items.i2, items.i3, items.i4].map(item =>
+            [items.i1, items.i2, items.i3, items.i4].map((item) =>
               parseItem(item)
             )
           );
         }
         return new Airbase([]);
-      })
+      }),
   };
 }

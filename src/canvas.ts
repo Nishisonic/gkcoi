@@ -4,7 +4,7 @@ export type Image = HTMLImageElement;
 export const createCanvas = (width: number, height: number): Canvas => {
   const canvas = Object.assign(document.createElement("canvas"), {
     width,
-    height
+    height,
   });
 
   return canvas;
@@ -27,6 +27,7 @@ export const createCanvas2D = (
 export const loadImage = async (src: string): Promise<Image> => {
   return new Promise((resolve, reject) => {
     const image = document.createElement("img");
+    image.crossOrigin = "Anonymous";
 
     const cleanup = (): void => {
       image.onload = null;

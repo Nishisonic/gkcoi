@@ -8,5 +8,9 @@ module.exports = {
   rules: {
     semi: 2,
     "max-attributes-per-line": "off",
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
   }
 };

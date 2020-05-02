@@ -33,7 +33,7 @@ export const SPEED: {
   5: new Language("低速", "Slow", "저속", "低速", "低速"),
   10: new Language("高速", "Fast", "고속", "高速", "高速"),
   15: new Language("高速+", "Fast+", "고속+", "高速+", "高速+"),
-  20: new Language("最速", "Fastest", "초고속", "最速", "最速")
+  20: new Language("最速", "Fastest", "초고속", "最速", "最速"),
 };
 
 export const RANGE: {
@@ -43,7 +43,7 @@ export const RANGE: {
   1: new Language("短", "S", "단", "短", "短"),
   2: new Language("中", "M", "중", "中", "中"),
   3: new Language("長", "L", "장", "长", "長"),
-  4: new Language("超長", "VL", "초장", "超长", "超長")
+  4: new Language("超長", "VL", "초장", "超长", "超長"),
 };
 
 export const LABEL: {
@@ -62,7 +62,7 @@ export const LABEL: {
   RANGE: new Language("射程", "RNG", "사거리", "射程", "射程"),
   LUCK: new Language("運", "LK", "운", "运气", "運氣"),
   SPEED: new Language("速力", "SP", "속력", "速度", "速度"),
-  AIRPOWER: new Language("制空", "AIR", "제공", "制空", "制空")
+  AIRPOWER: new Language("制空", "AIR", "제공", "制空", "制空"),
 };
 
 export const AIR_POWER = new Language(
@@ -148,7 +148,7 @@ const EQUIPMENT_ICON_SOURCE = {
   44: "ArmyInterceptor",
   45: "NightFighter",
   46: "NightTorpedo",
-  47: "LandASPatrol"
+  47: "LandASPatrol",
 };
 
 export async function loadOriginalParameterIcons(): Promise<{
@@ -213,7 +213,7 @@ export async function load74eoParameterIcons(): Promise<{
       "Luck",
       "Range",
       "Speed",
-      "Torpedo"
+      "Torpedo",
     ].map(async (fileName: string) => {
       const src = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/74eo/${fileName}.png`;
       const img = await loadImage(src);
@@ -332,8 +332,8 @@ export async function fetchLangData(
 }> {
   const shipsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/ships-${lang}.json`;
   const itemsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/items-${lang}.json`;
-  const ships = await fetch(shipsUrl).then(res => res.json());
-  const items = await fetch(itemsUrl).then(res => res.json());
+  const ships = await fetch(shipsUrl).then((res) => res.json());
+  const items = await fetch(itemsUrl).then((res) => res.json());
   return { ships, items };
 }
 
@@ -349,7 +349,7 @@ export function toTranslateShipName(
   if (langData && langData.suffixes) {
     Object.keys(langData.suffixes)
       .sort((a, b) => b.length - a.length)
-      .some(suffix => {
+      .some((suffix) => {
         if (name.includes(suffix)) {
           shipName = name.replace(suffix, "");
           shipSuffix = suffix;
@@ -387,8 +387,8 @@ export function resize(image: Image, width: number, height: number): Canvas {
 export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
   const itemBonus = (ship: Ship): number => {
     return ship.items
-      .filter(item => item.id > 0)
-      .map(item => {
+      .filter((item) => item.id > 0)
+      .map((item) => {
         // SG レーダー(初期型)
         if ([65, 69, 83, 87, 84, 91, 93, 95, 99].includes(ship.ctype)) {
           if (item.id === 315) {
@@ -404,12 +404,12 @@ export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
 
   return (
     ships
-      .filter(ship => ship.id > 0)
-      .map(ship => {
+      .filter((ship) => ship.id > 0)
+      .map((ship) => {
         return (
           ship.items
-            .filter(item => item.id > 0)
-            .map(item => {
+            .filter((item) => item.id > 0)
+            .map((item) => {
               switch (item.type[2]) {
                 case 8: // 艦上攻撃機
                   return 0.8 * item.los; // 改修不可
@@ -437,6 +437,6 @@ export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
       })
       .reduce((p, v) => p + v, 0) -
     Math.ceil(0.4 * hqLv) +
-    2 * (6 - ships.filter(ship => ship.id > 0).length)
+    2 * (6 - ships.filter((ship) => ship.id > 0).length)
   );
 }

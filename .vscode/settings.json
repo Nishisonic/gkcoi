@@ -3,5 +3,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "files.eol": "\r\n"
 }
