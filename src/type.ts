@@ -1,30 +1,4 @@
-const SKILLED_BONUS_LIST: {
-  [key: number]: number[];
-} = {
-  /** 艦上戦闘機/夜間戦闘機 */
-  6: [0, 0, 2, 5, 9, 14, 14, 22],
-  /** 艦上爆撃機/夜間爆撃機 */
-  7: [0, 0, 0, 0, 0, 0, 0, 0],
-  /** 艦上攻撃機/夜間攻撃機 */
-  8: [0, 0, 0, 0, 0, 0, 0, 0],
-  /** 水上爆撃機 */
-  11: [0, 0, 1, 1, 1, 3, 3, 6],
-  /** 水上戦闘機 */
-  45: [0, 0, 2, 5, 9, 14, 14, 22],
-  /** 局地戦闘機 */
-  48: [0, 0, 2, 5, 9, 14, 14, 22],
-  /** 噴式戦闘機 */
-  56: [0, 0, 2, 5, 9, 14, 14, 22],
-  /** 噴式戦闘爆撃機 */
-  57: [0, 0, 0, 0, 0, 0, 0, 0],
-  /** 噴式攻撃機 */
-  58: [0, 0, 0, 0, 0, 0, 0, 0],
-};
-
-const SKILLED_BONUS = {
-  MIN: [0, 10, 25, 40, 55, 70, 85, 100],
-  MAX: [9, 24, 39, 54, 69, 84, 99, 120],
-};
+import { getAirPower, MASTER_URL } from "./utils";
 
 /**
  * 艦
@@ -75,49 +49,7 @@ export class Ship {
     min: number;
     max: number;
   } {
-    function getImprovementBonus(item: Item): number {
-      if (item.lv > 0) {
-        switch (item.type[2]) {
-          case 6:
-          case 45:
-            return 0.2 * item.lv;
-          case 7:
-          case 8:
-          case 57:
-            return item.id !== 320 ? 0.25 * item.lv : 0;
-        }
-      }
-      return 0;
-    }
-
-    return Object.values(this.items)
-      .map((item, i) => {
-        if (this.slots[i] > 0 && item && SKILLED_BONUS_LIST[item.type[2]]) {
-          const bonus =
-            SKILLED_BONUS_LIST[item.type[2]][7] +
-            Math.sqrt(this.slots[i]) * (item.aa + getImprovementBonus(item));
-          return {
-            min: bonus + Math.sqrt(SKILLED_BONUS.MIN[7] / 10),
-            max: bonus + Math.sqrt(SKILLED_BONUS.MAX[7] / 10),
-          };
-        }
-        return { min: 0, max: 0 };
-      })
-      .map(({ min, max }) => ({
-        min: Math.floor(min),
-        max: Math.floor(max),
-      }))
-      .reduce(
-        (p, v) => {
-          p.min += v.min;
-          p.max += v.max;
-          return p;
-        },
-        {
-          min: 0,
-          max: 0,
-        }
-      );
+    return getAirPower(this.items, this.slots);
   }
 
   /**
@@ -211,6 +143,54 @@ export class Ship {
       [0, 0, 0, 0, 0],
       []
     );
+  }
+
+  get tp(): number {
+    const shipTP = ((): number => {
+      switch (this.stype) {
+        case 2: // 駆逐艦
+          return 5;
+        case 3: // 軽巡洋艦
+          return 2 + (this.id === 487 ? 8 : 0);
+        case 6: // 航空巡洋艦
+          return 4;
+        case 10: // 航空戦艦
+          return 7;
+        case 14: // 潜水空母
+          return 1;
+        case 16: // 水上機母艦
+          return 9;
+        case 17: // 揚陸艦
+          return 12;
+        case 20: // 潜水母艦
+          return 7;
+        case 21: // 練習巡洋艦
+          return 6;
+        case 15:
+        case 22: // 補給艦
+          return 15;
+      }
+      return 0;
+    })();
+
+    const itemTP = this.items
+      .filter(({ id }) => id > 0)
+      .map(({ type }): number => {
+        switch (type[2]) {
+          case 30: // 簡易輸送部材
+            return 5;
+          case 24: // 上陸用舟艇
+            return 8;
+          case 46: // 特型内火艇
+            return 2;
+          case 43: // 戦闘糧食
+            return 1;
+        }
+        return 0;
+      })
+      .reduce((p, v) => p + v, 0);
+
+    return shipTP + itemTP;
   }
 
   get speed(): 0 | 5 | 10 | 15 | 20 {
@@ -567,7 +547,7 @@ interface DeckBuilderAirbase {
 }
 
 export async function loadStart2(): Promise<MasterData> {
-  const url = `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/START2.json`;
+  const url = `${MASTER_URL}/START2.json`;
   const res = await fetch(url);
   return res.json();
 }

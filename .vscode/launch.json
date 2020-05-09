@@ -1,10 +1,11 @@
 {
   "version": "0.2.0",
   "configurations": [{
-    "type": "node",
+    "type": "chrome",
     "request": "launch",
-    "name": "Launch TypeScript",
-    "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-    "args": ["${workspaceFolder}/test/index.test.ts"]
+    "name": "Debug",
+    "url": "http://127.0.0.1:5501/test/index.html",
+    "webRoot": "${workspaceRoot}/test/",
+    "sourceMaps": true
   }]
 }

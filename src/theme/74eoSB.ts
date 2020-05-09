@@ -7,6 +7,7 @@ import {
   AIR_POWER,
   LOS,
   resize,
+  toAirPowerString,
 } from "../utils";
 import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
@@ -171,8 +172,7 @@ export async function generate74eoSmallBannerFleetCanvasAsync(
   const airPowerStringWidth = ctx.measureText(AIR_POWER[lang]).width;
   const losValueStringWidth = ctx.measureText(LOS[lang]).width;
   ctx.font = "16px Meiryo";
-  const { min, max } = airPower || { min: 0, max: 0 };
-  const airPowerString = min === max ? String(min) : `${min}~${max}`;
+  const airPowerString = toAirPowerString(airPower);
   ctx.fillText(airPowerString, 30 + airPowerStringWidth + 6, 54); // fixed
   ctx.fillText(
     (Math.floor(los[1] * 100) / 100).toFixed(2),

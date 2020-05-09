@@ -10,6 +10,7 @@ import {
   load74eoAircraftLevelIcons,
   RANGE,
   SPEED,
+  toAirPowerString,
 } from "../utils";
 import { createCanvas2D, loadImage, Canvas } from "../canvas";
 import { Ship } from "../type";
@@ -250,8 +251,7 @@ export async function generate74eoLargeCardFleetCanvasAsync(
   const airPowerStringWidth = ctx.measureText(AirPower[lang]).width;
   const losValueStringWidth = ctx.measureText(LoS[lang]).width;
   ctx.font = "16px Meiryo";
-  const { min, max } = airPower || { min: 0, max: 0 };
-  const airPowerString = min === max ? String(min) : `${min}~${max}`;
+  const airPowerString = toAirPowerString(airPower);
   ctx.fillText(airPowerString, 336 + airPowerStringWidth + 5, 32); // fixed
   ctx.fillText(
     (Math.floor(los[1] * 100) / 100).toFixed(2),

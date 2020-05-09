@@ -5,7 +5,6 @@ import { Canvas, createCanvas2D } from "./canvas";
  * ※同じ画像サイズにすること
  * @param images 画像リスト
  * @param rowNum 横幅
- * @param offset オフセット
  * @return くっつけた画像
  */
 export function stick(images: Canvas[], rowNum = 2): Canvas {

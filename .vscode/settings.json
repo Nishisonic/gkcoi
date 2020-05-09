@@ -4,5 +4,6 @@
     "source.fixAll.eslint": true
   },
   "editor.tabSize": 2,
-  "files.eol": "\r\n"
+  "files.eol": "\n",
+  "liveServer.settings.port": 5501
 }

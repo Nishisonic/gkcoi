@@ -1,10 +1,14 @@
-import { generateDarkFleetCanvasAsync } from "./theme/dark";
+import {
+  generateDarkFleetCanvasAsync,
+  generateDarkAirbaseCanvasAsync,
+  generateDarkParameterCanvasAsync,
+} from "./theme/dark";
 import { parse, loadStart2, Ship, DeckBuilder } from "./type";
 import { getLoSValue } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
-import { createCanvas, Canvas } from "./canvas";
+import { createCanvas, Canvas, createCanvas2D } from "./canvas";
 import { stick } from "./stick";
 
 export { DeckBuilder } from "./type";
@@ -15,7 +19,12 @@ export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
   const has5slot = fleets.some(({ ships }) =>
     ships.some((ship) => ship.slotNum === 5)
   );
-  return stick(
+  // return await generateDarkParameterCanvasAsync(
+  //   fleets[0].ships,
+  //   fleets[1].ships,
+  //   lang
+  // );
+  const fimage = stick(
     await Promise.all(
       fleets.map(
         async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
@@ -95,4 +104,29 @@ export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
       ? 2
       : 1
   );
+  const useAirbase = airbases
+    .map(({ items }) => items)
+    .some((items) => items.some(({ id }) => id > 0));
+  if (theme === "dark" && useAirbase) {
+    const aimage = await generateDarkAirbaseCanvasAsync(airbases, false, lang);
+    const { canvas, ctx } = createCanvas2D(
+      fimage.width + aimage.width + 2,
+      fimage.height
+    );
+    ctx.fillStyle = "#212121";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(fimage, 0, 0);
+    ctx.drawImage(aimage, fimage.width + 2, 0);
+    if (fleets.length > 1) {
+      const pimage = await generateDarkParameterCanvasAsync(
+        fleets[0].ships,
+        fleets[1].ships,
+        lang
+      );
+      ctx.drawImage(pimage, fimage.width + 2, aimage.height);
+    }
+    return canvas;
+  }
+  return fimage;
 }
