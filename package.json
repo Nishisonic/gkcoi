@@ -1,12 +1,13 @@
 {
   "name": "gkcoi",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Generate KanColle Organization Image",
   "main": "dist/index.js",
   "module": "esm/index.js",
   "sideEffects": false,
   "scripts": {
-    "build": "webpack && npm run build:esm",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p tsconfig.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "watch": "webpack -w"
   },
