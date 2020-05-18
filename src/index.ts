@@ -3,32 +3,45 @@ import {
   generateDarkAirbaseCanvasAsync,
   generateDarkParameterCanvasAsync,
 } from "./theme/dark";
-import { parse, loadStart2, Ship, DeckBuilder } from "./type";
-import { getLoSValue } from "./utils";
+import { parse, Ship, DeckBuilder, Speed, LoS, MasterData } from "./type";
+import { getLoSValue, fetchStart2, MASTER_URL } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
-import { createCanvas, Canvas, createCanvas2D } from "./canvas";
+import { Canvas, createCanvas2D } from "./canvas";
 import { stick } from "./stick";
 
 export { DeckBuilder } from "./type";
 
-export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
-  const start2 = await loadStart2();
-  const { lang, theme, hqlv, fleets, airbases } = parse(deckbuilder, start2);
+/**
+ * 画像を生成する
+ * @param deckbuilder フォーマット
+ * @param options 画像取得オプション
+ */
+export async function generate(
+  deckbuilder: DeckBuilder,
+  options: {
+    start2URL: string;
+    shipURL: string;
+  } = {
+    start2URL: `${MASTER_URL}/START2.json`,
+    shipURL: `${MASTER_URL}/ship`,
+  }
+): Promise<Canvas> {
+  const start2: MasterData = await fetchStart2(options.start2URL);
+  const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
+    deckbuilder,
+    start2,
+    options.shipURL
+  );
   const has5slot = fleets.some(({ ships }) =>
     ships.some((ship) => ship.slotNum === 5)
   );
-  // return await generateDarkParameterCanvasAsync(
-  //   fleets[0].ships,
-  //   fleets[1].ships,
-  //   lang
-  // );
   const fimage = stick(
     await Promise.all(
       fleets.map(
         async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
-          const los = {
+          const los: LoS = {
             1: getLoSValue(ships, hqlv, 1),
             2: getLoSValue(ships, hqlv, 2),
             3: getLoSValue(ships, hqlv, 3),
@@ -49,7 +62,7 @@ export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
                 max: 0,
               }
             );
-          const speed: 0 | 5 | 10 | 15 | 20 = ships
+          const speed: Speed = ships
             .filter((ship) => ship.id > 0)
             .map((ship) => ship.speed)
             .reduce(
@@ -94,7 +107,6 @@ export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
                 has5slot
               );
           }
-          return createCanvas(0, 0);
         }
       )
     ),
@@ -108,7 +120,7 @@ export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
     .map(({ items }) => items)
     .some((items) => items.some(({ id }) => id > 0));
   if (theme === "dark" && useAirbase) {
-    const aimage = await generateDarkAirbaseCanvasAsync(airbases, false, lang);
+    const aimage = await generateDarkAirbaseCanvasAsync(airbases, lang);
     const { canvas, ctx } = createCanvas2D(
       fimage.width + aimage.width + 2,
       fimage.height
@@ -120,8 +132,9 @@ export async function generate(deckbuilder: DeckBuilder): Promise<Canvas> {
     ctx.drawImage(aimage, fimage.width + 2, 0);
     if (fleets.length > 1) {
       const pimage = await generateDarkParameterCanvasAsync(
-        fleets[0].ships,
-        fleets[1].ships,
+        [fleets[0].ships, fleets[1].ships].flat(),
+        airState,
+        comment,
         lang
       );
       ctx.drawImage(pimage, fimage.width + 2, aimage.height);

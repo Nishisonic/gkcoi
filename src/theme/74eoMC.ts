@@ -1,30 +1,26 @@
 import {
   fetchLangData,
-  load74eoParameterIcons,
-  load74eoEquipmentIcons,
   toTranslateShipName,
   toTranslateEquipmentName,
-  NONE,
-  AIR_POWER,
-  LOS,
   resize,
   toAirPowerString,
+  MASTER_URL,
 } from "../utils";
-import { createCanvas2D, loadImage, Canvas } from "../canvas";
-import { Ship } from "../type";
+import { createCanvas2D, Canvas } from "../canvas";
+import { Ship, LoS, AirPower, ShipImageKind } from "../type";
+import { Lang, NONE, AIR_POWER, LOS } from "../lang";
+import { load74eoParameterIcons, load74eoEquipmentIcons } from "../icon";
 
 async function generate74eoMediumCutinShipCanvasAsync(
   shipIdx: number,
   ship: Ship,
   has5slot: boolean,
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
   const albumStatusImage = resize(
-    await loadImage(
-      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/album_status/${ship.id}.png`
-    ),
+    await ship.fetchImage(ShipImageKind.ALBUM_STATUS),
     436,
     63
   );
@@ -39,9 +35,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
   const itemOffset = has5slot ? 0 : 23;
   if (ship.id > 0) {
     const shipImage = resize(
-      await loadImage(
-        `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
-      ),
+      await ship.fetchImage(ShipImageKind.REMODEL),
       665,
       121
     );
@@ -72,9 +66,9 @@ async function generate74eoMediumCutinShipCanvasAsync(
   ctx.fillText("L", 360, 18 + offset);
   ctx.fillText("v", 367, 18 + offset);
   ctx.fillText(".", 374, 18 + offset);
-  ctx.drawImage(parameterIcons["HP"], 432, 3 + offset);
-  ctx.drawImage(parameterIcons["ASW"], 500, 3 + offset);
-  ctx.drawImage(parameterIcons["Luck"], 568, 3 + offset);
+  ctx.drawImage(parameterIcons.HP, 432, 3 + offset);
+  ctx.drawImage(parameterIcons.ASW, 500, 3 + offset);
+  ctx.drawImage(parameterIcons.Luck, 568, 3 + offset);
   ctx.font = "16px Meiryo";
   ctx.fillStyle = "#0f0f0f";
   ctx.textAlign = "right";
@@ -165,9 +159,9 @@ async function generate74eoMediumCutinShipCanvasAsync(
 export async function generate74eoMediumCutinFleetCanvasAsync(
   fleetName: string,
   ships: Ship[],
-  los: { 1: number; 2: number; 3: number; 4: number; 5: number },
-  airPower: { min: number; max: number },
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp",
+  los: LoS,
+  airPower: AirPower,
+  lang: Lang = "jp",
   has5slot = false
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(

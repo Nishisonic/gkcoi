@@ -1,4 +1,27 @@
 import { getAirPower, MASTER_URL } from "./utils";
+import { Lang } from "./lang";
+import { Image, fetchImage } from "./canvas";
+
+export type Theme = "dark" | "74lc" | "74mc" | "74sb";
+export type Range = 0 | 1 | 2 | 3 | 4;
+export type Speed = 0 | 5 | 10 | 15 | 20;
+export type AirState = "AS+" | "AS" | "AP";
+export type AirPower = { min: number; max: number };
+export type LoS = {
+  [key: string]: number;
+  1: number;
+  2: number;
+  3: number;
+  4: number;
+  5: number;
+};
+
+export enum ShipImageKind {
+  ALBUM_STATUS = "album_status",
+  BANNER = "banner",
+  CARD = "card",
+  REMODEL = "remodel",
+}
 
 /**
  * 艦
@@ -33,9 +56,9 @@ export class Ship {
   /** 運 */
   luck: number;
   /** 射程 */
-  range: 0 | 1 | 2 | 3 | 4;
+  range: Range;
   /** 速力 */
-  sp: 0 | 5 | 10 | 15 | 20;
+  sp: Speed;
   /** スロット数 */
   slotNum: number;
   /** 搭載機数 */
@@ -44,6 +67,8 @@ export class Ship {
   items: Item[];
   /** Lv */
   lv: number;
+  /** URL */
+  url: string;
 
   get airPower(): {
     min: number;
@@ -75,6 +100,7 @@ export class Ship {
    * @param speed 艦速
    * @param slots 装備スロット
    * @param items 装備
+   * @param url URL
    */
   constructor(
     id: number,
@@ -93,10 +119,11 @@ export class Ship {
     los: number,
     luck: number,
     slotNum: number,
-    range: 0 | 1 | 2 | 3 | 4,
-    speed: 0 | 5 | 10 | 15 | 20,
+    range: Range,
+    speed: Speed,
     slots: number[],
-    items: Item[]
+    items: Item[],
+    url: string = MASTER_URL
   ) {
     this.id = id;
     this.name = name;
@@ -118,6 +145,7 @@ export class Ship {
     this.sp = speed;
     this.slotNum = slotNum;
     this.slots = slots;
+    this.url = url;
   }
 
   static get UNKNOWN(): Ship {
@@ -193,7 +221,7 @@ export class Ship {
     return shipTP + itemTP;
   }
 
-  get speed(): 0 | 5 | 10 | 15 | 20 {
+  get speed(): Speed {
     const turbine = this.items.filter((item) => item.id === 33).length;
     const boiler = this.items.filter((item) => item.id === 34).length;
     const newBoiler = this.items.filter((item) => item.id === 87).length;
@@ -254,6 +282,10 @@ export class Ship {
       }
     }
     return this.sp;
+  }
+
+  async fetchImage(kind: ShipImageKind): Promise<Image> {
+    return await fetchImage(`${this.url}/${kind}/${this.id}.png`);
   }
 }
 
@@ -376,7 +408,7 @@ export class Fleet {
   }
 }
 
-interface MasterData {
+export interface MasterData {
   api_result: number;
   api_result_msg: string;
   api_data: Apidata;
@@ -403,8 +435,8 @@ interface MasterShip {
   api_raig: number[];
   api_tyku: number[];
   api_luck: number[];
-  api_soku: 0 | 5 | 10 | 15 | 20;
-  api_leng: 0 | 1 | 2 | 3 | 4;
+  api_soku: Speed;
+  api_leng: Range;
   api_slot_num: number;
   api_maxeq: number[];
   api_buildtime: number;
@@ -441,7 +473,7 @@ interface MasterItem {
   api_saku: number;
   api_sakb: number;
   api_luck: number;
-  api_leng: 0 | 1 | 2 | 3 | 4;
+  api_leng: Range;
   api_rare: number;
   api_broken: number[];
   api_usebull: string;
@@ -451,11 +483,13 @@ interface MasterItem {
 }
 
 export interface FormatData {
-  lang: "jp" | "en" | "ko" | "tcn" | "scn";
-  theme: string;
+  lang: Lang;
+  theme: Theme;
   hqlv: number;
   fleets: Fleet[];
   airbases: Airbase[];
+  airState: AirState;
+  comment: string;
 }
 
 /**
@@ -464,7 +498,7 @@ export interface FormatData {
  */
 export interface DeckBuilder {
   /** 言語 */
-  lang: "jp" | "en" | "ko" | "tcn" | "scn";
+  lang: Lang;
   /**
    * テーマ
    * dark=オリジナル
@@ -472,7 +506,7 @@ export interface DeckBuilder {
    * 74mc=74式(中型)
    * 74sb=74式(小型)
    */
-  theme: "dark" | "74lc" | "74mc" | "74sb";
+  theme: Theme;
   hqlv: number;
   f1?: DeckBuilderFleet;
   f2?: DeckBuilderFleet;
@@ -481,6 +515,8 @@ export interface DeckBuilder {
   a1?: DeckBuilderAirbase;
   a2?: DeckBuilderAirbase;
   a3?: DeckBuilderAirbase;
+  as?: AirState;
+  cmt?: string;
 }
 
 export interface DeckBuilderFleet {
@@ -546,15 +582,10 @@ interface DeckBuilderAirbase {
   };
 }
 
-export async function loadStart2(): Promise<MasterData> {
-  const url = `${MASTER_URL}/START2.json`;
-  const res = await fetch(url);
-  return res.json();
-}
-
 export function parse(
   deckbuilder: DeckBuilder,
-  master: MasterData
+  master: MasterData,
+  url: string
 ): FormatData {
   const masterShip: {
     [key: number]: MasterShip;
@@ -628,13 +659,16 @@ export function parse(
       masterShip[id].api_leng,
       masterShip[id].api_soku,
       masterShip[id].api_maxeq,
-      items
+      items,
+      url
     );
   }
 
-  const lang: "jp" | "en" | "ko" | "tcn" | "scn" = deckbuilder.lang || "ja";
-  const theme: string = deckbuilder.theme || "dark";
-  const hqlv: number = deckbuilder.hqlv || 120;
+  const lang: Lang = deckbuilder.lang || "ja";
+  const theme = deckbuilder.theme || "dark";
+  const hqlv = deckbuilder.hqlv || 120;
+  const airState = deckbuilder.as || "AS+";
+  const comment = deckbuilder.cmt || "";
   return {
     lang,
     theme,
@@ -673,5 +707,7 @@ export function parse(
         }
         return new Airbase([]);
       }),
+    airState,
+    comment,
   };
 }

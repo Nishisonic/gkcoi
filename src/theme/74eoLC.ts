@@ -1,40 +1,23 @@
 import {
   fetchLangData,
-  load74eoParameterIcons,
-  load74eoEquipmentIcons,
   toTranslateShipName,
   toTranslateEquipmentName,
-  NONE,
   resize,
-  LABEL,
-  load74eoAircraftLevelIcons,
-  RANGE,
-  SPEED,
   toAirPowerString,
 } from "../utils";
-import { createCanvas2D, loadImage, Canvas } from "../canvas";
-import { Ship } from "../type";
-
-const AirPower = {
-  jp: "制空戦力",
-  en: "Air Power",
-  ko: "제공전력",
-  scn: "制空戦力",
-  tcn: "制空戦力",
-};
-
-const LoS = {
-  jp: "索敵能力",
-  en: "LoS(1)",
-  ko: "색적능력",
-  scn: "索敵容量",
-  tcn: "索敵容量",
-};
+import { createCanvas2D, Canvas } from "../canvas";
+import { Ship, LoS, AirPower, ShipImageKind } from "../type";
+import { LABEL, RANGE, SPEED, NONE, AIR_POWER, LOS, Lang } from "../lang";
+import {
+  load74eoParameterIcons,
+  load74eoEquipmentIcons,
+  load74eoAircraftLevelIcons,
+} from "../icon";
 
 async function generate74eoLargeCardShipCanvasAsync(
   shipIdx: number,
   ship: Ship,
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
@@ -70,18 +53,18 @@ async function generate74eoLargeCardShipCanvasAsync(
   ctx.fillText("L", 193, 30);
   ctx.fillText("v", 200, 30);
   ctx.fillText(".", 207, 30);
-  ctx.drawImage(parameterIcons["HP"], 19, 173);
-  ctx.drawImage(parameterIcons["Armor"], 19, 195);
-  ctx.drawImage(parameterIcons["Evasion"], 19, 217);
-  ctx.drawImage(parameterIcons["Aircraft"], 19, 239);
-  ctx.drawImage(parameterIcons["Speed"], 19, 261);
-  ctx.drawImage(parameterIcons["Range"], 19, 283);
-  ctx.drawImage(parameterIcons["Firepower"], 132, 173);
-  ctx.drawImage(parameterIcons["Torpedo"], 132, 195);
-  ctx.drawImage(parameterIcons["AA"], 132, 217);
-  ctx.drawImage(parameterIcons["ASW"], 132, 239);
-  ctx.drawImage(parameterIcons["LOS"], 132, 261);
-  ctx.drawImage(parameterIcons["Luck"], 132, 283);
+  ctx.drawImage(parameterIcons.HP, 19, 173);
+  ctx.drawImage(parameterIcons.Armor, 19, 195);
+  ctx.drawImage(parameterIcons.Evasion, 19, 217);
+  ctx.drawImage(parameterIcons.Aircraft, 19, 239);
+  ctx.drawImage(parameterIcons.Speed, 19, 261);
+  ctx.drawImage(parameterIcons.Range, 19, 283);
+  ctx.drawImage(parameterIcons.Firepower, 132, 173);
+  ctx.drawImage(parameterIcons.Torpedo, 132, 195);
+  ctx.drawImage(parameterIcons.AA, 132, 217);
+  ctx.drawImage(parameterIcons.ASW, 132, 239);
+  ctx.drawImage(parameterIcons.LOS, 132, 261);
+  ctx.drawImage(parameterIcons.Luck, 132, 283);
   ctx.textAlign = "center";
   ctx.fillText(LABEL.HP[lang], 49, 185);
   ctx.fillText(LABEL.ARMOR[lang], 49, 207);
@@ -184,9 +167,7 @@ async function generate74eoLargeCardShipCanvasAsync(
   }
   if (ship.id > 0) {
     const shipImage = resize(
-      await loadImage(
-        `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/card/${ship.id}.png`
-      ),
+      await ship.fetchImage(ShipImageKind.CARD),
       218,
       300
     );
@@ -207,9 +188,9 @@ async function generate74eoLargeCardShipCanvasAsync(
 export async function generate74eoLargeCardFleetCanvasAsync(
   fleetName: string,
   ships: Ship[],
-  los: { 1: number; 2: number; 3: number; 4: number; 5: number },
-  airPower: { min: number; max: number },
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  los: LoS,
+  airPower: AirPower,
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(
     952,
@@ -248,8 +229,8 @@ export async function generate74eoLargeCardFleetCanvasAsync(
   ctx.font = "24px Meiryo";
   ctx.fillText(fleetName, 8, 29);
   ctx.font = "12px Meiryo";
-  const airPowerStringWidth = ctx.measureText(AirPower[lang]).width;
-  const losValueStringWidth = ctx.measureText(LoS[lang]).width;
+  const airPowerStringWidth = ctx.measureText(AIR_POWER[lang]).width;
+  const losValueStringWidth = ctx.measureText(LOS[lang]).width;
   ctx.font = "16px Meiryo";
   const airPowerString = toAirPowerString(airPower);
   ctx.fillText(airPowerString, 336 + airPowerStringWidth + 5, 32); // fixed
@@ -273,14 +254,14 @@ export async function generate74eoLargeCardFleetCanvasAsync(
   ctx.stroke();
   ctx.font = "12px Meiryo";
   ctx.drawImage(equipmentIcons[6], 317, 18); // fixed
-  ctx.fillText(AirPower[lang], 335, 30);
+  ctx.fillText(AIR_POWER[lang], 335, 30);
   ctx.drawImage(
     equipmentIcons[9],
     363 + ctx.measureText(airPowerString).width + airPowerStringWidth,
     18
   );
   ctx.fillText(
-    LoS[lang],
+    LOS[lang],
     381 + ctx.measureText(airPowerString).width + airPowerStringWidth,
     30
   );

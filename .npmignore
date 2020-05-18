@@ -3,5 +3,5 @@ tsconfig.json
 tslint.json
 test/
 src/
-static/
+static/ship/
 dist/bundle.js

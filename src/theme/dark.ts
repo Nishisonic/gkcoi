@@ -1,35 +1,47 @@
 import {
   fetchLangData,
-  MyCanvas,
-  loadOriginalParameterIcons,
-  loadOriginalEquipmentIcons,
   toTranslateShipName,
   toTranslateEquipmentName,
-  FLEET,
-  SPEED,
-  NONE,
   toAirPowerString,
   getDistance,
   getAirbaseAirPower,
-  AIR_DEFENSE_POWER,
-  HIGH_ALTITUDE,
-  AIR_POWER,
-  DISTANCE,
-  CONTACT_ASPLUS,
-  CONTACT_AS,
+  getCanAACIList,
+  getContactValue,
 } from "../utils";
-import { createCanvas2D, loadImage, Canvas } from "../canvas";
-import { Ship, Airbase } from "../type";
+import { createCanvas2D, Canvas } from "../canvas";
+import {
+  Ship,
+  Airbase,
+  AirState,
+  Speed,
+  LoS,
+  AirPower,
+  ShipImageKind,
+} from "../type";
 import Chart from "chart.js";
 import "chartjs-plugin-labels";
-import "chartjs-plugin-datalabels";
 import "chartjs-plugin-colorschemes";
-import { Context } from "chartjs-plugin-datalabels";
+import {
+  NONE,
+  SPEED,
+  FLEET,
+  AIR_DEFENSE_POWER,
+  HIGH_ALTITUDE,
+  DISTANCE,
+  AIR_POWER,
+  CONTACT,
+  AA_CI,
+  Lang,
+} from "../lang";
+import {
+  loadOriginalParameterIcons,
+  loadOriginalEquipmentIcons,
+} from "../icon";
 
 async function generateDarkShipInfoCanvasAsync(
   shipIdx: number,
   ship: Ship,
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
@@ -40,9 +52,7 @@ async function generateDarkShipInfoCanvasAsync(
   ctx.fillStyle = "#1A1A1A";
   ctx.fillRect(0, 0, 650, 176);
   if (ship.id > 0) {
-    const image = await loadImage(
-      `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/remodel/${ship.id}.png`
-    );
+    const image = await ship.fetchImage(ShipImageKind.REMODEL);
     // ship
     ctx.drawImage(
       image,
@@ -90,9 +100,9 @@ async function generateDarkShipInfoCanvasAsync(
   // parameter
   ctx.font = "16px Meiryo";
   ctx.textAlign = "right";
-  ctx.drawImage(parameterIcons["hp"], 476, 14);
-  ctx.drawImage(parameterIcons["as"], 532, 13);
-  ctx.drawImage(parameterIcons["luck"], 588, 13);
+  ctx.drawImage(parameterIcons.hp, 476, 14);
+  ctx.drawImage(parameterIcons.as, 532, 13);
+  ctx.drawImage(parameterIcons.luck, 588, 13);
   ctx.fillText(String(ship.hp), 529, 28);
   ctx.fillText(String(ship.asw), 585, 28);
   ctx.fillText(String(ship.luck), 638, 28);
@@ -154,7 +164,7 @@ async function generateDarkShipInfoCanvasAsync(
 async function generateDarkShipCanvasAsync(
   shipIdx: number,
   ship: Ship,
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(654, 180);
   const shipInfoCanvas = await generateDarkShipInfoCanvasAsync(
@@ -182,10 +192,10 @@ async function generateDarkShipCanvasAsync(
 export async function generateDarkFleetCanvasAsync(
   fleetIdx: number,
   ships: Ship[],
-  los: { 1: number; 2: number; 3: number; 4: number; 5: number },
-  airPower: { min: number; max: number },
-  speed: 0 | 5 | 10 | 15 | 20,
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  los: LoS,
+  airPower: AirPower,
+  speed: Speed,
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const parameterIcons = await loadOriginalParameterIcons();
   const { canvas, ctx } = createCanvas2D(
@@ -200,35 +210,33 @@ export async function generateDarkFleetCanvasAsync(
       .filter(({ ship }) => ship.id > 0)
       .map(async ({ ship, idx }) => {
         const shipCanvas = await generateDarkShipCanvasAsync(idx, ship, lang);
-        return new MyCanvas(String(idx), shipCanvas);
+        return { id: idx, canvas: shipCanvas };
       })
   );
 
-  shipCanvases.forEach((shipCanvas) => {
+  shipCanvases.forEach(({ id, canvas }) => {
     ctx.drawImage(
-      shipCanvas.canvas,
-      (Number(shipCanvas.id) % 2) * 656,
-      Math.floor(Number(shipCanvas.id) / 2) * 182 + 40
+      canvas,
+      (Number(id) % 2) * 656,
+      Math.floor(Number(id) / 2) * 182 + 40
     );
   });
 
   ctx.font = "bold 20px Meiryo";
   ctx.fillStyle = "#fff";
   ctx.fillText(`Fleet #${Number(fleetIdx) + 1}`, 20, 30);
-  ctx.drawImage(parameterIcons["air"], 172, 11);
+  ctx.drawImage(parameterIcons.air, 172, 11);
   ctx.fillText(toAirPowerString(airPower), 200, 30);
-  ctx.drawImage(parameterIcons["los"], 346, 12);
-  ctx.fillText((Math.floor(los[1] * 100) / 100).toFixed(2), 380, 30);
-  ctx.drawImage(parameterIcons["los"], 476, 12);
-  ctx.fillText((Math.floor(los[2] * 100) / 100).toFixed(2), 510, 30);
-  ctx.drawImage(parameterIcons["los"], 606, 12);
-  ctx.fillText((Math.floor(los[3] * 100) / 100).toFixed(2), 640, 30);
-  ctx.drawImage(parameterIcons["los"], 736, 12);
-  ctx.fillText((Math.floor(los[4] * 100) / 100).toFixed(2), 770, 30);
-  ctx.drawImage(parameterIcons["los"], 866, 12);
-  ctx.fillText((Math.floor(los[5] * 100) / 100).toFixed(2), 900, 30);
-  const tp = ships.reduce((p, { tp }) => p + tp, 90);
-  ctx.drawImage(parameterIcons["drum"], 1156, 11);
+  Object.keys(los).map((v, i) => {
+    ctx.drawImage(parameterIcons.los, 346 + 130 * i, 12);
+    ctx.fillText(
+      (Math.floor(los[v] * 100) / 100).toFixed(2),
+      380 + 130 * i,
+      30
+    );
+  });
+  const tp = ships.reduce((p, { tp }) => p + tp, 0);
+  ctx.drawImage(parameterIcons.drum, 1156, 11);
   ctx.fillText(`${tp}`, 1205, 30);
   ctx.font = "11px Meiryo";
   ctx.fillText("1", 365, 32);
@@ -238,7 +246,7 @@ export async function generateDarkFleetCanvasAsync(
   ctx.fillText("5", 885, 32);
   ctx.fillText("TP", 1170, 32);
   // 速力
-  ctx.drawImage(parameterIcons["soku"], 1000, 13);
+  ctx.drawImage(parameterIcons.soku, 1000, 13);
   ctx.font = "bold 18px Meiryo";
   ctx.fillText(`${SPEED[speed][lang]}${FLEET[lang]}`, 1033, 29);
   return canvas;
@@ -246,8 +254,7 @@ export async function generateDarkFleetCanvasAsync(
 
 export async function generateDarkAirbaseCanvasAsync(
   airbases: Airbase[],
-  largeSize: boolean,
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const langs = lang === "jp" ? null : (await fetchLangData(lang)).items;
   const parameterIcons = await loadOriginalParameterIcons();
@@ -399,90 +406,78 @@ export async function generateDarkAirbaseCanvasAsync(
   return canvas;
 }
 
-function drawsq(
-  context: CanvasRenderingContext2D,
+function fillTextLine(
+  ctx: CanvasRenderingContext2D,
+  text: string,
   x: number,
   y: number,
-  w: number,
-  h: number,
-  r: number,
-  color: string | CanvasGradient | CanvasPattern
+  width: number
 ): void {
-  const strokeStyle = context.strokeStyle;
-  const fillStyle = context.fillStyle;
-  context.beginPath();
-  context.lineWidth = 1;
-  context.strokeStyle = color;
-  context.fillStyle = color;
-  context.moveTo(x, y + r);
-  context.arc(x + r, y + h - r, r, Math.PI, Math.PI * 0.5, true);
-  context.arc(x + w - r, y + h - r, r, Math.PI * 0.5, 0, true);
-  context.arc(x + w - r, y + r, r, 0, Math.PI * 1.5, true);
-  context.arc(x + r, y + r, r, Math.PI * 1.5, Math.PI, true);
-  context.closePath();
-  context.stroke();
-  context.fill();
-  context.strokeStyle = strokeStyle;
-  context.fillStyle = fillStyle;
+  const textAlign = ctx.textAlign;
+  ctx.textAlign = "left";
+  const columns = [""];
+  for (let i = 0, line = 0; i < text.length; i++) {
+    const char = text.charAt(i);
+
+    if (char == "\n" || ctx.measureText(columns[line] + char).width > width) {
+      columns[++line] = "";
+      continue;
+    }
+    columns[line] += char;
+  }
+  const size = ctx.measureText("■").width;
+  columns.forEach((column, i) => {
+    ctx.fillText(column, x, y + size * i);
+  });
+  ctx.textAlign = textAlign;
 }
 
 export async function generateDarkParameterCanvasAsync(
-  ships1: Ship[],
-  ships2: Ship[],
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  ships: Ship[],
+  airState: AirState,
+  comment: string,
+  lang: Lang = "jp"
 ): Promise<Canvas> {
-  const parameterIcons = await loadOriginalParameterIcons();
   const { canvas, ctx } = createCanvas2D(265, 586);
   ctx.fillStyle = "#212121";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = "#fff";
-  // ctx.font = "bold 16px Meiryo";
-  // ctx.textAlign = "center";
-  // ctx.fillText("Details(Combined Fleet)", 128, 24);
-  ctx.fillStyle = "#1A1A1A";
   ctx.strokeStyle = "#434343";
   ctx.lineWidth = 2;
-  ctx.font = "16px Meiryo";
-  ctx.textAlign = "right";
-  for (let i = 0; i < 3; i++) {
+  ["Contact", "Anti-Air CI", "Comment"].forEach((label, i) => {
     ctx.fillStyle = "#1A1A1A";
     ctx.fillRect(1, 41 + i * 182, 263, 178);
     ctx.strokeRect(1, 41 + i * 182, 263, 178);
-    if (i < 2) {
-      ctx.fillStyle = "#fff";
-      ctx.fillText(
-        [CONTACT_ASPLUS[lang], CONTACT_AS[lang]][i],
-        252,
-        70 + i * 182
-      );
-    }
-  }
-  ctx.font = "bold 32px Meiryo";
-  ctx.fillStyle = "#2A2a2a";
-  ctx.fillText("Comment", 250, 435);
-  ctx.strokeRect(1, 1, 263, 36);
-  ctx.drawImage(parameterIcons.aa2, 3, 0);
-  ctx.textAlign = "left";
+    ctx.textAlign = "right";
+    ctx.font = "bold 32px Meiryo";
+    ctx.fillStyle = "#2A2a2a";
+    ctx.fillText(label, 250, 71 + 182 * i);
+  });
+  ctx.fillStyle = "#1A1A1A";
+  ctx.fillRect(1, 1, 263, 36);
+  ctx.font = "bold 16px Meiryo";
+  ctx.textAlign = "center";
   ctx.fillStyle = "#fff";
-  ctx.font = "8px Meiryo";
-  ctx.fillText("CI (%)", 5, 33);
+  ctx.fillText("Details(Combined Fleet)", 132, 24);
+  ctx.fillText(CONTACT.LABEL[lang], 85, 125);
+  ctx.fillText(`(${CONTACT[airState][lang]})`, 85, 146);
+  ctx.fillText(AA_CI[lang], 85, 318);
+  ctx.strokeRect(1, 1, 263, 36);
 
-  const canvases = createCanvas2D(265, 150);
-  const chart = new Chart(canvases.ctx, {
+  const touchCanvases = createCanvas2D(265, 150);
+  const contacts = getContactValue(ships, airState);
+  new Chart(touchCanvases.ctx, {
     type: "doughnut",
     data: {
       datasets: [
         {
-          data: [9000, 20, 30, 40],
-          backgroundColor: ["#ff6384", "#ffbf00", "#36a2eb", "gray"],
+          data: contacts.map(({ rate }) => rate),
         },
       ],
-      labels: ["x1.2", "x1.17", "x1.12", "none"],
+      labels: ["x1.2", "x1.17", "x1.12", NONE[lang]],
     },
     options: {
       responsive: false,
-      maintainAspectRatio: false,
       animation: {
         duration: 0,
       },
@@ -502,85 +497,63 @@ export async function generateDarkParameterCanvasAsync(
         datalabels: {
           formatter: (): string => "",
         },
+        colorschemes: {
+          scheme: "tableau.ClassicMedium10",
+          custom: (schemeColors: string[]): string[] => {
+            schemeColors.splice(3, 0, "#1A1A1A");
+            return schemeColors;
+          },
+        },
       },
     },
   });
-  ctx.drawImage(canvases.canvas, 0, 55);
-  ctx.drawImage(canvases.canvas, 0, 237);
-  const canvases2 = createCanvas2D(243, 33);
-  const stackedBar = new Chart(canvases2.ctx, {
-    type: "horizontalBar",
+  ctx.drawImage(touchCanvases.canvas, 0, 55);
+  const aaciCanvases = createCanvas2D(265, 150);
+  const canAACIList = getCanAACIList(ships);
+  new Chart(aaciCanvases.ctx, {
+    type: "doughnut",
     data: {
       datasets: [
         {
-          label: "34",
-          data: [60],
-        },
-        {
-          label: "35",
-          data: [25],
-        },
-        {
-          label: "37",
-          data: [5],
+          data: canAACIList.map(({ rate }) => rate),
         },
       ],
+      labels: canAACIList.map(({ kind }) => kind || NONE[lang]),
     },
     options: {
       responsive: false,
-      maintainAspectRatio: false,
       animation: {
         duration: 0,
       },
-      plugins: {
-        colorschemes: {
-          scheme: "brewer.Greens5",
-        },
-        datalabels: {
-          labels: {
-            value: {
-              color: "black",
-              font: {
-                weight: "bold",
-              },
-            },
-          },
-          formatter: (value, context): string => String(context.dataset.label),
-        },
-      },
       legend: {
-        display: false,
+        position: "right",
+        labels: {
+          fontColor: "white",
+        },
       },
-      scales: {
-        xAxes: [
-          {
-            gridLines: {
-              color: "#fff",
-            },
-            scaleLabel: {
-              display: false,
-            },
-            stacked: true,
-            ticks: {
-              min: 0,
-              max: 100,
-              stepSize: 20,
-              fontColor: "white",
-              fontSize: 7,
-            },
+      plugins: {
+        labels: {
+          fontSize: 14,
+          fontColor: "black",
+          fontStyle: "bold",
+          render: (args: {
+            value: number;
+            label: string;
+            percentage: number;
+          }): string =>
+            args.label !== NONE[lang] ? `${args.percentage}%` : "",
+        },
+        colorschemes: {
+          scheme: "tableau.ClassicMedium10",
+          custom: (schemeColors: string[]): string[] => {
+            schemeColors.splice(canAACIList.length - 1, 0, "#1A1A1A");
+            return schemeColors;
           },
-        ],
-        yAxes: [
-          {
-            gridLines: {
-              color: "#fff",
-            },
-            stacked: true,
-          },
-        ],
+        },
       },
     },
   });
-  ctx.drawImage(canvases2.canvas, 22, 2);
+  ctx.drawImage(aaciCanvases.canvas, 0, 237);
+  fillTextLine(ctx, comment, 12, 430, 250);
   return canvas;
 }

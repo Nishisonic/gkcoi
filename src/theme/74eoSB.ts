@@ -1,21 +1,18 @@
 import {
   fetchLangData,
-  load74eoParameterIcons,
-  load74eoEquipmentIcons,
   toTranslateEquipmentName,
-  NONE,
-  AIR_POWER,
-  LOS,
   resize,
   toAirPowerString,
 } from "../utils";
-import { createCanvas2D, loadImage, Canvas } from "../canvas";
-import { Ship } from "../type";
+import { createCanvas2D, Canvas } from "../canvas";
+import { Ship, LoS, AirPower, ShipImageKind } from "../type";
+import { Lang, NONE, AIR_POWER, LOS } from "../lang";
+import { load74eoParameterIcons, load74eoEquipmentIcons } from "../icon";
 
 async function generate74eoSmallBannerShipCanvasAsync(
   ship: Ship,
   has5slot: boolean,
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp"
+  lang: Lang = "jp"
 ): Promise<Canvas> {
   const items = lang === "jp" ? null : (await fetchLangData(lang)).items;
   const parameterIcons = await load74eoParameterIcons();
@@ -26,9 +23,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   if (ship.id > 0) {
     const shipImage = resize(
-      await loadImage(
-        `https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship/banner/${ship.id}.png`
-      ),
+      await ship.fetchImage(ShipImageKind.BANNER),
       160,
       40
     );
@@ -45,7 +40,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
   ctx.fillText("L", 163, 14);
   ctx.fillText("v", 170, 14);
   ctx.fillText(".", 177, 14);
-  ctx.drawImage(parameterIcons["Luck"], 161, 18);
+  ctx.drawImage(parameterIcons.Luck, 161, 18);
   ctx.fillStyle = "#0f0f0f";
   ctx.textAlign = "right";
   ctx.fillText(String(ship.lv), 208, 14);
@@ -126,9 +121,9 @@ async function generate74eoSmallBannerShipCanvasAsync(
 export async function generate74eoSmallBannerFleetCanvasAsync(
   fleetName: string,
   ships: Ship[],
-  los: { 1: number; 2: number; 3: number; 4: number; 5: number },
-  airPower: { min: number; max: number },
-  lang: "jp" | "en" | "ko" | "tcn" | "scn" = "jp",
+  los: LoS,
+  airPower: AirPower,
+  lang: Lang = "jp",
   has5slot = false
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(

@@ -1,376 +1,24 @@
-import { createCanvas2D, loadImage, Canvas, Image } from "./canvas";
-import { Ship, Item } from "./type";
+import { createCanvas2D, Canvas, Image, fetchImage } from "./canvas";
+import {
+  Ship,
+  Item,
+  AirState,
+  AirPower,
+  MasterData,
+  ShipImageKind,
+} from "./type";
+import { Lang } from "./lang";
 
 export const MASTER_URL =
   "https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static";
 
-export class Language {
-  /** 日本語 */
-  jp: string;
-  /** 英語 */
-  en: string;
-  /** 韓国語 */
-  ko: string;
-  /** 中国語(簡体字) */
-  scn: string;
-  /** 中国語(繁体字) */
-  tcn: string;
-
-  constructor(jp: string, en: string, ko: string, scn: string, tcn: string) {
-    this.jp = jp;
-    this.en = en;
-    this.ko = ko;
-    this.scn = scn;
-    this.tcn = tcn;
-  }
-}
-
-export const NONE = new Language("なし", "None", "없음", "没有", "沒有");
-
-export const FLEET = new Language("艦隊", "", "함대", "舰队", "艦隊");
-
-export const SPEED: {
-  [key: number]: Language;
-} = {
-  0: new Language("陸上", "Land", "육상", "土地", "土地"),
-  5: new Language("低速", "Slow", "저속", "低速", "低速"),
-  10: new Language("高速", "Fast", "고속", "高速", "高速"),
-  15: new Language("高速+", "Fast+", "고속+", "高速+", "高速+"),
-  20: new Language("最速", "Fastest", "초고속", "最速", "最速"),
-};
-
-export const RANGE: {
-  [key: number]: Language;
-} = {
-  0: new Language("無", "N", "무", "无", "無"),
-  1: new Language("短", "S", "단", "短", "短"),
-  2: new Language("中", "M", "중", "中", "中"),
-  3: new Language("長", "L", "장", "长", "長"),
-  4: new Language("超長", "VL", "초장", "超长", "超長"),
-};
-
-export const LABEL: {
-  [key: string]: Language;
-} = {
-  HP: new Language("耐久", "HP", "내구", "耐力", "耐力"),
-  FIREPOWER: new Language("火力", "FP", "화력", "火力", "火力"),
-  TORPEDO: new Language("雷装", "TP", "뇌장", "雷装", "雷裝"),
-  AA: new Language("対空", "AA", "대공", "对空", "對空"),
-  ARMOR: new Language("装甲", "AR", "장갑", "装甲", "裝甲"),
-  ASW: new Language("対潜", "ASW", "대잠", "对潜", "對潛"),
-  EVASION: new Language("回避", "EVS", "회피", "回避", "迴避"),
-  LOS: new Language("索敵", "LOS", "색적", "索敌", "索敵"),
-  ACCURACY: new Language("命中", "ACC", "명중", "命中", "命中"),
-  BOMB: new Language("爆装", "BOM", "폭장", "爆装", "爆裝"),
-  RANGE: new Language("射程", "RNG", "사거리", "射程", "射程"),
-  LUCK: new Language("運", "LK", "운", "运气", "運氣"),
-  SPEED: new Language("速力", "SP", "속력", "速度", "速度"),
-  AIRPOWER: new Language("制空", "AIR", "제공", "制空", "制空"),
-};
-
-export const AIR_POWER = new Language(
-  "制空戦力",
-  "Air Power",
-  "제공전력",
-  "制空戦力",
-  "制空戦力"
-);
-
-export const AIR_DEFENSE_POWER = new Language(
-  "防空戦力",
-  "Air Defense Power",
-  "방공전력",
-  "防空戦力",
-  "防空戦力"
-);
-
-export const HIGH_ALTITUDE = new Language(
-  "高高度",
-  "HA",
-  "고도",
-  "高海拔",
-  "高海拔"
-);
-
-export const DISTANCE = new Language(
-  "航続距離",
-  "Distance",
-  "항속거리",
-  "巡航距离",
-  "巡航距離"
-);
-
-export const LOS = new Language(
-  "索敵能力",
-  "LoS(1)",
-  "색적능력",
-  "索敵容量",
-  "索敵容量"
-);
-
-export const CONTACT_ASPLUS = new Language(
-  "触接率(確保)",
-  "Contact(AS+)",
-  "접촉(확보)",
-  "触接(确保)",
-  "觸接(確保)"
-);
-
-export const CONTACT_AS = new Language(
-  "触接率(優勢)",
-  "Contact(AS)",
-  "접촉(우세)",
-  "触接(优势)",
-  "觸接(優勢)"
-);
-
-class Img {
-  id: string;
-  img: Image;
-
-  constructor(id: string, img: Image) {
-    this.id = id;
-    this.img = img;
-  }
-}
-
-export class MyCanvas {
-  id: string;
-  canvas: Canvas;
-
-  constructor(id: string, canvas: Canvas) {
-    this.id = id;
-    this.canvas = canvas;
-  }
-}
-
-const EQUIPMENT_ICON_SOURCE = {
-  1: "MainGunS",
-  2: "MainGunM",
-  3: "MainGunL",
-  4: "SecondaryGun",
-  5: "Torpedo",
-  6: "CarrierBasedFighter",
-  7: "CarrierBasedBomber",
-  8: "CarrierBasedTorpedo",
-  9: "CarrierBasedRecon",
-  10: "Seaplane",
-  11: "RADAR",
-  12: "AAShell",
-  13: "APShell",
-  14: "DamageControl",
-  15: "AAGun",
-  16: "HighAngleGun",
-  17: "DepthCharge",
-  18: "SONAR",
-  19: "Engine",
-  20: "LandingCraft",
-  21: "Autogyro",
-  22: "ASPatrol",
-  23: "Bulge",
-  24: "Searchlight",
-  25: "DrumCanister",
-  26: "RepairFacility",
-  27: "Flare",
-  28: "CommandFacility",
-  29: "MaintenanceTeam",
-  30: "AADirector",
-  31: "RocketArtillery",
-  32: "PicketCrew",
-  33: "FlyingBoat",
-  34: "Ration",
-  35: "Supplies",
-  36: "AmphibiousVehicle",
-  37: "LandAttacker",
-  38: "Interceptor",
-  39: "JetFightingBomberKeiun",
-  40: "JetFightingBomberKikka",
-  41: "TransportMaterials",
-  42: "SubmarineEquipment",
-  43: "SeaplaneFighter",
-  44: "ArmyInterceptor",
-  45: "NightFighter",
-  46: "NightTorpedo",
-  47: "LandASPatrol",
-};
-
-export async function loadOriginalParameterIcons(): Promise<{
-  [key: string]: Image;
-}> {
-  const results = await Promise.all(
-    [
-      "as",
-      "los",
-      "luck",
-      "hp",
-      "air",
-      "soku",
-      "distance",
-      "aird",
-      "airdh",
-      "drum",
-      "fly",
-      "aa2",
-    ]
-      .map((fileName) => `${fileName}.png`)
-      .map(async (fileName: string) => {
-        const src = `${MASTER_URL}/dark/${fileName}`;
-        const img = await loadImage(src);
-        return new Img(fileName.replace(/(.*).png/g, "$1"), img);
-      })
-  );
-
-  return results.reduce((p, c) => {
-    if (c instanceof Img) {
-      return Object.assign(p, { [c.id]: c.img });
-    }
-    return p;
-  }, {});
-}
-
-export async function load74eoAircraftLevelIcons(): Promise<{
-  [key: string]: Image;
-}> {
-  const results = await Promise.all(
-    [0, 1, 2, 3, 4, 5, 6, 7].map(async (level: number) => {
-      const src = `${MASTER_URL}/74eo/AircraftLevel/AircraftLevel${level}.png`;
-      const img = await loadImage(src);
-      return new Img(String(level), img);
-    })
-  );
-
-  return results.reduce((p, c) => {
-    if (c instanceof Img) {
-      return Object.assign(p, { [c.id]: c.img });
-    }
-    return p;
-  }, {});
-}
-
-export async function load74eoParameterIcons(): Promise<{
-  [key: string]: Image;
-}> {
-  const results = await Promise.all(
-    [
-      "AA",
-      "Accuracy",
-      "Aircraft",
-      "AircraftCost",
-      "AircraftDistance",
-      "AntiBomber",
-      "Armor",
-      "ASW",
-      "Bomber",
-      "Evasion",
-      "Firepower",
-      "HP",
-      "Interception",
-      "LOS",
-      "Luck",
-      "Range",
-      "Speed",
-      "Torpedo",
-    ].map(async (fileName: string) => {
-      const src = `${MASTER_URL}/74eo/${fileName}.png`;
-      const img = await loadImage(src);
-      return new Img(fileName.replace(/(.*).png/g, "$1"), img);
-    })
-  );
-
-  return results.reduce((p, c) => {
-    if (c instanceof Img) {
-      return Object.assign(p, { [c.id]: c.img });
-    }
-    return p;
-  }, {});
-}
-
-export async function loadOriginalEquipmentIcons(
-  imgSize = 30
-): Promise<{ [key: string]: Image }> {
-  const results = await Promise.all(
-    Object.keys(EQUIPMENT_ICON_SOURCE).map(async (id: string) => {
-      const src = `${MASTER_URL}/common_icon_weapon/common_icon_weapon_id_${id}.png`;
-      const img = await loadImage(src);
-      const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
-      // offset
-      const { canvas: oc, ctx: octx } = createCanvas2D(54, 54);
-      octx.drawImage(img, img.width === 54 ? 0 : 3, img.height === 54 ? 0 : 3);
-      // resize
-      // step 1
-      const { canvas: rc, ctx: rctx } = createCanvas2D(imgSize, imgSize);
-      rctx.drawImage(oc, 0, 0, rc.width, rc.height);
-      // step 2
-      rctx.drawImage(rc, 0, 0, imgSize, imgSize);
-      /// step 3
-      ctx.drawImage(
-        rc,
-        0,
-        0,
-        imgSize,
-        imgSize,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-      return new Img(id, await loadImage(canvas.toDataURL()));
-    })
-  );
-
-  return results.reduce((p, c) => {
-    if (c instanceof Img) {
-      return Object.assign(p, { [c.id]: c.img });
-    }
-    return p;
-  }, {});
-}
-
-export async function load74eoEquipmentIcons(
-  imgSize = 54
-): Promise<{ [key: string]: Image }> {
-  const results = await Promise.all(
-    Object.values(EQUIPMENT_ICON_SOURCE).map(
-      async (id: string, idx: number) => {
-        const src = `${MASTER_URL}/74eo/Equipment/${id}.png`;
-        const img = await loadImage(src);
-        const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
-        // offset
-        const { canvas: oc, ctx: octx } = createCanvas2D(54, 54);
-        octx.drawImage(img, 0, 0);
-        // resize
-        // step 1
-        const { canvas: rc, ctx: rctx } = createCanvas2D(imgSize, imgSize);
-        rctx.drawImage(oc, 0, 0, rc.width, rc.height);
-        // step 2
-        rctx.drawImage(rc, 0, 0, imgSize, imgSize);
-        /// step 3
-        ctx.drawImage(
-          rc,
-          0,
-          0,
-          imgSize,
-          imgSize,
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
-        return new Img(String(idx + 1), await loadImage(canvas.toDataURL()));
-      }
-    )
-  );
-
-  return results.reduce((p, c) => {
-    if (c instanceof Img) {
-      return Object.assign(p, { [c.id]: c.img });
-    }
-    return p;
-  }, {});
+export async function fetchStart2(url: string): Promise<MasterData> {
+  const res = await fetch(url);
+  return res.json();
 }
 
 export async function fetchLangData(
-  lang: "en" | "ko" | "tcn" | "scn"
+  lang: Lang
 ): Promise<{
   ships: {
     [key: string]:
@@ -386,11 +34,15 @@ export async function fetchLangData(
     [key: string]: string;
   };
 }> {
-  const shipsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/ships-${lang}.json`;
-  const itemsUrl = `https://raw.githubusercontent.com/antest1/kcanotify/master/app/src/main/assets/items-${lang}.json`;
+  const URL =
+    "https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data";
+  const shipsUrl = `${URL}/${lang}/ships.json`;
+  const shipAffixUrl = `${URL}/${lang}/ship_affix.json`;
+  const itemsUrl = `${URL}/${lang}/items.json`;
   const ships = await fetch(shipsUrl).then((res) => res.json());
+  const shipAffix = await fetch(shipAffixUrl).then((res) => res.json());
   const items = await fetch(itemsUrl).then((res) => res.json());
-  return { ships, items };
+  return { ships: Object.assign(ships, shipAffix), items };
 }
 
 export function toTranslateShipName(
@@ -400,23 +52,18 @@ export function toTranslateShipName(
     [key: string]: string | { [key: string]: string };
   } | null
 ): string {
-  let shipName = name;
-  let shipSuffix = null;
   if (langData && langData.suffixes) {
-    Object.keys(langData.suffixes)
+    const suffix = Object.keys(langData.suffixes)
       .sort((a, b) => b.length - a.length)
-      .some((suffix) => {
+      .reduce((p, suffix) => {
         if (name.includes(suffix)) {
-          shipName = name.replace(suffix, "");
-          shipSuffix = suffix;
-          return true;
+          name = name.replace(suffix, "");
+          p += langData.suffixes[suffix];
         }
-        return false;
-      });
-    if (langData[shipName]) {
-      return (
-        langData[shipName] + (shipSuffix ? langData.suffixes[shipSuffix] : "")
-      );
+        return p;
+      }, "");
+    if (langData[name]) {
+      return langData[name] + suffix;
     }
   }
   return name;
@@ -541,10 +188,7 @@ function getImprovementBonus(item: Item): number {
   return 0;
 }
 
-export function getAirPower(
-  items: Item[],
-  slots: number[]
-): { min: number; max: number } {
+export function getAirPower(items: Item[], slots: number[]): AirPower {
   return items
     .map((item, i) => {
       if (slots[i] > 0 && item && SKILLED_BONUS_LIST[item.type[2]]) {
@@ -580,7 +224,7 @@ export function getAirbaseAirPower(
   airDefense = false,
   highAltitude = false,
   rocket = 0
-): { min: number; max: number } {
+): AirPower {
   const slot = (item: Item): 4 | 18 =>
     [9, 10, 41, 49].includes(item.type[2]) ? 4 : 18;
 
@@ -685,7 +329,7 @@ export function getAirbaseAirPower(
   };
 }
 
-export function toAirPowerString(power: { min: number; max: number }): string {
+export function toAirPowerString(power: AirPower): string {
   return power.min === power.max
     ? `${power.min}`
     : `${power.min} ~ ${power.max}`;
@@ -708,4 +352,403 @@ export function getDistance(items: Item[]): number {
   return min;
 }
 
-// export function getContact
+export function getContactValue(
+  ships: Ship[],
+  airState: AirState
+): { bonus: number; rate: number }[] {
+  const planes = [10, 9, 94, 41, 8];
+  const AIR_STATE = {
+    "AS+": 3,
+    AS: 2,
+    AP: 1,
+  };
+  const airStateValue: number = AIR_STATE[airState];
+  const touchStart = Math.min(
+    1,
+    ships
+      .map(({ slots, items }) =>
+        items
+          .map((item, i) => {
+            if (
+              slots.length > i &&
+              slots[i] > 0 &&
+              planes.includes(item.type[2])
+            ) {
+              return Math.floor(item.los * Math.sqrt(slots[i]));
+            }
+            return 0;
+          })
+          .reduce((p, v) => p + v, 0)
+      )
+      .reduce((p, v) => p + v, 1) /
+      (70 - 15 * airStateValue)
+  );
+
+  const touchSelect = (mag: number): number => {
+    return (
+      1 -
+      ships
+        .map(({ slots, items }) =>
+          items.map((item, i) => {
+            const lvBonus = (item: Item): number => {
+              switch (item.id) {
+                case 25: // 零式水上偵察機
+                  return 0.14;
+                case 59: // 零式水上観測機
+                  return 0.2;
+                case 102: // 九八式水上偵察機(夜偵)
+                  return 0.1;
+                case 163: // Ro.43水偵
+                  return 0.14;
+                case 304: // S9 Osprey
+                  return 0.14;
+                case 61: // 二式艦上偵察機
+                  return 0.3;
+                case 151: // 試製景雲(艦偵型)
+                  return 0.4;
+              }
+              return 0;
+            };
+
+            if (
+              slots.length > i &&
+              slots[i] > 0 &&
+              planes.includes(item.type[2]) &&
+              ((mag === 1.2 && item.accuracy >= 3) ||
+                (mag === 1.17 && item.accuracy === 2) ||
+                (mag === 1.12 && item.accuracy <= 1))
+            ) {
+              return (
+                Math.ceil(item.los + item.lv * lvBonus(item)) /
+                (20 - 2 * airStateValue)
+              );
+            }
+            return 0;
+          })
+        )
+        .flat()
+        .map((v) => 1 - v)
+        .reduce((p, v) => p * v, 1)
+    );
+  };
+
+  return [
+    { bonus: 1.2, rate: touchStart * touchSelect(1.2) },
+    {
+      bonus: 1.17,
+      rate:
+        (1 - touchStart * touchSelect(1.2)) * touchStart * touchSelect(1.17),
+    },
+    {
+      bonus: 1.12,
+      rate:
+        (1 - touchStart * touchSelect(1.2)) *
+        (1 - touchStart * touchSelect(1.17)) *
+        touchStart *
+        touchSelect(1.12),
+    },
+    {
+      bonus: 1,
+      rate:
+        (1 - touchStart * touchSelect(1.2)) *
+        (1 - touchStart * touchSelect(1.17)) *
+        (1 - touchStart * touchSelect(1.12)),
+    },
+  ];
+}
+
+const AA_CI_LIST: {
+  [key: number]: { kind: number; fixed: number; prop: number; value: number };
+} = {
+  1: { kind: 1, fixed: 7, prop: 1.7, value: 65 },
+  2: { kind: 2, fixed: 6, prop: 1.7, value: 58 },
+  3: { kind: 3, fixed: 4, prop: 1.6, value: 50 },
+  4: { kind: 4, fixed: 6, prop: 1.5, value: 52 },
+  5: { kind: 5, fixed: 4, prop: 1.5, value: 55 },
+  6: { kind: 6, fixed: 4, prop: 1.45, value: 40 },
+  7: { kind: 7, fixed: 3, prop: 1.35, value: 45 },
+  8: { kind: 8, fixed: 4, prop: 1.4, value: 50 },
+  9: { kind: 9, fixed: 2, prop: 1.3, value: 40 },
+  10: { kind: 10, fixed: 8, prop: 1.65, value: 60 },
+  11: { kind: 11, fixed: 6, prop: 1.5, value: 55 },
+  12: { kind: 12, fixed: 3, prop: 1.25, value: 45 },
+  13: { kind: 13, fixed: 4, prop: 1.35, value: 35 },
+  14: { kind: 14, fixed: 4, prop: 1.45, value: 64 },
+  15: { kind: 15, fixed: 3, prop: 1.3, value: 55 },
+  16: { kind: 16, fixed: 4, prop: 1.4, value: 63 },
+  17: { kind: 17, fixed: 2, prop: 1.25, value: 57 },
+  18: { kind: 18, fixed: 2, prop: 1.2, value: 60 },
+  19: { kind: 19, fixed: 5, prop: 1.45, value: 58 },
+  20: { kind: 20, fixed: 3, prop: 1.25, value: 66 },
+  21: { kind: 21, fixed: 5, prop: 1.45, value: 60 },
+  22: { kind: 22, fixed: 2, prop: 1.2, value: 59 },
+  23: { kind: 23, fixed: 1, prop: 1.05, value: 81 },
+  24: { kind: 24, fixed: 3, prop: 1.25, value: 56 },
+  25: { kind: 25, fixed: 7, prop: 1.55, value: 62 },
+  26: { kind: 26, fixed: 6, prop: 1.4, value: 61 },
+  // 27:
+  28: { kind: 28, fixed: 4, prop: 1.4, value: 55 },
+  29: { kind: 29, fixed: 5, prop: 1.55, value: 61 },
+  30: { kind: 30, fixed: 3, prop: 1.3, value: 67 },
+  31: { kind: 31, fixed: 2, prop: 1.25, value: 54 },
+  32: { kind: 32, fixed: 3, prop: 1.2, value: 33 },
+  33: { kind: 33, fixed: 3, prop: 1.35, value: 45 },
+  34: { kind: 34, fixed: 7, prop: 1.6, value: 60 },
+  35: { kind: 35, fixed: 6, prop: 1.55, value: 55 },
+  36: { kind: 36, fixed: 6, prop: 1.55, value: 34 },
+  37: { kind: 37, fixed: 4, prop: 1.45, value: 40 },
+  // 38:
+  39: { kind: 39, fixed: 10, prop: 1.7, value: 70 },
+  40: { kind: 40, fixed: 10, prop: 1.7, value: 57 },
+  41: { kind: 41, fixed: 9, prop: 1.65, value: 56 },
+};
+
+export function getCanAACIList(
+  ships: Ship[]
+): { kind: number; rate: number }[] {
+  const aalists = ships
+    .map((ship: Ship) => {
+      const aalist = [];
+      const HAGun = ship.items.filter(({ type }) => type[3] === 16).length;
+      const Radar = ship.items.filter(({ type }) => type[3] === 11).length;
+      if (ship.ctype === 54 && HAGun) {
+        if (HAGun >= 2 && Radar) {
+          aalist.push(1);
+        } else if (Radar) {
+          aalist.push(2);
+        } else if (HAGun >= 2) {
+          aalist.push(3);
+        }
+      } else {
+        const FiveInch = ship.items.filter(({ id }) => [284, 313].includes(id))
+          .length;
+        const FiveInchGFCS = ship.items.filter(({ id }) => id === 308).length;
+        const GFCS = ship.items.filter(({ id }) => id === 307).length;
+        const GFCSFiveInchM = ship.items.filter(({ id }) => id === 363).length;
+        const FiveInchM = ship.items.filter(({ id }) => id === 362).length;
+        const RocketLauncherK2 = ship.items.filter(({ id }) => id === 274)
+          .length;
+        const TenHAGunKai = ship.items.filter(({ id }) => id === 275).length;
+        const Type3Shell = ship.items.filter(({ type }) => type[2] === 18)
+          .length;
+        const AAGun = ship.items.filter(({ type }) => type[2] === 21).length;
+        const AAFD = ship.items.filter(({ type }) => type[2] === 36).length;
+        const LMainGun = ship.items.filter(({ type }) => type[2] === 3).length;
+        const HAGunFD = ship.items.filter(
+          ({ type, aa }) => type[3] === 16 && aa >= 8
+        ).length;
+        const AAGunNormal = ship.items.filter(
+          ({ type, aa }) => type[2] === 21 && aa >= 3 && aa <= 8
+        ).length;
+        const AAGunCD = ship.items.filter(
+          ({ type, aa }) => type[2] === 21 && aa >= 9
+        ).length;
+        const AARadar = ship.items.filter(
+          ({ type, aa }) => type[3] === 11 && aa >= 2
+        ).length;
+        if (ship.ctype === 91) {
+          if (FiveInchGFCS >= 2) {
+            aalist.push(34);
+          }
+          if (FiveInchGFCS && FiveInch) {
+            aalist.push(35);
+          }
+          if (FiveInch >= 2 && GFCS) {
+            aalist.push(36);
+          }
+          if (FiveInch >= 2) {
+            aalist.push(37);
+          }
+          aalist.push(0);
+        }
+        if (ship.ctype === 99) {
+          if (GFCSFiveInchM && FiveInchM) {
+            aalist.push(39);
+          }
+          aalist.push(0);
+          if (GFCSFiveInchM + FiveInchM >= 2 && GFCS) {
+            aalist.push(40);
+          }
+          aalist.push(0);
+          if (GFCSFiveInchM + FiveInchM >= 2) {
+            aalist.push(41);
+          }
+          aalist.push(0);
+        }
+        if (ship.id === 428 && HAGun && AAGunCD) {
+          if (AARadar) {
+            aalist.push(10);
+          }
+          aalist.push(11);
+        }
+        if (ship.id === 141 && HAGun && AAGun) {
+          if (AARadar) {
+            aalist.push(14);
+          }
+          aalist.push(15);
+        }
+        if ([470, 622].includes(ship.id) && HAGun && AAGun) {
+          if (AARadar) {
+            aalist.push(16);
+          }
+          aalist.push(17);
+        }
+        if (
+          ship.id === 487 &&
+          AAGunCD &&
+          ship.items.some(({ type, aa }) => type[3] === 16 && aa <= 7)
+        ) {
+          aalist.push(19);
+        }
+        if (ship.id === 488 && HAGun && AARadar) {
+          aalist.push(21);
+        }
+        if (
+          [82, 88, 553, 554].includes(ship.id) &&
+          RocketLauncherK2 &&
+          Type3Shell &&
+          AARadar
+        ) {
+          aalist.push(25);
+        }
+        if (AAFD && LMainGun && Type3Shell && AARadar) {
+          aalist.push(4);
+        }
+        if (HAGunFD >= 2 && AARadar) {
+          aalist.push(5);
+        }
+        if (AAFD && LMainGun && Type3Shell) {
+          aalist.push(6);
+        }
+        if (HAGunFD && AARadar) {
+          aalist.push(8);
+        }
+        if (AAFD && HAGun && AARadar) {
+          aalist.push(7);
+        }
+        if (ship.id === 546 && TenHAGunKai && AARadar) {
+          aalist.push(26);
+        }
+        if (
+          [82, 88, 553, 554, 148, 546].includes(ship.id) &&
+          RocketLauncherK2 &&
+          AARadar
+        ) {
+          aalist.push(28);
+        }
+        if ([557, 558].includes(ship.id) && HAGun && AARadar) {
+          aalist.push(29);
+        }
+        if (AAFD && HAGun) {
+          aalist.push(9);
+        }
+        if ([579, 630].includes(ship.id) && HAGun && AAGun) {
+          aalist.push(33);
+        }
+        if (AAGunCD && AAGun >= 2 && AARadar) {
+          aalist.push(12);
+        }
+        if (ship.id === 418 && AAGunCD) {
+          aalist.push(18);
+        }
+        if (ship.id === 487 && AAGunCD) {
+          aalist.push(20);
+        }
+        if (ship.id === 548 && AAGunCD) {
+          aalist.push(22);
+        }
+        if ([539, 530].includes(ship.id) && AAGunNormal) {
+          aalist.push(23);
+        }
+        if (ship.id === 478 && HAGun && AAGunNormal) {
+          aalist.push(24);
+        }
+        if ([477, 579, 630].includes(ship.id) && HAGun >= 3) {
+          aalist.push(30);
+        }
+        if (ship.id === 477 && HAGun >= 2) {
+          aalist.push(31);
+        }
+        if (
+          ([67, 78, 82, 88].includes(ship.ctype) ||
+            [149, 150, 151, 152, 591, 592].includes(ship.id)) &&
+          (ship.items.filter(({ id }) => id === 301).length >= 2 ||
+            (ship.items.some(({ id }) => id === 300) &&
+              ship.items.some(({ id }) => [191, 301].includes(id))))
+        ) {
+          aalist.push(32);
+        }
+      }
+      return aalist;
+    })
+    .filter((aalist) => aalist.length > 0);
+
+  const orderByAAlist = ((
+    aalists: number[][]
+  ): { index: number; kind: number }[] => {
+    const count = aalists.flat().length;
+    const result = [];
+
+    while (count > result.length) {
+      let index = 0;
+      for (let i = 0; i < aalists.length; i++) {
+        if (aalists[i][0] === 0) {
+          index = i;
+          continue;
+        }
+        if (aalists[index].length === 0 || aalists[index][0] < aalists[i][0]) {
+          index = i;
+        }
+      }
+      const kind = aalists[index].shift() || 0;
+      result.push({ index, kind });
+    }
+    return result;
+  })(aalists);
+  const aaRates = orderByAAlist.reduce<{
+    rate: number;
+    rates: { kind: number; rate: number }[];
+    rateByShips: { [key: number]: number };
+  }>(
+    (p, v) => {
+      if (v.kind > 0) {
+        if (p.rateByShips[v.index] < AA_CI_LIST[v.kind].value) {
+          const rate = p.rate;
+          p.rate +=
+            ((1 - p.rate) *
+              (AA_CI_LIST[v.kind].value - p.rateByShips[v.index])) /
+            101;
+          p.rates.push({ kind: v.kind, rate: p.rate - rate });
+          p.rateByShips[v.index] = AA_CI_LIST[v.kind].value;
+        }
+      } else {
+        p.rateByShips[v.index] = 0;
+      }
+      return p;
+    },
+    {
+      rate: 0,
+      rates: [],
+      rateByShips: [...new Set(orderByAAlist.map(({ index }) => index))].reduce(
+        (p, v) => Object.assign(p, { [v]: 0 }),
+        {}
+      ),
+    }
+  ).rates;
+
+  const result = Object.entries(
+    aaRates.reduce<{ [key: number]: number }>((p, v) => {
+      p[v.kind] = (isNaN(p[v.kind]) ? 0 : p[v.kind]) + v.rate;
+      return p;
+    }, {})
+  )
+    .sort((a, b) => {
+      return b[1] - a[1];
+    })
+    .map(([key, value]) => ({ kind: Number(key), rate: value }));
+
+  return [
+    ...result,
+    { kind: 0, rate: 1 - result.reduce((p, { rate }) => p + rate, 0) },
+  ];
+}

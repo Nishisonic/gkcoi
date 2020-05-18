@@ -24,7 +24,7 @@ export const createCanvas2D = (
   return { canvas, ctx };
 };
 
-export const loadImage = async (src: string): Promise<Image> => {
+export const fetchImage = async (src: string): Promise<Image> => {
   return new Promise((resolve, reject) => {
     const image = document.createElement("img");
     image.crossOrigin = "Anonymous";
