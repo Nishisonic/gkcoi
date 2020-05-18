@@ -4,7 +4,6 @@ import {
   toTranslateEquipmentName,
   resize,
   toAirPowerString,
-  MASTER_URL,
 } from "../utils";
 import { createCanvas2D, Canvas } from "../canvas";
 import { Ship, LoS, AirPower, ShipImageKind } from "../type";

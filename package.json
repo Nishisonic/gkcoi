@@ -1,6 +1,6 @@
 {
   "name": "gkcoi",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Generate KanColle Organization Image",
   "main": "dist/index.js",
   "module": "esm/index.js",
@@ -12,11 +12,7 @@
   },
   "files": [
     "dist",
-    "!dist/bundle.js",
-    "static/START2.json",
-    "static/74eo",
-    "static/common_icon_weapon",
-    "static/dark"
+    "!dist/bundle.js"
   ],
   "repository": {
     "type": "git",

@@ -1,12 +1,5 @@
-import { createCanvas2D, Canvas, Image, fetchImage } from "./canvas";
-import {
-  Ship,
-  Item,
-  AirState,
-  AirPower,
-  MasterData,
-  ShipImageKind,
-} from "./type";
+import { createCanvas2D, Canvas, Image } from "./canvas";
+import { Ship, Item, AirState, AirPower, MasterData } from "./type";
 import { Lang } from "./lang";
 
 export const MASTER_URL =

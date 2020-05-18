@@ -1,4 +1,5 @@
 import { fetchImage, Image, createCanvas2D } from "./canvas";
+import { MASTER_URL } from "./utils";
 
 const EQUIPMENT_ICON_SOURCE = {
   1: "MainGunS",
@@ -67,7 +68,7 @@ export async function loadOriginalParameterIcons(): Promise<{
         "airdh",
         "drum",
       ].map(async (name) => {
-        const src = `../static/dark/${name}.png`;
+        const src = `${MASTER_URL}/dark/${name}.png`;
         const image = await fetchImage(src);
         return { name, image };
       })
@@ -81,7 +82,7 @@ export async function load74eoAircraftLevelIcons(): Promise<{
   return (
     await Promise.all(
       [0, 1, 2, 3, 4, 5, 6, 7].map(async (level: number) => {
-        const src = `../static/74eo/AircraftLevel/AircraftLevel${level}.png`;
+        const src = `${MASTER_URL}/74eo/AircraftLevel/AircraftLevel${level}.png`;
         const image = await fetchImage(src);
         return { id: level, image };
       })
@@ -114,7 +115,7 @@ export async function load74eoParameterIcons(): Promise<{
         "Speed",
         "Torpedo",
       ].map(async (id: string) => {
-        const src = `../static/74eo/${id}.png`;
+        const src = `${MASTER_URL}/74eo/${id}.png`;
         const image = await fetchImage(src);
         return { id, image };
       })
@@ -128,7 +129,7 @@ export async function loadOriginalEquipmentIcons(
   return (
     await Promise.all(
       Object.keys(EQUIPMENT_ICON_SOURCE).map(async (id: string) => {
-        const src = `../static/common_icon_weapon/common_icon_weapon_id_${id}.png`;
+        const src = `${MASTER_URL}/common_icon_weapon/common_icon_weapon_id_${id}.png`;
         const img = await fetchImage(src);
         const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
         // offset
@@ -170,7 +171,7 @@ export async function load74eoEquipmentIcons(
     await Promise.all(
       Object.values(EQUIPMENT_ICON_SOURCE).map(
         async (id: string, idx: number) => {
-          const src = `../static/74eo/Equipment/${id}.png`;
+          const src = `${MASTER_URL}/74eo/Equipment/${id}.png`;
           const img = await fetchImage(src);
           const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
           // offset
