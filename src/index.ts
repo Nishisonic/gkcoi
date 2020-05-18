@@ -111,10 +111,10 @@ export async function generate(
       )
     ),
     ["74lc", "74sb"].includes(theme) ||
-      fleets.filter(({ ships }: { ships: Ship[] }) => ships.length > 0).length >
-        2
+      fleets.filter(({ ships }) => ships.length > 0).length > 2
       ? 2
-      : 1
+      : 1,
+    "dark" ? "#212121" : "white"
   );
   const useAirbase = airbases
     .map(({ items }) => items)

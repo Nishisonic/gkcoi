@@ -17,6 +17,7 @@ import {
   LoS,
   AirPower,
   ShipImageKind,
+  Item,
 } from "../type";
 import Chart from "chart.js";
 import "chartjs-plugin-labels";
@@ -314,8 +315,10 @@ export async function generateDarkAirbaseCanvasAsync(
   );
   ctx.fillText(totalHighAltitudeAirPower, 209, 34);
 
-  airbases.forEach((airbase, i) => {
-    const items = airbase.items;
+  for (let i = 0; i < 3; i++) {
+    const items = airbases[i]
+      ? airbases[i].items
+      : new Array(4).fill(Item.UNKNOWN);
     ctx.fillStyle = "#1A1A1A";
     ctx.fillRect(1, 41 + i * 182, 263, 178);
     // equipment
@@ -402,7 +405,7 @@ export async function generateDarkAirbaseCanvasAsync(
     ctx.strokeStyle = "#434343";
     ctx.lineWidth = 2;
     ctx.strokeRect(1, 41 + i * 182, 263, 178);
-  });
+  }
   return canvas;
 }
 

@@ -329,11 +329,11 @@ export function toAirPowerString(power: AirPower): string {
 }
 
 export function getDistance(items: Item[]): number {
-  const min = Math.min(
-    ...items.filter(({ type }) => type[4] > 0).map(({ distance }) => distance)
-  );
+  const planes = items.filter(({ type }) => type[4] > 0);
+  if (planes.length === 0) return 0; // Infinity対策
+  const min = Math.min(...planes.map(({ distance }) => distance));
   const reconMax = Math.max(
-    ...items
+    ...planes
       .filter(({ type }) => [9, 10, 41, 49].includes(type[2]))
       .map(({ distance }) => distance)
   );
