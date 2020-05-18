@@ -482,7 +482,7 @@ interface MasterItem {
   api_cost: number;
 }
 
-export interface FormatData {
+interface FormatData {
   lang: Lang;
   theme: Theme;
   hqlv: number;
@@ -507,30 +507,80 @@ export interface DeckBuilder {
    * 74sb=74式(小型)
    */
   theme: Theme;
+  /**
+   * 司令部Lv
+   */
   hqlv: number;
+  /**
+   * 第一艦隊
+   */
   f1?: DeckBuilderFleet;
+  /**
+   * 第二艦隊
+   */
   f2?: DeckBuilderFleet;
+  /**
+   * 第三艦隊
+   */
   f3?: DeckBuilderFleet;
+  /**
+   * 第四艦隊
+   */
   f4?: DeckBuilderFleet;
+  /**
+   * 第一基地航空隊
+   */
   a1?: DeckBuilderAirbase;
+  /**
+   * 第二基地航空隊
+   */
   a2?: DeckBuilderAirbase;
+  /**
+   * 第三基地航空隊
+   */
   a3?: DeckBuilderAirbase;
+  /**
+   * 制空状態(dark ver.&複数艦隊&基地航空隊使用時のみ使用)
+   * 触接率グラフ表示に使用
+   *
+   * AS+:制空権確保
+   * AS:航空優勢
+   * AP:航空劣勢
+   */
   as?: AirState;
+  /**
+   * コメント(dark ver.&複数艦隊&基地航空隊使用時のみ使用)
+   * コメント表示に使用
+   */
   cmt?: string;
 }
 
+/**
+ * フォーマット(艦隊)
+ */
 export interface DeckBuilderFleet {
+  /** 艦隊名(七四式ver.使用時のみ使用) */
   name?: string;
+  /** 旗艦 */
   s1?: DeckBuilderShip;
+  /** 二番艦 */
   s2?: DeckBuilderShip;
+  /** 三番艦 */
   s3?: DeckBuilderShip;
+  /** 四番艦 */
   s4?: DeckBuilderShip;
+  /** 五番艦 */
   s5?: DeckBuilderShip;
+  /** 六番艦 */
   s6?: DeckBuilderShip;
+  /** 七番艦(これを設定する場合、出力は一艦隊のみにすること) */
   s7?: DeckBuilderShip;
 }
 
-interface DeckBuilderShip {
+/**
+ * フォーマット(艦)
+ */
+export interface DeckBuilderShip {
   /** 艦ID */
   id: number;
   /** レベル */
@@ -564,13 +614,23 @@ interface DeckBuilderShip {
   luck: number;
 }
 
-interface DeckBuilderItem {
+/**
+ * フォーマット(装備)
+ * 熟練度の値はそのまま制空に反映されるので注意
+ */
+export interface DeckBuilderItem {
+  /** 装備ID */
   id: number;
-  rf: number;
-  mas: number;
+  /** 改修 */
+  rf?: number;
+  /** 熟練度 */
+  mas?: number;
 }
 
-interface DeckBuilderAirbase {
+/**
+ * フォーマット(基地)
+ */
+export interface DeckBuilderAirbase {
   /** 基地状態 */
   mode?: number;
   /** 装備 */

@@ -1,6 +1,6 @@
 {
   "name": "gkcoi",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate KanColle Organization Image",
   "main": "dist/index.js",
   "module": "esm/index.js",
@@ -17,12 +17,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nishikuma/gkcoi.git"
+    "url": "git+https://github.com/Nishisonic/gkcoi.git"
   },
   "keywords": [
     "kancolle"
   ],
-  "author": "Nishikuma",
+  "author": "Nishisonic(Nishikuma)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Nishisonic/gkcoi/issues"

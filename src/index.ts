@@ -11,7 +11,13 @@ import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
 import { Canvas, createCanvas2D } from "./canvas";
 import { stick } from "./stick";
 
-export { DeckBuilder } from "./type";
+export {
+  DeckBuilder,
+  DeckBuilderFleet,
+  DeckBuilderShip,
+  DeckBuilderItem,
+  DeckBuilderAirbase,
+} from "./type";
 
 /**
  * 画像を生成する
