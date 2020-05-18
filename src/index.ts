@@ -114,7 +114,7 @@ export async function generate(
       fleets.filter(({ ships }) => ships.length > 0).length > 2
       ? 2
       : 1,
-    "dark" ? "#212121" : "white"
+    theme === "dark" ? "#212121" : "white"
   );
   const useAirbase = airbases
     .map(({ items }) => items)
