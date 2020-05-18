@@ -1,7 +1,0 @@
-.prettierrc
-tsconfig.json
-tslint.json
-test/
-src/
-static/ship/
-dist/bundle.js

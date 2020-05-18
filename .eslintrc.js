@@ -3,14 +3,11 @@ module.exports = {
   extends: [
     "plugin:@typescript-eslint/recommended",
     "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
   ],
   rules: {
     semi: 2,
     "max-attributes-per-line": "off",
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-  }
+    "linebreak-style": ["error", "unix"],
+  },
 };
