@@ -477,9 +477,9 @@ interface MasterItem {
   api_rare: number;
   api_broken: number[];
   api_usebull: string;
-  api_version: number;
-  api_distance: number;
-  api_cost: number;
+  api_version?: number;
+  api_distance?: number;
+  api_cost?: number;
 }
 
 interface FormatData {
@@ -724,7 +724,7 @@ export function parse(
     );
   }
 
-  const lang: Lang = deckbuilder.lang || "ja";
+  const lang: Lang = deckbuilder.lang || "jp";
   const theme = deckbuilder.theme || "dark";
   const hqlv = deckbuilder.hqlv || 120;
   const airState = deckbuilder.as || "AS+";
