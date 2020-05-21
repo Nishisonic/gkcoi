@@ -85,34 +85,22 @@ export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
   const UK_SHIPS = [67, 78, 82, 88];
 
   const itemBonus = (ship: Ship): number => {
-    return ship.items
-      .filter((item) => item.id > 0)
-      .map(({ id, los }) => {
-        if (US_SHIPS.includes(ship.ctype)) {
-          // SK レーダー
-          if (id === 278) {
-            return los + 1;
-          }
-          // SK+SG レーダー
-          if (id === 279) {
-            return los + 2;
-          }
-          // SG レーダー(初期型)
-          if (id === 315) {
-            return los + 4;
-          }
-        }
-        if (UK_SHIPS.includes(ship.ctype)) {
-          // SK+SG レーダー
-          if (id === 279) {
-            return los + 1;
-          }
-        }
-        return los;
-      })
-      .reduce((previous, current) => {
-        return previous + current;
-      }, 0);
+    const items = ship.items.filter((item) => item.id > 0);
+    const count = (id: number, minLv = 0): number =>
+      items.filter((item) => item.id === id && item.lv >= minLv).length;
+    const itemLoS = items.map((item) => item.los).reduce((p, v) => p + v, 0);
+    let bonus = 0;
+
+    if (US_SHIPS.includes(ship.ctype)) {
+      bonus += count(278) && 1;
+      bonus += count(279) && 2;
+      bonus += count(315) * 4;
+    }
+    if (UK_SHIPS.includes(ship.ctype)) {
+      bonus += count(279) && 1;
+    }
+
+    return itemLoS + bonus;
   };
 
   return (
