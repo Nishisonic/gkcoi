@@ -81,14 +81,31 @@ export function resize(image: Image, width: number, height: number): Canvas {
 }
 
 export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
+  const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99];
+  const UK_SHIPS = [67, 78, 82, 88];
+
   const itemBonus = (ship: Ship): number => {
     return ship.items
       .filter((item) => item.id > 0)
       .map(({ id, los }) => {
-        // SG レーダー(初期型)
-        if ([65, 69, 83, 87, 84, 91, 93, 95, 99].includes(ship.ctype)) {
+        if (US_SHIPS.includes(ship.ctype)) {
+          // SK レーダー
+          if (id === 278) {
+            return los + 1;
+          }
+          // SK+SG レーダー
+          if (id === 279) {
+            return los + 2;
+          }
+          // SG レーダー(初期型)
           if (id === 315) {
             return los + 4;
+          }
+        }
+        if (UK_SHIPS.includes(ship.ctype)) {
+          // SK+SG レーダー
+          if (id === 279) {
+            return los + 1;
           }
         }
         return los;
