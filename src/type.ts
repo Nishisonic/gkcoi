@@ -2,7 +2,7 @@ import { getAirPower, MASTER_URL } from "./utils";
 import { Lang } from "./lang";
 import { Image, fetchImage } from "./canvas";
 
-export type Theme = "dark" | "74lc" | "74mc" | "74sb";
+export type Theme = "dark" | "74lc" | "74mc" | "74sb" | "official";
 export type Range = 0 | 1 | 2 | 3 | 4;
 export type Speed = 0 | 5 | 10 | 15 | 20;
 export type AirState = "AS+" | "AS" | "AP";
@@ -56,7 +56,7 @@ export class Ship {
   /** 運 */
   luck: number;
   /** 射程 */
-  range: Range;
+  rn: Range;
   /** 速力 */
   sp: Speed;
   /** スロット数 */
@@ -141,7 +141,7 @@ export class Ship {
     this.los = los;
     this.luck = luck;
     this.items = items;
-    this.range = range;
+    this.rn = range;
     this.sp = speed;
     this.slotNum = slotNum;
     this.slots = slots;
@@ -219,6 +219,36 @@ export class Ship {
       .reduce((p, v) => p + v, 0);
 
     return shipTP + itemTP;
+  }
+
+  get range(): Range {
+    const bonus: number =
+      ([87, 91].includes(this.ctype) && this.items.some(({ id }) => id === 315)
+        ? 1
+        : 0) +
+      ([553, 554, 196, 197].includes(this.id) &&
+      this.items.some(({ id }) => id === 61)
+        ? 1
+        : 0);
+    let max: Range = this.rn;
+    for (const { range } of this.items) {
+      if (range > max) {
+        max = range;
+      }
+    }
+    switch (max + bonus) {
+      case 4:
+        return 4;
+      case 3:
+        return 3;
+      case 2:
+        return 2;
+      case 1:
+        return 1;
+      case 0:
+        return 0;
+    }
+    return 4;
   }
 
   get speed(): Speed {
@@ -349,7 +379,7 @@ export class Item {
   /** 索敵 */
   los = 0;
   /** 射程 */
-  range = 0;
+  range: Range = 0;
   /** 航続距離 */
   distance = 0;
   /** 配置コスト */

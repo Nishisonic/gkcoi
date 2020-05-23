@@ -35,8 +35,8 @@ import {
   Lang,
 } from "../lang";
 import {
-  loadOriginalParameterIcons,
-  loadOriginalEquipmentIcons,
+  loadOfficialParameterIcons,
+  loadOfficialEquipmentIcons,
 } from "../icon";
 
 async function generateDarkShipInfoCanvasAsync(
@@ -46,8 +46,8 @@ async function generateDarkShipInfoCanvasAsync(
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
-  const parameterIcons = await loadOriginalParameterIcons();
-  const equipmentIcons = await loadOriginalEquipmentIcons();
+  const parameterIcons = await loadOfficialParameterIcons();
+  const equipmentIcons = await loadOfficialEquipmentIcons();
   const { canvas, ctx } = createCanvas2D(650, 176);
   // overlay
   ctx.fillStyle = "#1A1A1A";
@@ -198,7 +198,7 @@ export async function generateDarkFleetCanvasAsync(
   speed: Speed,
   lang: Lang = "jp"
 ): Promise<Canvas> {
-  const parameterIcons = await loadOriginalParameterIcons();
+  const parameterIcons = await loadOfficialParameterIcons();
   const { canvas, ctx } = createCanvas2D(
     1310,
     ships.filter((ship) => ship.id > 0).length < 7 ? 586 : 768
@@ -258,8 +258,8 @@ export async function generateDarkAirbaseCanvasAsync(
   lang: Lang = "jp"
 ): Promise<Canvas> {
   const langs = lang === "jp" ? null : (await fetchLangData(lang)).items;
-  const parameterIcons = await loadOriginalParameterIcons();
-  const equipmentIcons = await loadOriginalEquipmentIcons();
+  const parameterIcons = await loadOfficialParameterIcons();
+  const equipmentIcons = await loadOfficialEquipmentIcons();
   const { canvas, ctx } = createCanvas2D(265, 586);
   ctx.fillStyle = "#212121";
   ctx.fillRect(0, 0, canvas.width, canvas.height);

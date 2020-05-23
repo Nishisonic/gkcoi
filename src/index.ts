@@ -10,6 +10,7 @@ import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
 import { Canvas, createCanvas2D } from "./canvas";
 import { stick } from "./stick";
+import { generateOfficialFleetCanvasAsync } from "./theme/official";
 
 export {
   DeckBuilder,
@@ -112,15 +113,17 @@ export async function generate(
                 lang,
                 has5slot
               );
+            case "official":
+              return await generateOfficialFleetCanvasAsync(ships, lang);
           }
         }
       )
     ),
-    ["74lc", "74sb"].includes(theme) ||
+    ["74lc", "74sb", "official"].includes(theme) ||
       fleets.filter(({ ships }) => ships.length > 0).length > 2
       ? 2
       : 1,
-    theme === "dark" ? "#212121" : "white"
+    theme === "dark" ? "#212121" : theme === "official" ? "#ece3d7" : "white"
   );
   const useAirbase = airbases
     .map(({ items }) => items)

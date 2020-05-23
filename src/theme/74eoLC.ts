@@ -2,7 +2,6 @@ import {
   fetchLangData,
   toTranslateShipName,
   toTranslateEquipmentName,
-  resize,
   toAirPowerString,
 } from "../utils";
 import { createCanvas2D, Canvas } from "../canvas";
@@ -12,6 +11,7 @@ import {
   load74eoParameterIcons,
   load74eoEquipmentIcons,
   load74eoAircraftLevelIcons,
+  resize,
 } from "../icon";
 
 async function generate74eoLargeCardShipCanvasAsync(

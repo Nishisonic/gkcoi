@@ -10,7 +10,7 @@ gkcoi
 ## Description
 
 [七四式電子観測儀(ElectronicObserver)](https://github.com/andanteyk/ElectronicObserver)で作られた編成画像をWeb上でも再現可能にするライブラリです  
-また、オリジナル版(Dark ver. 上図参照)も提供します
+また、オリジナル版(Dark ver. 上図参照)・公式版(Official ver.)も提供します
 
 ※多言語対応(日本語・English・한국어・中文(簡体))
 
@@ -83,6 +83,7 @@ generate(deck); // Promise<Canvas>
    * 74lc=七四式(大型)
    * 74mc=七四式(中型)
    * 74sb=七四式(小型)
+   * official=公式
    */
   theme?: "dark" | "74lc" | "74mc" | "74sb";
   /** 司令部Lv(default=120) */

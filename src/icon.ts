@@ -1,4 +1,4 @@
-import { fetchImage, Image, createCanvas2D } from "./canvas";
+import { fetchImage, Image, createCanvas2D, Canvas } from "./canvas";
 import { MASTER_URL } from "./utils";
 
 const EQUIPMENT_ICON_SOURCE = {
@@ -51,7 +51,7 @@ const EQUIPMENT_ICON_SOURCE = {
   47: "LandASPatrol",
 };
 
-export async function loadOriginalParameterIcons(): Promise<{
+export async function loadOfficialParameterIcons(): Promise<{
   [key: string]: Image;
 }> {
   return (
@@ -123,7 +123,8 @@ export async function load74eoParameterIcons(): Promise<{
   ).reduce((p, { id, image }) => Object.assign(p, { [id]: image }), {});
 }
 
-export async function loadOriginalEquipmentIcons(
+export async function loadOfficialEquipmentIcons(
+  originalSize = false,
   imgSize = 30
 ): Promise<{ [key: string]: Image }> {
   return (
@@ -131,6 +132,9 @@ export async function loadOriginalEquipmentIcons(
       Object.keys(EQUIPMENT_ICON_SOURCE).map(async (id: string) => {
         const src = `${MASTER_URL}/common_icon_weapon/common_icon_weapon_id_${id}.png`;
         const img = await fetchImage(src);
+        if (originalSize) {
+          return { id, image: img };
+        }
         const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
         // offset
         const { canvas: oc, ctx: octx } = createCanvas2D(54, 54);
@@ -201,4 +205,82 @@ export async function load74eoEquipmentIcons(
       )
     )
   ).reduce((p, { id, image }) => Object.assign(p, { [id]: image }), {});
+}
+
+export async function loadOfficialCommonMainIcons(): Promise<{
+  [key: string]: Image;
+}> {
+  return (
+    await Promise.all(
+      [
+        12,
+        14,
+        18,
+        19,
+        26,
+        27,
+        28,
+        29,
+        41,
+        42,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        61,
+        62,
+      ].map(async (name) => {
+        const src = `${MASTER_URL}/common_main_${name}.png`;
+        const image = await fetchImage(src);
+        return { name, image };
+      })
+    )
+  ).reduce((p, c) => Object.assign(p, { [c.name]: c.image }), {});
+}
+
+export async function loadOfficialCommonMiscIcons(): Promise<{
+  [key: string]: Image;
+}> {
+  return (
+    await Promise.all(
+      [169, 170, 171, 172, 173, 174, 175, 180].map(async (name) => {
+        const src = `${MASTER_URL}/common_main_${name}.png`;
+        const image = await fetchImage(src);
+        return { name, image };
+      })
+    )
+  ).reduce((p, c) => Object.assign(p, { [c.name]: c.image }), {});
+}
+
+export async function loadOfficialHpGaugeIcons(): Promise<{
+  [key: string]: Image;
+}> {
+  return (
+    await Promise.all(
+      ["hp_gauge_mask", "hp_s_bg2"].map(async (name) => {
+        const src = `${MASTER_URL}/hpgauge/${name}.png`;
+        const image = await fetchImage(src);
+        return { name, image };
+      })
+    )
+  ).reduce((p, c) => Object.assign(p, { [c.name]: c.image }), {});
+}
+
+export function resize(
+  image: Image,
+  width: number,
+  height: number,
+  offsetX = 0,
+  offsetY = 0
+): Canvas {
+  const { canvas, ctx } = createCanvas2D(width, height);
+  ctx.drawImage(image, offsetX, offsetY, width, height);
+  return canvas;
 }

@@ -1,4 +1,3 @@
-import { createCanvas2D, Canvas, Image } from "./canvas";
 import { Ship, Item, AirState, AirPower, MasterData } from "./type";
 import { Lang } from "./lang";
 
@@ -72,12 +71,6 @@ export function toTranslateEquipmentName(
     return langData[name];
   }
   return name;
-}
-
-export function resize(image: Image, width: number, height: number): Canvas {
-  const { canvas, ctx } = createCanvas2D(width, height);
-  ctx.drawImage(image, 0, 0, width, height);
-  return canvas;
 }
 
 export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {

@@ -1,13 +1,16 @@
 import {
   fetchLangData,
   toTranslateEquipmentName,
-  resize,
   toAirPowerString,
 } from "../utils";
 import { createCanvas2D, Canvas } from "../canvas";
 import { Ship, LoS, AirPower, ShipImageKind } from "../type";
 import { Lang, NONE, AIR_POWER, LOS } from "../lang";
-import { load74eoParameterIcons, load74eoEquipmentIcons } from "../icon";
+import {
+  load74eoParameterIcons,
+  load74eoEquipmentIcons,
+  resize,
+} from "../icon";
 
 async function generate74eoSmallBannerShipCanvasAsync(
   ship: Ship,
@@ -115,7 +118,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
  * @param los 索敵
  * @param airPower 制空値
  * @param lang 言語
- * @pram has5slot 5スロット目は存在するか
+ * @param has5slot 5スロット目は存在するか
  * @return 画像
  */
 export async function generate74eoSmallBannerFleetCanvasAsync(
