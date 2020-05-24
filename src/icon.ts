@@ -237,7 +237,7 @@ export async function loadOfficialCommonMainIcons(): Promise<{
         61,
         62,
       ].map(async (name) => {
-        const src = `${MASTER_URL}/common_main_${name}.png`;
+        const src = `${MASTER_URL}/common_main/common_main_${name}.png`;
         const image = await fetchImage(src);
         return { name, image };
       })
@@ -251,7 +251,7 @@ export async function loadOfficialCommonMiscIcons(): Promise<{
   return (
     await Promise.all(
       [169, 170, 171, 172, 173, 174, 175, 180].map(async (name) => {
-        const src = `${MASTER_URL}/common_main_${name}.png`;
+        const src = `${MASTER_URL}/common_misc/common_misc_${name}.png`;
         const image = await fetchImage(src);
         return { name, image };
       })

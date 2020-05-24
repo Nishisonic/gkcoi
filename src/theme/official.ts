@@ -166,6 +166,7 @@ async function generateOfficialShipCanvasAsync(
 
   ctx.font = "22px Meiryo";
   ctx.textAlign = "right";
+  ctx.fillStyle = `#54483c`;
   [
     [ship.hp, ship.firepower],
     [ship.armor, ship.torpedo],
