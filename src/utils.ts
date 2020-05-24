@@ -499,7 +499,7 @@ export function getCanAACIList(
 ): { kind: number; rate: number }[] {
   const aalists = ships
     .map((ship: Ship) => {
-      const aalist = [];
+      const aalist: number[] = [];
       const HAGun = ship.items.filter(({ type }) => type[3] === 16).length;
       const Radar = ship.items.filter(({ type }) => type[3] === 11).length;
       if (ship.ctype === 54 && HAGun) {
@@ -513,6 +513,7 @@ export function getCanAACIList(
       } else {
         const FiveInch = ship.items.filter(({ id }) => [284, 313].includes(id))
           .length;
+        const FiveInchKai = ship.items.filter(({ id }) => id === 313).length;
         const FiveInchGFCS = ship.items.filter(({ id }) => id === 308).length;
         const GFCS = ship.items.filter(({ id }) => id === 307).length;
         const GFCSFiveInchM = ship.items.filter(({ id }) => id === 363).length;
@@ -547,7 +548,7 @@ export function getCanAACIList(
           if (FiveInch >= 2 && GFCS) {
             aalist.push(36);
           }
-          if (FiveInch >= 2) {
+          if (FiveInchKai >= 2) {
             aalist.push(37);
           }
           aalist.push(0);

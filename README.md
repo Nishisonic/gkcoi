@@ -63,9 +63,13 @@ generate(deck); // Promise<Canvas>
 
 ## Format
 
+```TS
+generate(DeckBuilder, options)
+```
+
 ?は無くても動く部分
 
-### deckbuilder
+### Deckbuilder
 
 ```
 {
@@ -85,7 +89,7 @@ generate(deck); // Promise<Canvas>
    * 74sb=七四式(小型)
    * official=公式
    */
-  theme?: "dark" | "74lc" | "74mc" | "74sb";
+  theme?: "dark" | "74lc" | "74mc" | "74sb" | "official";
   /** 司令部Lv(default=120) */
   hqlv?: number;
   /** 艦隊 */
@@ -163,6 +167,13 @@ generate(deck); // Promise<Canvas>
 ```
 
 ### options
+
+```
+{
+  start2URL?: string;
+  shipURL?: string;
+}
+```
 
 この引数を指定すると、画像・マスターデータ取得先をデフォルトから変えることができます  
 これにより、ライブラリの更新が遅れたとしても独自で更新することが可能になります
