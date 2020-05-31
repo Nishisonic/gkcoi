@@ -1,15 +1,16 @@
 gkcoi  
 ![npm](https://img.shields.io/npm/v/gkcoi)
 [![License](https://img.shields.io/npm/l/express.svg)](https://github.com/Nishisonic/gkcoi/blob/master/LICENSE)
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q11RO52)
 ====
 
-パラメータから艦これ編成画像をCanvas形式で出力します
+パラメータから艦これ編成画像を Canvas 形式で出力します
 
 ![](https://i.imgur.com/1edg6hX.png)
 
 ## Description
 
-[七四式電子観測儀(ElectronicObserver)](https://github.com/andanteyk/ElectronicObserver)で作られた編成画像をWeb上でも再現可能にするライブラリです  
+[七四式電子観測儀(ElectronicObserver)](https://github.com/andanteyk/ElectronicObserver)で作られた編成画像を Web 上でも再現可能にするライブラリです  
 また、オリジナル版(Dark ver. 上図参照)・公式版(Official ver.)も提供します
 
 ※多言語対応(日本語・English・한국어・中文(簡体))
@@ -19,13 +20,14 @@ gkcoi
 - [Chart.js](https://github.com/chartjs/Chart.js)
 - [chartjs-plugin-labels](https://github.com/emn178/chartjs-plugin-labels)
 - [chartjs-plugin-colorschemes](https://github.com/nagix/chartjs-plugin-colorschemes)
+- [chartjs-plugin-datalabels](https://github.com/chartjs/chartjs-plugin-datalabels)
 
-Dark ver.&連合艦隊&基地航空隊使用時のみ使用  
-ドーナツ円グラフの表示に使用します
+Dark(-ex) ver.のときに使用  
+棒グラフ、ドーナツ円グラフの表示に使用します
 
 ## Usage
 
-``` JS
+```JS
 import { generate } from "gkcoi";
 
 // DeckBuilder
@@ -84,12 +86,13 @@ generate(DeckBuilder, options)
   /**
    * テーマ
    * dark=オリジナル(default)
+   * dark-ex=オリジナル(遠征パラメータ表示版/第一艦隊のみ表示)
    * 74lc=七四式(大型)
    * 74mc=七四式(中型)
    * 74sb=七四式(小型)
    * official=公式
    */
-  theme?: "dark" | "74lc" | "74mc" | "74sb" | "official";
+  theme?: "dark" | "dark-ex" | "74lc" | "74mc" | "74sb" | "official";
   /** 司令部Lv(default=120) */
   hqlv?: number;
   /** 艦隊 */
@@ -178,20 +181,20 @@ generate(DeckBuilder, options)
 この引数を指定すると、画像・マスターデータ取得先をデフォルトから変えることができます  
 これにより、ライブラリの更新が遅れたとしても独自で更新することが可能になります
 
-* start2URL(マスターデータ)
-  * デフォルト:https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/START2.json
+- start2URL(マスターデータ)
+  - デフォルト:https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/START2.json
 
 設定する場合はファイルを直指定してください
 
-* shipURL(艦娘画像)
-  * デフォルト:https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship
+- shipURL(艦娘画像)
+  - デフォルト:https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static/ship
 
 設定する場合は途中まで指定  
-その先はライブラリが``` `${shipURL}/card/1.png` ```等といった形で取得します
+その先はライブラリが`` `${shipURL}/card/1.png` ``等といった形で取得します
 
 ## Install
 
-``` shell
+```shell
 $ npm install gkcoi
 ```
 
@@ -201,19 +204,28 @@ $ npm install gkcoi
 ※コードのみ
 
 - Chart.js
+
   - ドーナツ円グラフの表示に使用
   - [MIT License](https://github.com/chartjs/Chart.js/blob/master/LICENSE.md)
 
 - chartjs-plugin-labels
+
   - ドーナツ円グラフの表示に使用
   - [MIT License](https://github.com/emn178/chartjs-plugin-labels/blob/master/LICENSE.txt)
 
 - chartjs-plugin-colorschemes
+
   - ドーナツ円グラフの表示に使用
   - [MIT License](https://github.com/nagix/chartjs-plugin-colorschemes/blob/master/LICENSE.md)
 
+- chartjs-plugin-datalabels
+
+  - 棒グラフの表示に使用
+  - [MIT License](https://github.com/chartjs/chartjs-plugin-datalabels/blob/master/LICENSE.md)
+
 - ElectronicObserver
-  - 七四式ver.のアイコンで使用
+
+  - 七四式 ver.のアイコンで使用
   - [MIT License](https://github.com/andanteyk/ElectronicObserver/blob/develop/LICENSE)
 
 - kc3-translations

@@ -22,6 +22,7 @@ import {
 import Chart from "chart.js";
 import "chartjs-plugin-labels";
 import "chartjs-plugin-colorschemes";
+import "chartjs-plugin-datalabels";
 import {
   NONE,
   SPEED,
@@ -33,11 +34,14 @@ import {
   CONTACT,
   AA_CI,
   Lang,
+  LABEL,
 } from "../lang";
 import {
   loadOfficialParameterIcons,
   loadOfficialEquipmentIcons,
 } from "../icon";
+import { isNumber } from "util";
+import { Context } from "chartjs-plugin-datalabels";
 
 async function generateDarkShipInfoCanvasAsync(
   shipIdx: number,
@@ -498,7 +502,7 @@ export async function generateDarkParameterCanvasAsync(
           fontStyle: "bold",
         },
         datalabels: {
-          formatter: (): string => "",
+          display: (): boolean => false,
         },
         colorschemes: {
           scheme: "tableau.ClassicMedium10",
@@ -553,10 +557,187 @@ export async function generateDarkParameterCanvasAsync(
             return schemeColors;
           },
         },
+        datalabels: {
+          display: (): boolean => false,
+        },
       },
     },
   });
   ctx.drawImage(aaciCanvases.canvas, 0, 237);
   fillTextLine(ctx, comment, 12, 430, 250);
+  return canvas;
+}
+
+export async function generateDarkExpeditionStatsCanvasAsync(
+  ships: Ship[],
+  lang: Lang = "jp"
+): Promise<Canvas> {
+  const { canvas, ctx } = createCanvas2D(265, 586);
+  ctx.fillStyle = "#212121";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "#434343";
+  ctx.lineWidth = 2;
+  ctx.fillStyle = "#1A1A1A";
+  ctx.fillRect(1, 41, 263, 542);
+  ctx.strokeRect(1, 41, 263, 542);
+  ctx.textAlign = "right";
+  ctx.font = "bold 32px Meiryo";
+  ctx.fillStyle = "#2A2a2a";
+  ctx.fillText("Expedition", 250, 31);
+
+  ctx.fillStyle = "#1A1A1A";
+  ctx.fillRect(1, 1, 263, 36);
+  ctx.font = "bold 16px Meiryo";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#fff";
+  ctx.fillText("Expedition", 132, 24);
+  ctx.strokeRect(1, 1, 263, 36);
+
+  const canvas2 = createCanvas2D(265, 545);
+  new Chart(canvas2.ctx, {
+    type: "horizontalBar",
+    data: {
+      datasets: [
+        {
+          data: ships.reduce(
+            (p, ship) => {
+              p[0] += ship.firepower;
+              p[1] += ship.aa;
+              p[2] += ship.asw;
+              p[3] += ship.los;
+              return p;
+            },
+            [0, 0, 0, 0]
+          ),
+          label: "Status",
+          borderWidth: 1,
+          borderColor: [
+            "rgb(255, 128, 114)",
+            "rgb(144, 238, 144)",
+            "rgb(175, 238, 238)",
+            "rgb(238, 255, 204)",
+          ],
+          backgroundColor: [
+            "rgba(250, 128, 114, 0.6)",
+            "rgba(144, 238, 144, 0.6)",
+            "rgba(175, 238, 238, 0.6)",
+            "rgba(238, 255, 204, 0.6)",
+          ],
+        },
+        {
+          data: ships.reduce(
+            (p, ship) => {
+              p[0] += ship.items.reduce(
+                (p, v) => p + v.expeditionFirepowerBonus,
+                0
+              );
+              p[1] += ship.items.reduce((p, v) => p + v.expeditionAABonus, 0);
+              p[2] += ship.items.reduce((p, v) => p + v.expeditionASWBonus, 0);
+              p[3] += ship.items.reduce((p, v) => p + v.expeditionLoSBonus, 0);
+              return p;
+            },
+            [0, 0, 0, 0]
+          ),
+          borderWidth: 1,
+          borderColor: [
+            "rgb(255, 128, 114)",
+            "rgb(144, 238, 144)",
+            "rgb(175, 238, 238)",
+            "rgb(238, 255, 204)",
+          ],
+          backgroundColor: [
+            "rgba(250, 128, 114, 0.25)",
+            "rgba(144, 238, 144, 0.25)",
+            "rgba(175, 238, 238, 0.25)",
+            "rgba(238, 255, 204, 0.25)",
+          ],
+          label: "★",
+        },
+      ],
+      labels: [
+        LABEL.FIREPOWER[lang],
+        LABEL.AA[lang],
+        LABEL.ASW[lang],
+        LABEL.LOS[lang],
+      ],
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          formatter: (value, ctx: Context): string => {
+            const datasets = ctx.chart.data.datasets;
+            if (datasets && ctx.datasetIndex === datasets.length - 1) {
+              const data = datasets
+                .map((dataset) => dataset.data)
+                .map((data) => {
+                  if (data) {
+                    const num = data[ctx.dataIndex];
+                    if (typeof num === "number") {
+                      return num;
+                    }
+                  }
+                  return 0;
+                });
+              return `${(Math.floor((data[0] + data[1]) * 10) / 10).toFixed(
+                1
+              )}\n(${data[0]}+${(Math.floor(data[1] * 10) / 10).toFixed(1)})`;
+            } else {
+              return "";
+            }
+          },
+          anchor: "end",
+          align: "end",
+          color: "white",
+          textAlign: "center",
+          font: {
+            size: 16,
+          },
+        },
+      },
+      responsive: false,
+      animation: {
+        duration: 0,
+      },
+      legend: {
+        position: "top",
+        labels: {
+          fontColor: "white",
+          fontSize: 16,
+        },
+      },
+      scales: {
+        xAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+              max: 1000,
+              fontColor: "white",
+              fontSize: 16,
+            },
+            stacked: true,
+            gridLines: {
+              zeroLineColor: "#434343",
+              color: "#434343",
+            },
+          },
+        ],
+        yAxes: [
+          {
+            ticks: {
+              fontColor: "white",
+              fontSize: 16,
+            },
+            stacked: true,
+            gridLines: {
+              zeroLineColor: "#434343",
+              color: ["#434343"],
+            },
+          },
+        ],
+      },
+    },
+  });
+  ctx.drawImage(canvas2.canvas, 0, 41);
   return canvas;
 }

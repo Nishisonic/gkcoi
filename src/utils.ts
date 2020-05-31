@@ -173,7 +173,7 @@ function getImprovementBonus(item: Item): number {
         return 0.2 * item.lv;
       case 7:
       case 57:
-        return item.id !== 320 ? 0.25 * item.lv : 0;
+        return item.aa > 3 ? 0.25 * item.lv : 0;
     }
   }
   return 0;

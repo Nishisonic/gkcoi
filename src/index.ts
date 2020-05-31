@@ -2,6 +2,7 @@ import {
   generateDarkFleetCanvasAsync,
   generateDarkAirbaseCanvasAsync,
   generateDarkParameterCanvasAsync,
+  generateDarkExpeditionStatsCanvasAsync,
 } from "./theme/dark";
 import { parse, Ship, DeckBuilder, Speed, LoS, MasterData } from "./type";
 import { getLoSValue, fetchStart2, MASTER_URL } from "./utils";
@@ -46,8 +47,9 @@ export async function generate(
   );
   const fimage = stick(
     await Promise.all(
-      fleets.map(
-        async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
+      fleets
+        .filter((v, i) => (theme === "dark-ex" ? i === 0 : true))
+        .map(async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
           const los: LoS = {
             1: getLoSValue(ships, hqlv, 1),
             2: getLoSValue(ships, hqlv, 2),
@@ -79,6 +81,7 @@ export async function generate(
 
           switch (theme) {
             case "dark":
+            case "dark-ex":
               return await generateDarkFleetCanvasAsync(
                 i,
                 ships,
@@ -116,8 +119,7 @@ export async function generate(
             case "official":
               return await generateOfficialFleetCanvasAsync(ships, lang);
           }
-        }
-      )
+        })
     ),
     ["74lc", "74sb", "official"].includes(theme) ||
       fleets.filter(({ ships }) => ships.length > 0).length > 2
@@ -125,6 +127,22 @@ export async function generate(
       : 1,
     theme === "dark" ? "#212121" : theme === "official" ? "#ece3d7" : "white"
   );
+  if (theme === "dark-ex") {
+    const eimage = await generateDarkExpeditionStatsCanvasAsync(
+      fleets[0].ships,
+      lang
+    );
+    const { canvas, ctx } = createCanvas2D(
+      fimage.width + eimage.width + 2,
+      fimage.height
+    );
+    ctx.fillStyle = "#212121";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(fimage, 0, 0);
+    ctx.drawImage(eimage, fimage.width + 2, 0);
+    return canvas;
+  }
   const useAirbase = airbases
     .map(({ items }) => items)
     .some((items) => items.some(({ id }) => id > 0));

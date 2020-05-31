@@ -2,7 +2,7 @@ import { getAirPower, MASTER_URL } from "./utils";
 import { Lang } from "./lang";
 import { Image, fetchImage } from "./canvas";
 
-export type Theme = "dark" | "74lc" | "74mc" | "74sb" | "official";
+export type Theme = "dark" | "74lc" | "74mc" | "74sb" | "official" | "dark-ex";
 export type Range = 0 | 1 | 2 | 3 | 4;
 export type Speed = 0 | 5 | 10 | 15 | 20;
 export type AirState = "AS+" | "AS" | "AP";
@@ -296,19 +296,19 @@ export class Ship {
       // 低速B群:戦艦、航戦、軽空母、水母、練巡、大鯨など
       if (
         [8, 9, 10, 7, 16, 21].includes(this.stype) ||
-        [50].includes(this.ctype)
+        [50, 72].includes(this.ctype)
       ) {
         if (newBoiler >= 2 || newBoiler + boiler >= 3) return 15;
-        if (newBoiler || boiler) return 10;
-      }
-      // 低速C群:潜水艦、潜水空母、あきつ丸、明石、速吸
-      if ([13, 14].includes(this.stype) || [45, 49, 60].includes(this.ctype)) {
         if (newBoiler || boiler) return 10;
       }
       // 低速特殊B群:Samuel B.Roberts、夕張
       if (["サミュエル・B・ロバーツ", "ゆうばり"].includes(this.yomi)) {
         if (newBoiler >= 2 || newBoiler + boiler >= 3) return 15;
         return 10;
+      }
+      // 低速C群:潜水艦、潜水空母、あきつ丸、明石、速吸
+      if ([13, 14].includes(this.stype) || [45, 49, 60].includes(this.ctype)) {
+        if (newBoiler || boiler) return 10;
       }
     }
     return this.sp;
@@ -416,6 +416,62 @@ export class Item {
 
   static get UNKNOWN(): Item {
     return new Item(new UnknownMasterItem());
+  }
+
+  get expeditionFirepowerBonus(): number {
+    switch (this.type[2]) {
+      /** 小口径主砲 */
+      case 1:
+        return 0.5 * Math.sqrt(this.lv);
+      /** 中口径主砲 */
+      case 2:
+        return Math.sqrt(this.lv);
+      /** 大口径主砲 */
+      case 3:
+        return 0.95 * Math.sqrt(this.lv);
+      /** 副砲 */
+      case 4:
+        return 0.15 * this.lv;
+      /** 徹甲弾 */
+      case 19:
+        return 0.5 * Math.sqrt(this.lv);
+      /** 機銃 */
+      case 21:
+        return 0.5 * Math.sqrt(this.lv);
+    }
+    return 0;
+  }
+
+  get expeditionAABonus(): number {
+    switch (this.type[3]) {
+      /** 機銃 */
+      case 15:
+        return Math.sqrt(this.lv);
+      /** 高角砲 */
+      case 16:
+        return 0.3 * this.lv;
+    }
+    return 0;
+  }
+
+  get expeditionASWBonus(): number {
+    switch (this.type[2]) {
+      /** ソナー */
+      case 14:
+      /** 爆雷 */
+      case 15:
+        return Math.sqrt(this.lv);
+    }
+    return 0;
+  }
+
+  get expeditionLoSBonus(): number {
+    switch (this.type[3]) {
+      /** 電探 */
+      case 11:
+        return Math.sqrt(this.lv);
+    }
+    return 0;
   }
 }
 
