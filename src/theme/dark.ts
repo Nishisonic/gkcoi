@@ -40,7 +40,6 @@ import {
   loadOfficialParameterIcons,
   loadOfficialEquipmentIcons,
 } from "../icon";
-import { isNumber } from "util";
 import { Context } from "chartjs-plugin-datalabels";
 
 async function generateDarkShipInfoCanvasAsync(

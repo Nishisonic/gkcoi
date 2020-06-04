@@ -21,9 +21,7 @@ gkcoi
 - [chartjs-plugin-labels](https://github.com/emn178/chartjs-plugin-labels)
 - [chartjs-plugin-colorschemes](https://github.com/nagix/chartjs-plugin-colorschemes)
 - [chartjs-plugin-datalabels](https://github.com/chartjs/chartjs-plugin-datalabels)
-
-Dark(-ex) ver.のときに使用  
-棒グラフ、ドーナツ円グラフの表示に使用します
+- [lzjs](https://github.com/polygonplanet/lzjs)
 
 ## Usage
 
@@ -192,6 +190,20 @@ generate(DeckBuilder, options)
 設定する場合は途中まで指定  
 その先はライブラリが`` `${shipURL}/card/1.png` ``等といった形で取得します
 
+## Extension
+
+v1.1.1 より、新たな関数として`decode()`が追加されました  
+これを使うと、生成した画像から`DeckBuilder`インターフェースのフォーマットを取り出すことが出来るようになります  
+※v1.1.1 以降に生成された画像のみ対応しています
+
+### Extension Format
+
+```TS
+decode(url)
+```
+
+url の部分は、`canvas.toDataURL()`で変換する等してください
+
 ## Install
 
 ```shell
@@ -229,8 +241,20 @@ $ npm install gkcoi
   - [MIT License](https://github.com/andanteyk/ElectronicObserver/blob/develop/LICENSE)
 
 - kc3-translations
+
   - 翻訳で使用
   - [MIT License](https://github.com/KC3Kai/kc3-translations/blob/master/LICENSE)
+
+- steganography.js
+
+  - 画像に情報を埋め込む際に使用
+  - 本家:[MIT License](https://github.com/petereigenschink/steganography.js/blob/master/LICENSE) 改造版:[MIT License](https://github.com/KC3Kai/KC3Kai/blob/master/LICENSE)
+    - このライブラリでは改造版を使用しています
+
+- lzjs
+
+  - 情報を圧縮する際に使用
+  - [MIT License](https://github.com/polygonplanet/lzjs/blob/master/LICENSE)
 
 ## Author
 

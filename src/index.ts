@@ -9,9 +9,13 @@ import { getLoSValue, fetchStart2, MASTER_URL } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
-import { Canvas, createCanvas2D } from "./canvas";
+import { Canvas, createCanvas2D, fetchImage } from "./canvas";
 import { stick } from "./stick";
 import { generateOfficialFleetCanvasAsync } from "./theme/official";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const steg = require("./steganography.js");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lzjs = require("lzjs");
 
 export {
   DeckBuilder,
@@ -21,19 +25,11 @@ export {
   DeckBuilderAirbase,
 } from "./type";
 
-/**
- * 画像を生成する
- * @param deckbuilder フォーマット
- * @param options 画像取得オプション
- */
-export async function generate(
+async function createAsync(
   deckbuilder: DeckBuilder,
   options: {
     start2URL: string;
     shipURL: string;
-  } = {
-    start2URL: `${MASTER_URL}/START2.json`,
-    shipURL: `${MASTER_URL}/ship`,
   }
 ): Promise<Canvas> {
   const start2: MasterData = await fetchStart2(options.start2URL);
@@ -169,4 +165,57 @@ export async function generate(
     return canvas;
   }
   return fimage;
+}
+
+function encodeAsync(data: string, url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    steg.encode(data, url, {
+      success: (value: string) => resolve(value),
+      error: (e: string) => reject(e),
+    });
+  });
+}
+
+function decodeAsync(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    steg.decode(url, {
+      success: (value: string) => resolve(value),
+      error: (e: string) => reject(e),
+    });
+  });
+}
+
+/**
+ * 画像を生成する
+ * @param deckbuilder フォーマット
+ * @param options 画像取得オプション
+ * @return 編成画像
+ */
+export async function generate(
+  deckbuilder: DeckBuilder,
+  options: {
+    start2URL: string;
+    shipURL: string;
+  } = {
+    start2URL: `${MASTER_URL}/START2.json`,
+    shipURL: `${MASTER_URL}/ship`,
+  }
+): Promise<Canvas> {
+  const original = await createAsync(deckbuilder, options);
+  const src = await encodeAsync(
+    lzjs.compress(JSON.stringify(deckbuilder)),
+    original.toDataURL()
+  );
+  const { canvas, ctx } = createCanvas2D(original.width, original.height);
+  ctx.drawImage(await fetchImage(src), 0, 0);
+  return canvas;
+}
+
+/**
+ * 画像をデコードして情報を取り出す
+ * @param src ソース
+ * @return フォーマット
+ */
+export async function decode(src: string): Promise<string> {
+  return JSON.parse(lzjs.decompress(await decodeAsync(src)));
 }

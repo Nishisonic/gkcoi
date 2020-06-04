@@ -1,4 +1,4 @@
-import { generate } from "../src/index";
+import { generate, decode } from "../src/index";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 (async () => {
@@ -29,5 +29,6 @@ import { generate } from "../src/index";
     },
   };
   const canvas = await generate(deck);
-  document.body.appendChild(canvas, canvas.width, canvas.height);
+  document.body.appendChild(canvas);
+  console.log(await decode(canvas.toDataURL()));
 })();
