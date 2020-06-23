@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "target": "ESNext",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -15,7 +16,7 @@
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
   ],
   "exclude": [
     "node_modules",
