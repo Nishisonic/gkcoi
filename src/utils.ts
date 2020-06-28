@@ -74,7 +74,7 @@ export function toTranslateEquipmentName(
 }
 
 export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
-  const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99];
+  const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99, 102];
   // const UK_SHIPS = [67, 78, 82, 88];
 
   const itemBonus = (ship: Ship): number => {
