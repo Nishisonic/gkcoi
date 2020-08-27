@@ -495,10 +495,17 @@ export async function generateDarkParameterCanvasAsync(
       },
       plugins: {
         labels: {
-          render: "percentage",
           fontSize: 14,
           fontColor: "black",
           fontStyle: "bold",
+          render: (args: {
+            value: number;
+            label: string;
+            percentage: number;
+          }): string =>
+            args.label !== NONE[lang] && args.percentage >= 10
+              ? `${args.percentage}%`
+              : "",
         },
         datalabels: {
           display: (): boolean => false,
@@ -547,7 +554,9 @@ export async function generateDarkParameterCanvasAsync(
             label: string;
             percentage: number;
           }): string =>
-            args.label !== NONE[lang] ? `${args.percentage}%` : "",
+            args.label !== NONE[lang] && args.percentage >= 10
+              ? `${args.percentage}%`
+              : "",
         },
         colorschemes: {
           scheme: "tableau.ClassicMedium10",
