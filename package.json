@@ -1,6 +1,6 @@
 {
   "name": "gkcoi",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Generate KanColle Organization Image",
   "main": "dist/index.js",
   "module": "esm/index.js",

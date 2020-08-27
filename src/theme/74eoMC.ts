@@ -29,7 +29,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
   const parameterIcons = await load74eoParameterIcons();
   const equipmentIcons = await load74eoEquipmentIcons();
   const { canvas, ctx } = createCanvas2D(677, 172);
-  ctx.fillStyle = "#FFF";
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // 5スロ位置基準
@@ -56,7 +56,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
   grd.addColorStop(1, "rgba(255,255,255,0.9)");
   ctx.fillStyle = grd;
   ctx.fillRect(370, 0, 730, 166);
-  ctx.strokeStyle = ctx.fillStyle = "#008888";
+  ctx.strokeStyle = ctx.fillStyle = "#088";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(10, 168.5);
@@ -98,8 +98,8 @@ async function generate74eoMediumCutinShipCanvasAsync(
           30 + 23 * itemIdx + itemOffset
         );
         grd.addColorStop(0, "rgba(255,255,255,0)");
-        grd.addColorStop(0.6, "rgba(255,255,255,1)");
-        grd.addColorStop(1, "rgba(255,255,255,1)");
+        grd.addColorStop(0.6, "white");
+        grd.addColorStop(1, "white");
         ctx.fillStyle = grd;
         ctx.fillRect(667, 30 + 23 * itemIdx + itemOffset, 10, 21);
       }
@@ -108,8 +108,8 @@ async function generate74eoMediumCutinShipCanvasAsync(
           // オーバーレイ
           grd = ctx.createLinearGradient(640, 0, 685, 0);
           grd.addColorStop(0, "rgba(255,255,255,0)");
-          grd.addColorStop(0.3, "rgba(255,255,255,1)");
-          grd.addColorStop(1, "rgba(255,255,255,1)");
+          grd.addColorStop(0.3, "white");
+          grd.addColorStop(1, "white");
           ctx.fillStyle = grd;
           ctx.fillRect(640, 30 + 23 * itemIdx + itemOffset, 37, 21);
         }
@@ -131,7 +131,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
       if (ship.items[i] && ship.items[i].type[4] > 0) {
         ctx.fillStyle = "#0f0f0f";
       } else {
-        ctx.fillStyle = "#aaaaaa";
+        ctx.fillStyle = "#aaa";
       }
       ctx.textAlign = "right";
       ctx.font = "12px Meiryo";
@@ -143,7 +143,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
   }
   ctx.textAlign = "left";
   ctx.font = "12px Meiryo";
-  ctx.fillStyle = "#008888";
+  ctx.fillStyle = "#088";
   ctx.fillText("-------------------------------------------------", 421, 149);
   return canvas;
 }
@@ -171,7 +171,7 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
     ships.filter((ship) => ship.id > 0).length < 7 ? 567 : 734
   );
 
-  ctx.fillStyle = "#FFF";
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   (
@@ -218,7 +218,7 @@ export async function generate74eoMediumCutinFleetCanvasAsync(
       49,
     32
   );
-  ctx.strokeStyle = ctx.fillStyle = "#008888";
+  ctx.strokeStyle = ctx.fillStyle = "#088";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(8, 37.5);

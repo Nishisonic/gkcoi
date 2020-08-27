@@ -22,7 +22,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
   const equipmentIcons = await load74eoEquipmentIcons();
   const offset = has5slot ? 0 : 18;
   const { canvas, ctx } = createCanvas2D(213, 151 - offset);
-  ctx.fillStyle = "#FFF";
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   if (ship.id > 0) {
     const shipImage = resize(
@@ -33,7 +33,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
     ctx.drawImage(shipImage, 1, 1);
   }
 
-  ctx.strokeStyle = ctx.fillStyle = "#008888";
+  ctx.strokeStyle = ctx.fillStyle = "#088";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(5, 149.5 - offset);
@@ -63,8 +63,8 @@ async function generate74eoSmallBannerShipCanvasAsync(
       if (nameWidth > 170) {
         const grd = ctx.createLinearGradient(205, 0, 215, 0);
         grd.addColorStop(0, "rgba(255,255,255,0)");
-        grd.addColorStop(0.6, "rgba(255,255,255,1)");
-        grd.addColorStop(1, "rgba(255,255,255,1)");
+        grd.addColorStop(0.6, "white");
+        grd.addColorStop(1, "white");
         ctx.fillStyle = grd;
         ctx.fillRect(205, 42 + 18 * itemIdx, 10, 17);
       }
@@ -73,8 +73,8 @@ async function generate74eoSmallBannerShipCanvasAsync(
           // オーバーレイ
           const grd = ctx.createLinearGradient(180, 0, 215, 0);
           grd.addColorStop(0, "rgba(255,255,255,0)");
-          grd.addColorStop(0.3, "rgba(255,255,255,1)");
-          grd.addColorStop(1, "rgba(255,255,255,1)");
+          grd.addColorStop(0.3, "white");
+          grd.addColorStop(1, "white");
           ctx.fillStyle = grd;
           ctx.fillRect(180, 42 + 18 * itemIdx, 35, 17);
         }
@@ -96,7 +96,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
       if (ship.items[i] && ship.items[i].type[4] > 0) {
         ctx.fillStyle = "#0f0f0f";
       } else {
-        ctx.fillStyle = "#aaaaaa";
+        ctx.fillStyle = "#aaa";
       }
       ctx.textAlign = "right";
       ctx.font = "12px Meiryo";
@@ -106,7 +106,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
   }
   ctx.textAlign = "left";
   ctx.font = "12px Meiryo";
-  ctx.fillStyle = "#008888";
+  ctx.fillStyle = "#088";
   ctx.fillText("----------------------------------------", 6, 135 - offset);
   return canvas;
 }
@@ -135,7 +135,7 @@ export async function generate74eoSmallBannerFleetCanvasAsync(
       ? 785 - (has5slot ? 0 : 72)
       : 533 - (has5slot ? 0 : 54)
   );
-  ctx.fillStyle = "#FFF";
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   (
@@ -181,7 +181,7 @@ export async function generate74eoSmallBannerFleetCanvasAsync(
       49,
     54
   );
-  ctx.strokeStyle = ctx.fillStyle = "#008888";
+  ctx.strokeStyle = ctx.fillStyle = "#088";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(8, 59.5);

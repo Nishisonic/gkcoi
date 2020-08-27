@@ -264,24 +264,20 @@ export class Ship {
         if (boiler) return 15;
       }
       // 高速B1群:天津風、阿賀野型、蒼龍、飛龍、雲龍、天城、金剛型、Iowa
-      if (
+      else if (
         [41, 17, 25, 6, 65].includes(this.ctype) ||
         ["あまつかぜ", "うんりゅう", "あまぎ"].includes(this.yomi)
       ) {
         if (newBoiler >= 2 || (newBoiler && boiler)) return 20;
         if (newBoiler || boiler) return 15;
       }
-      // 高速B2群:駆逐、軽巡、雷巡、重巡、軽空母、赤城、葛城、Bismarck、Littorioなど
-      if (
-        [2, 3, 4, 5, 7].includes(this.stype) ||
-        [14, 47, 58].includes(this.ctype) ||
-        ["かつらぎ"].includes(this.yomi)
-      ) {
-        if (newBoiler >= 2 || newBoiler + boiler >= 3) return 20;
+      // 高速C群:加賀、夕張/夕張改、水母
+      else if ([16].includes(this.stype) || [3, 34].includes(this.ctype)) {
         if (newBoiler || boiler) return 15;
       }
-      // 高速C群:加賀、夕張、水母
-      if ([16].includes(this.stype) || [3, 34].includes(this.ctype)) {
+      // 高速B2群(汎用):駆逐、軽巡、雷巡、重巡、軽空母、赤城、葛城、Bismarck、Littorioなど
+      else {
+        if (newBoiler >= 2 || newBoiler + boiler >= 3) return 20;
         if (newBoiler || boiler) return 15;
       }
     }
@@ -293,21 +289,21 @@ export class Ship {
         if (newBoiler && (newBoiler >= 2 || boiler)) return 15;
         if (newBoiler || boiler) return 10;
       }
-      // 低速B群:戦艦、航戦、軽空母、水母、練巡、大鯨など
-      if (
-        [8, 9, 10, 7, 16, 21].includes(this.stype) ||
-        [50, 72].includes(this.ctype)
-      ) {
-        if (newBoiler >= 2 || newBoiler + boiler >= 3) return 15;
-        if (newBoiler || boiler) return 10;
-      }
-      // 低速特殊B群:Samuel B.Roberts、夕張
-      if (["サミュエル・B・ロバーツ", "ゆうばり"].includes(this.yomi)) {
+      // 低速特殊B群:Samuel B.Roberts、夕張改二特
+      else if (["サミュエル・B・ロバーツ", "ゆうばり"].includes(this.yomi)) {
         if (newBoiler >= 2 || newBoiler + boiler >= 3) return 15;
         return 10;
       }
       // 低速C群:潜水艦、潜水空母、あきつ丸、明石、速吸
-      if ([13, 14].includes(this.stype) || [45, 49, 60].includes(this.ctype)) {
+      else if (
+        [13, 14].includes(this.stype) ||
+        [45, 49, 60].includes(this.ctype)
+      ) {
+        if (newBoiler || boiler) return 10;
+      }
+      // 低速B群(汎用):戦艦、航戦、軽空母、水母、練巡、大鯨など
+      else {
+        if (newBoiler >= 2 || newBoiler + boiler >= 3) return 15;
         if (newBoiler || boiler) return 10;
       }
     }
@@ -495,87 +491,87 @@ export class Fleet {
 }
 
 export interface MasterData {
-  api_result: number;
-  api_result_msg: string;
-  api_data: Apidata;
+  readonly api_result: number;
+  readonly api_result_msg: string;
+  readonly api_data: Apidata;
 }
 
 interface Apidata {
-  api_mst_ship: MasterShip[];
-  api_mst_slotitem: MasterItem[];
+  readonly api_mst_ship: MasterShip[];
+  readonly api_mst_slotitem: MasterItem[];
 }
 
 interface MasterShip {
-  api_id: number;
-  api_sortno: number;
-  api_sort_id: number;
-  api_name: string;
-  api_yomi: string;
-  api_stype: number;
-  api_ctype: number;
-  api_afterlv: number;
-  api_aftershipid: string;
-  api_taik: number[];
-  api_souk: number[];
-  api_houg: number[];
-  api_raig: number[];
-  api_tyku: number[];
-  api_luck: number[];
-  api_soku: Speed;
-  api_leng: Range;
-  api_slot_num: number;
-  api_maxeq: number[];
-  api_buildtime: number;
-  api_broken: number[];
-  api_powup: number[];
-  api_backs: number;
-  api_getmes: string;
-  api_afterfuel: number;
-  api_afterbull: number;
-  api_fuel_max: number;
-  api_bull_max: number;
-  api_voicef: number;
+  readonly api_id: number;
+  readonly api_sortno: number;
+  readonly api_sort_id: number;
+  readonly api_name: string;
+  readonly api_yomi: string;
+  readonly api_stype: number;
+  readonly api_ctype: number;
+  readonly api_afterlv: number;
+  readonly api_aftershipid: string;
+  readonly api_taik: number[];
+  readonly api_souk: number[];
+  readonly api_houg: number[];
+  readonly api_raig: number[];
+  readonly api_tyku: number[];
+  readonly api_luck: number[];
+  readonly api_soku: Speed;
+  readonly api_leng: Range;
+  readonly api_slot_num: number;
+  readonly api_maxeq: number[];
+  readonly api_buildtime: number;
+  readonly api_broken: number[];
+  readonly api_powup: number[];
+  readonly api_backs: number;
+  readonly api_getmes: string;
+  readonly api_afterfuel: number;
+  readonly api_afterbull: number;
+  readonly api_fuel_max: number;
+  readonly api_bull_max: number;
+  readonly api_voicef: number;
 }
 
 interface MasterItem {
-  api_id: number;
-  api_sortno: number;
-  api_name: string;
-  api_type: number[];
-  api_taik: number;
-  api_souk: number;
-  api_houg: number;
-  api_raig: number;
-  api_soku: number;
-  api_baku: number;
-  api_tyku: number;
-  api_tais: number;
-  api_atap: number;
-  api_houm: number;
-  api_raim: number;
-  api_houk: number;
-  api_raik: number;
-  api_bakk: number;
-  api_saku: number;
-  api_sakb: number;
-  api_luck: number;
-  api_leng: Range;
-  api_rare: number;
-  api_broken: number[];
-  api_usebull: string;
-  api_version?: number;
-  api_distance?: number;
-  api_cost?: number;
+  readonly api_id: number;
+  readonly api_sortno: number;
+  readonly api_name: string;
+  readonly api_type: number[];
+  readonly api_taik: number;
+  readonly api_souk: number;
+  readonly api_houg: number;
+  readonly api_raig: number;
+  readonly api_soku: number;
+  readonly api_baku: number;
+  readonly api_tyku: number;
+  readonly api_tais: number;
+  readonly api_atap: number;
+  readonly api_houm: number;
+  readonly api_raim: number;
+  readonly api_houk: number;
+  readonly api_raik: number;
+  readonly api_bakk: number;
+  readonly api_saku: number;
+  readonly api_sakb: number;
+  readonly api_luck: number;
+  readonly api_leng: Range;
+  readonly api_rare: number;
+  readonly api_broken: number[];
+  readonly api_usebull: string;
+  readonly api_version?: number;
+  readonly api_distance?: number;
+  readonly api_cost?: number;
 }
 
 interface FormatData {
-  lang: Lang;
-  theme: Theme;
-  hqlv: number;
-  fleets: Fleet[];
-  airbases: Airbase[];
-  airState: AirState;
-  comment: string;
+  readonly lang: Lang;
+  readonly theme: Theme;
+  readonly hqlv: number;
+  readonly fleets: Fleet[];
+  readonly airbases: Airbase[];
+  readonly airState: AirState;
+  readonly comment: string;
 }
 
 /**
@@ -584,7 +580,7 @@ interface FormatData {
  */
 export interface DeckBuilder {
   /** 言語 */
-  lang: Lang;
+  readonly lang: Lang;
   /**
    * テーマ
    * dark=オリジナル
@@ -592,39 +588,39 @@ export interface DeckBuilder {
    * 74mc=74式(中型)
    * 74sb=74式(小型)
    */
-  theme: Theme;
+  readonly theme: Theme;
   /**
    * 司令部Lv
    */
-  hqlv: number;
+  readonly hqlv: number;
   /**
    * 第一艦隊
    */
-  f1?: DeckBuilderFleet;
+  readonly f1?: DeckBuilderFleet;
   /**
    * 第二艦隊
    */
-  f2?: DeckBuilderFleet;
+  readonly f2?: DeckBuilderFleet;
   /**
    * 第三艦隊
    */
-  f3?: DeckBuilderFleet;
+  readonly f3?: DeckBuilderFleet;
   /**
    * 第四艦隊
    */
-  f4?: DeckBuilderFleet;
+  readonly f4?: DeckBuilderFleet;
   /**
    * 第一基地航空隊
    */
-  a1?: DeckBuilderAirbase;
+  readonly a1?: DeckBuilderAirbase;
   /**
    * 第二基地航空隊
    */
-  a2?: DeckBuilderAirbase;
+  readonly a2?: DeckBuilderAirbase;
   /**
    * 第三基地航空隊
    */
-  a3?: DeckBuilderAirbase;
+  readonly a3?: DeckBuilderAirbase;
   /**
    * 制空状態(dark ver.&複数艦隊&基地航空隊使用時のみ使用)
    * 触接率グラフ表示に使用
@@ -633,12 +629,12 @@ export interface DeckBuilder {
    * AS:航空優勢
    * AP:航空劣勢
    */
-  as?: AirState;
+  readonly as?: AirState;
   /**
    * コメント(dark ver.&複数艦隊&基地航空隊使用時のみ使用)
    * コメント表示に使用
    */
-  cmt?: string;
+  readonly cmt?: string;
 }
 
 /**
@@ -646,21 +642,21 @@ export interface DeckBuilder {
  */
 export interface DeckBuilderFleet {
   /** 艦隊名(七四式ver.使用時のみ使用) */
-  name?: string;
+  readonly name?: string;
   /** 旗艦 */
-  s1?: DeckBuilderShip;
+  readonly s1?: DeckBuilderShip;
   /** 二番艦 */
-  s2?: DeckBuilderShip;
+  readonly s2?: DeckBuilderShip;
   /** 三番艦 */
-  s3?: DeckBuilderShip;
+  readonly s3?: DeckBuilderShip;
   /** 四番艦 */
-  s4?: DeckBuilderShip;
+  readonly s4?: DeckBuilderShip;
   /** 五番艦 */
-  s5?: DeckBuilderShip;
+  readonly s5?: DeckBuilderShip;
   /** 六番艦 */
-  s6?: DeckBuilderShip;
+  readonly s6?: DeckBuilderShip;
   /** 七番艦(これを設定する場合、出力は一艦隊のみにすること) */
-  s7?: DeckBuilderShip;
+  readonly s7?: DeckBuilderShip;
 }
 
 /**
@@ -668,36 +664,36 @@ export interface DeckBuilderFleet {
  */
 export interface DeckBuilderShip {
   /** 艦ID */
-  id: number;
+  readonly id: number;
   /** レベル */
-  lv: number;
+  readonly lv: number;
   /** 装備 */
-  items: {
-    i1?: DeckBuilderItem;
-    i2?: DeckBuilderItem;
-    i3?: DeckBuilderItem;
-    i4?: DeckBuilderItem;
-    i5?: DeckBuilderItem;
-    ix?: DeckBuilderItem;
+  readonly items: {
+    readonly i1?: DeckBuilderItem;
+    readonly i2?: DeckBuilderItem;
+    readonly i3?: DeckBuilderItem;
+    readonly i4?: DeckBuilderItem;
+    readonly i5?: DeckBuilderItem;
+    readonly ix?: DeckBuilderItem;
   };
   /** 耐久 */
-  hp: number;
+  readonly hp: number;
   /** 火力 */
-  fp: number;
+  readonly fp: number;
   /** 雷装 */
-  tp: number;
+  readonly tp: number;
   /** 対空 */
-  aa: number;
+  readonly aa: number;
   /** 装甲 */
-  ar: number;
+  readonly ar: number;
   /** 対潜 */
-  asw: number;
+  readonly asw: number;
   /** 回避 */
-  ev: number;
+  readonly ev: number;
   /** 索敵 */
-  los: number;
+  readonly los: number;
   /** 運 */
-  luck: number;
+  readonly luck: number;
 }
 
 /**
@@ -706,11 +702,11 @@ export interface DeckBuilderShip {
  */
 export interface DeckBuilderItem {
   /** 装備ID */
-  id: number;
+  readonly id: number;
   /** 改修 */
-  rf?: number;
+  readonly rf?: number;
   /** 熟練度 */
-  mas?: number;
+  readonly mas?: number;
 }
 
 /**
@@ -718,13 +714,13 @@ export interface DeckBuilderItem {
  */
 export interface DeckBuilderAirbase {
   /** 基地状態 */
-  mode?: number;
+  readonly mode?: number;
   /** 装備 */
-  items: {
-    i1?: DeckBuilderItem;
-    i2?: DeckBuilderItem;
-    i3?: DeckBuilderItem;
-    i4?: DeckBuilderItem;
+  readonly items: {
+    readonly i1?: DeckBuilderItem;
+    readonly i2?: DeckBuilderItem;
+    readonly i3?: DeckBuilderItem;
+    readonly i4?: DeckBuilderItem;
   };
 }
 

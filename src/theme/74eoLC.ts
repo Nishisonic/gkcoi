@@ -27,15 +27,15 @@ async function generate74eoLargeCardShipCanvasAsync(
 
   const { canvas, ctx } = createCanvas2D(470, 305);
 
-  ctx.fillStyle = "#FFF";
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = `#0f0f0f`;
   ctx.font = "24px Meiryo";
   ctx.fillText(toTranslateShipName(ship.name, ships), 39, 26);
-  ctx.fillStyle = "#FFF";
+  ctx.fillStyle = "white";
   ctx.fillRect(188, 3, 55, 30);
-  ctx.strokeStyle = ctx.fillStyle = "#008888";
+  ctx.strokeStyle = ctx.fillStyle = "#088";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(3, 168.5);
@@ -95,6 +95,7 @@ async function generate74eoLargeCardShipCanvasAsync(
   ctx.fillText(String(ship.los), 226, 275);
   ctx.fillText(String(ship.luck), 226, 297);
   for (let i = 0; i < ship.slotNum + 1; i++) {
+    ctx.fillStyle = "#0f0f0f";
     ctx.font = "16px Meiryo";
     ctx.textAlign = "left";
     const itemIdx = i === ship.slotNum ? 5 : i;
@@ -109,8 +110,8 @@ async function generate74eoLargeCardShipCanvasAsync(
       if (ctx.measureText(name).width > 200) {
         const grd = ctx.createLinearGradient(222, 0, 247, 0);
         grd.addColorStop(0, "rgba(255,255,255,0)");
-        grd.addColorStop(0.65, "rgba(255,255,255,1)");
-        grd.addColorStop(1, "rgba(255,255,255,1)");
+        grd.addColorStop(0.65, "white");
+        grd.addColorStop(1, "white");
         ctx.fillStyle = grd;
         ctx.fillRect(222, 36 + 22 * itemIdx, 27, 21);
       }
@@ -119,8 +120,8 @@ async function generate74eoLargeCardShipCanvasAsync(
           // オーバーレイ
           const grd = ctx.createLinearGradient(148, 0, 247, 0);
           grd.addColorStop(0, "rgba(255,255,255,0)");
-          grd.addColorStop(0.55, "rgba(255,255,255,1)");
-          grd.addColorStop(1, "rgba(255,255,255,1)");
+          grd.addColorStop(0.55, "white");
+          grd.addColorStop(1, "white");
           ctx.fillStyle = grd;
           ctx.fillRect(148, 36 + 22 * itemIdx, 100, 21);
         }
@@ -136,8 +137,8 @@ async function generate74eoLargeCardShipCanvasAsync(
           // オーバーレイ
           const grd = ctx.createLinearGradient(188, 0, 247, 0);
           grd.addColorStop(0, "rgba(255,255,255,0)");
-          grd.addColorStop(0.6, "rgba(255,255,255,1)");
-          grd.addColorStop(1, "rgba(255,255,255,1)");
+          grd.addColorStop(0.6, "white");
+          grd.addColorStop(1, "white");
           ctx.fillStyle = grd;
           ctx.fillRect(188, 36 + 22 * itemIdx, 52, 21);
         }
@@ -155,7 +156,7 @@ async function generate74eoLargeCardShipCanvasAsync(
       if (ship.items[i] && ship.items[i].type[4] > 0) {
         ctx.fillStyle = "#0f0f0f";
       } else {
-        ctx.fillStyle = "#aaaaaa";
+        ctx.fillStyle = "#aaa";
       }
       ctx.textAlign = "right";
       ctx.font = "12px Meiryo";
@@ -163,9 +164,10 @@ async function generate74eoLargeCardShipCanvasAsync(
       ctx.font = "16px Meiryo";
       ctx.textAlign = "left";
     }
-    ctx.fillStyle = "#0f0f0f";
   }
   if (ship.id > 0) {
+    ctx.fillStyle = "white";
+    ctx.fillRect(249, 1, 221, 301);
     const shipImage = resize(
       await ship.fetchImage(ShipImageKind.CARD),
       218,
@@ -197,7 +199,7 @@ export async function generate74eoLargeCardFleetCanvasAsync(
     ships.filter((ship) => ship.id > 0).length < 7 ? 972 : 1279
   );
 
-  ctx.fillStyle = "#FFF";
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   (
@@ -242,7 +244,7 @@ export async function generate74eoLargeCardFleetCanvasAsync(
       losValueStringWidth,
     32
   );
-  ctx.strokeStyle = ctx.fillStyle = "#008888";
+  ctx.strokeStyle = ctx.fillStyle = "#088";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(8, 37.5);
