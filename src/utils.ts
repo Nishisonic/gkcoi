@@ -1,8 +1,7 @@
 import { Ship, Item, AirState, AirPower, MasterData } from "./type";
 import { Lang } from "./lang";
 
-export const MASTER_URL =
-  "https://raw.githubusercontent.com/Nishisonic/gkcoi/master/static";
+export const MASTER_URL = "https://cdn.jsdelivr.net/gh/Nishisonic/gkcoi/static";
 
 export async function fetchStart2(url: string): Promise<MasterData> {
   const res = await fetch(url);
@@ -26,8 +25,7 @@ export async function fetchLangData(
     [key: string]: string;
   };
 }> {
-  const URL =
-    "https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data";
+  const URL = "https://cdn.jsdelivr.net/gh/KC3Kai/kc3-translations/data";
   const shipsUrl = `${URL}/${lang}/ships.json`;
   const shipAffixUrl = `${URL}/${lang}/ship_affix.json`;
   const itemsUrl = `${URL}/${lang}/items.json`;
@@ -174,6 +172,8 @@ function getImprovementBonus(item: Item): number {
       case 7:
       case 57:
         return item.aa > 3 ? 0.25 * item.lv : 0;
+      case 47:
+        return 0.5 * Math.sqrt(item.lv);
     }
   }
   return 0;
