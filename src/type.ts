@@ -15,6 +15,7 @@ export type LoS = {
   4: number;
   5: number;
 };
+type ExpeditionParameter = "firepower" | "aa" | "asw" | "los";
 
 export enum ShipImageKind {
   ALBUM_STATUS = "album_status",
@@ -312,6 +313,50 @@ export class Ship {
 
   async fetchImage(kind: ShipImageKind): Promise<Image> {
     return await fetchImage(`${this.url}/${kind}/${this.id}.png`);
+  }
+
+  private getExpditionPlaneBonus(param: ExpeditionParameter): number {
+    return this.slots
+      .map((slot, i) => {
+        if (this.items[i] && this.items[i].type[4] > 0) {
+          if (slot > 0) {
+            return Math.floor(
+              this.items[i][param] * (-0.35 + Math.sqrt(Math.max(0, slot - 2)))
+            );
+          }
+          return this.items[i][param];
+        }
+        return 0;
+      })
+      .reduce((p, v) => p + v, 0);
+  }
+
+  get expeditionFirepowerBonus(): number {
+    return (
+      this.getExpditionPlaneBonus("firepower") +
+      this.items.reduce((p, v) => p + v.expeditionFirepowerBonus, 0)
+    );
+  }
+
+  get expeditionAABonus(): number {
+    return (
+      this.getExpditionPlaneBonus("aa") +
+      this.items.reduce((p, v) => p + v.expeditionAABonus, 0)
+    );
+  }
+
+  get expeditionASWBonus(): number {
+    return (
+      this.getExpditionPlaneBonus("asw") +
+      this.items.reduce((p, v) => p + v.expeditionASWBonus, 0)
+    );
+  }
+
+  get expeditionLoSBonus(): number {
+    return (
+      this.getExpditionPlaneBonus("los") +
+      this.items.reduce((p, v) => p + v.expeditionLoSBonus, 0)
+    );
   }
 }
 

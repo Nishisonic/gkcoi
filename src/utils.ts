@@ -3,6 +3,10 @@ import { Lang } from "./lang";
 
 export const MASTER_URL = "https://cdn.jsdelivr.net/gh/Nishisonic/gkcoi/static";
 
+const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99, 102, 105, 106, 107];
+const UK_SHIPS = [67, 78, 82, 88, 108];
+const RECON_PLANE = [9, 10, 41, 49, 94];
+
 export async function fetchStart2(url: string): Promise<MasterData> {
   const res = await fetch(url);
   return res.json();
@@ -72,9 +76,6 @@ export function toTranslateEquipmentName(
 }
 
 export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
-  const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99, 102];
-  // const UK_SHIPS = [67, 78, 82, 88];
-
   const itemBonus = (ship: Ship): number => {
     const items = ship.items.filter((item) => item.id > 0);
     const count = (id: number, minLv = 0): number =>
@@ -104,7 +105,7 @@ export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
             .map(({ type, los, lv }) => {
               switch (type[2]) {
                 case 8: // 艦上攻撃機
-                  return 0.8 * los; // 改修不可
+                  return 0.8 * los;
                 case 9: // 艦上偵察機
                 case 94: // 艦上偵察機(II)
                   return 1.0 * (los + 1.2 * Math.sqrt(lv));
@@ -166,14 +167,16 @@ const SKILLED_BONUS = {
 function getImprovementBonus(item: Item): number {
   if (item.lv > 0) {
     switch (item.type[2]) {
-      case 6:
-      case 45:
+      case 6: // 艦上戦闘機
+      case 45: // 夜間戦闘機
         return 0.2 * item.lv;
-      case 7:
-      case 57:
+      case 7: // 艦上爆撃機
+      case 57: // 噴式戦闘爆撃機
         return item.aa > 3 ? 0.25 * item.lv : 0;
-      case 47:
+      case 47: // 陸上攻撃機
         return 0.5 * Math.sqrt(item.lv);
+      case 49: // 陸上偵察機
+        return 1; // 暫定
     }
   }
   return 0;
@@ -217,7 +220,7 @@ export function getAirbaseAirPower(
   rocket = 0
 ): AirPower {
   const slot = (item: Item): 4 | 18 =>
-    [9, 10, 41, 49].includes(item.type[2]) ? 4 : 18;
+    RECON_PLANE.includes(item.type[2]) ? 4 : 18;
 
   const { min, max } = items
     .map((item) => {
@@ -233,6 +236,8 @@ export function getAirbaseAirPower(
                 : 0) +
               getImprovementBonus(item));
         return {
+          // 311: 二式陸上偵察機
+          // 312: 二式陸上偵察機(熟練)
           min: Math.floor(
             bonus +
               Math.sqrt(
@@ -272,17 +277,19 @@ export function getAirbaseAirPower(
   const reconBonus = Math.max(
     ...items.map((item) => {
       switch (item.type[2]) {
-        case 9:
+        case 9: // 艦上偵察機
           if (item.los >= 9) return 1.3;
           if (item.los >= 8) return 1.25; // 仮
           if (item.los <= 7) return 1.2;
-        case 10:
-        case 41:
+        case 10: // 水上偵察機
+        case 41: // 大型飛行艇
           if (item.los >= 9) return 1.16;
           if (item.los >= 8) return 1.13;
           if (item.los <= 7) return 1.1;
-        case 49:
-          return 1.18;
+        case 49: // 陸上偵察機
+          if (item.los >= 9) return 1.23;
+          if (item.los >= 8) return 1.18;
+          if (item.los <= 7) return 1.13; // 仮
       }
       return 1;
     })
@@ -332,7 +339,7 @@ export function getDistance(items: Item[]): number {
   const min = Math.min(...planes.map(({ distance }) => distance));
   const reconMax = Math.max(
     ...planes
-      .filter(({ type }) => [9, 10, 41, 49].includes(type[2]))
+      .filter(({ type }) => RECON_PLANE.includes(type[2]))
       .map(({ distance }) => distance)
   );
   if (reconMax > 0) {
@@ -347,7 +354,7 @@ export function getContactValue(
   ships: Ship[],
   airState: AirState
 ): { bonus: number; rate: number }[] {
-  const planes = [10, 9, 94, 41, 8];
+  const planes = [8, ...RECON_PLANE];
   const AIR_STATE = {
     "AS+": 3,
     AS: 2,
@@ -662,7 +669,7 @@ export function getCanAACIList(
           aalist.push(31);
         }
         if (
-          ([67, 78, 82, 88].includes(ship.ctype) ||
+          (UK_SHIPS.includes(ship.ctype) ||
             [149, 150, 151, 152, 591, 592].includes(ship.id)) &&
           (ship.items.filter(({ id }) => id === 301).length >= 2 ||
             (ship.items.some(({ id }) => id === 300) &&

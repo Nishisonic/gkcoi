@@ -636,13 +636,10 @@ export async function generateDarkExpeditionStatsCanvasAsync(
         {
           data: ships.reduce(
             (p, ship) => {
-              p[0] += ship.items.reduce(
-                (p, v) => p + v.expeditionFirepowerBonus,
-                0
-              );
-              p[1] += ship.items.reduce((p, v) => p + v.expeditionAABonus, 0);
-              p[2] += ship.items.reduce((p, v) => p + v.expeditionASWBonus, 0);
-              p[3] += ship.items.reduce((p, v) => p + v.expeditionLoSBonus, 0);
+              p[0] += ship.expeditionFirepowerBonus;
+              p[1] += ship.expeditionAABonus;
+              p[2] += ship.expeditionASWBonus;
+              p[3] += ship.expeditionLoSBonus;
               return p;
             },
             [0, 0, 0, 0]
