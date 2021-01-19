@@ -324,7 +324,7 @@ export class Ship {
               this.items[i][param] * (-0.35 + Math.sqrt(Math.max(0, slot - 2)))
             );
           }
-          return this.items[i][param];
+          return -this.items[i][param];
         }
         return 0;
       })

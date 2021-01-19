@@ -728,10 +728,9 @@ export function getCanAACIList(
     {
       rate: 0,
       rates: [],
-      rateByShips: [...new Set(orderByAAlist.map(({ index }) => index))].reduce(
-        (p, v) => Object.assign(p, { [v]: 0 }),
-        {}
-      ),
+      rateByShips: Array.from(
+        new Set(orderByAAlist.map(({ index }) => index))
+      ).reduce((p, v) => Object.assign(p, { [v]: 0 }), {}),
     }
   ).rates;
 
