@@ -1,7 +1,7 @@
 import { Ship, Item, AirState, AirPower, MasterData } from "./type";
 import { Lang } from "./lang";
 
-export const MASTER_URL = "https://cdn.jsdelivr.net/gh/Nishisonic/gkcoi/static";
+export const MASTER_URL = "https://gkcoi.vercel.app";
 
 const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99, 102, 105, 106, 107];
 const UK_SHIPS = [67, 78, 82, 88, 108];
@@ -219,8 +219,8 @@ export function getAirbaseAirPower(
   highAltitude = false,
   rocket = 0
 ): AirPower {
-  const slot = (item: Item): 4 | 18 =>
-    RECON_PLANE.includes(item.type[2]) ? 4 : 18;
+  const slot = (item: Item): 4 | 9 | 18 =>
+    RECON_PLANE.includes(item.type[2]) ? 4 : item.type[2] === 53 ? 9 : 18;
 
   const { min, max } = items
     .map((item) => {

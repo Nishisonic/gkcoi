@@ -427,13 +427,15 @@ function fillTextLine(
 
     if (char == "\n" || ctx.measureText(columns[line] + char).width > width) {
       columns[++line] = "";
-      continue;
+      if (char == "\n") {
+        continue;
+      }
     }
     columns[line] += char;
   }
   const size = ctx.measureText("■").width;
   columns.forEach((column, i) => {
-    ctx.fillText(column, x, y + size * i);
+    ctx.fillText(column, x, y + (size + 5) * i);
   });
   ctx.textAlign = textAlign;
 }

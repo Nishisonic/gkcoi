@@ -49,6 +49,7 @@ const EQUIPMENT_ICON_SOURCE = {
   45: "NightFighter",
   46: "NightTorpedo",
   47: "LandASPatrol",
+  49: "HeavyBomber",
 };
 
 export async function loadOfficialParameterIcons(): Promise<{
