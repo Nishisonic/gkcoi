@@ -818,13 +818,18 @@ export function parse(
     const evasion: number = ship.ev;
     const los: number = ship.los;
     const luck: number = ship.luck;
-    const items = [
+    const _items = [
       ship.items.i1,
       ship.items.i2,
       ship.items.i3,
       ship.items.i4,
       ship.items.i5,
       ship.items.ix,
+    ];
+    const slotNum = masterShip[id].api_slot_num;
+    const items = [
+      ..._items.filter((_, i) => i < slotNum),
+      _items[slotNum] ?? _items[_items.length - 1],
     ].map((item) => parseItem(item));
     return new Ship(
       id,
