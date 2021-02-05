@@ -4,7 +4,7 @@ import { Lang } from "./lang";
 export const MASTER_URL = "https://gkcoi.vercel.app";
 
 const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99, 102, 105, 106, 107];
-const UK_SHIPS = [67, 78, 82, 88, 108];
+const UK_SHIPS = [67, 78, 82, 88 /*, 108*/];
 const RECON_PLANE = [9, 10, 41, 49, 94];
 
 export async function fetchStart2(url: string): Promise<MasterData> {
@@ -165,6 +165,12 @@ const SKILLED_BONUS = {
 };
 
 function getImprovementBonus(item: Item): number {
+  const fighterBomber = [
+    60, // 零式艦戦62型(爆戦)
+    154, // 零戦62型(爆戦/岩井隊)
+    219, // 零式艦戦63型(爆戦)
+  ];
+
   if (item.lv > 0) {
     switch (item.type[2]) {
       case 6: // 艦上戦闘機
@@ -172,7 +178,7 @@ function getImprovementBonus(item: Item): number {
         return 0.2 * item.lv;
       case 7: // 艦上爆撃機
       case 57: // 噴式戦闘爆撃機
-        return item.aa > 3 ? 0.25 * item.lv : 0;
+        return fighterBomber.includes(item.id) ? 0.25 * item.lv : 0;
       case 47: // 陸上攻撃機
         return 0.5 * Math.sqrt(item.lv);
       case 49: // 陸上偵察機
