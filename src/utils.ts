@@ -4,7 +4,7 @@ import { Lang } from "./lang";
 export const MASTER_URL = "https://gkcoi.vercel.app";
 
 const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99, 102, 105, 106, 107];
-const UK_SHIPS = [67, 78, 82, 88 /*, 108*/];
+const UK_SHIPS = [67, 78, 82, 88, 108];
 const RECON_PLANE = [9, 10, 41, 49, 94];
 
 export async function fetchStart2(url: string): Promise<MasterData> {
