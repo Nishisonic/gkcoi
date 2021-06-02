@@ -462,49 +462,55 @@ export function getContactValue(
 }
 
 const AA_CI_LIST: {
-  [key: number]: { kind: number; fixed: number; prop: number; value: number };
+  [key: number]: {
+    kind: number;
+    fixed: number;
+    prop: number;
+    value: number;
+    sp: boolean;
+  };
 } = {
-  1: { kind: 1, fixed: 7, prop: 1.7, value: 65 },
-  2: { kind: 2, fixed: 6, prop: 1.7, value: 58 },
-  3: { kind: 3, fixed: 4, prop: 1.6, value: 50 },
-  4: { kind: 4, fixed: 6, prop: 1.5, value: 52 },
-  5: { kind: 5, fixed: 4, prop: 1.5, value: 55 },
-  6: { kind: 6, fixed: 4, prop: 1.45, value: 40 },
-  7: { kind: 7, fixed: 3, prop: 1.35, value: 45 },
-  8: { kind: 8, fixed: 4, prop: 1.4, value: 50 },
-  9: { kind: 9, fixed: 2, prop: 1.3, value: 40 },
-  10: { kind: 10, fixed: 8, prop: 1.65, value: 60 },
-  11: { kind: 11, fixed: 6, prop: 1.5, value: 55 },
-  12: { kind: 12, fixed: 3, prop: 1.25, value: 45 },
-  13: { kind: 13, fixed: 4, prop: 1.35, value: 35 },
-  14: { kind: 14, fixed: 4, prop: 1.45, value: 64 },
-  15: { kind: 15, fixed: 3, prop: 1.3, value: 55 },
-  16: { kind: 16, fixed: 4, prop: 1.4, value: 63 },
-  17: { kind: 17, fixed: 2, prop: 1.25, value: 57 },
-  18: { kind: 18, fixed: 2, prop: 1.2, value: 60 },
-  19: { kind: 19, fixed: 5, prop: 1.45, value: 58 },
-  20: { kind: 20, fixed: 3, prop: 1.25, value: 66 },
-  21: { kind: 21, fixed: 5, prop: 1.45, value: 60 },
-  22: { kind: 22, fixed: 2, prop: 1.2, value: 59 },
-  23: { kind: 23, fixed: 1, prop: 1.05, value: 81 },
-  24: { kind: 24, fixed: 3, prop: 1.25, value: 56 },
-  25: { kind: 25, fixed: 7, prop: 1.55, value: 62 },
-  26: { kind: 26, fixed: 6, prop: 1.4, value: 61 },
+  1: { kind: 1, fixed: 7, prop: 1.7, value: 65, sp: false },
+  2: { kind: 2, fixed: 6, prop: 1.7, value: 58, sp: false },
+  3: { kind: 3, fixed: 4, prop: 1.6, value: 50, sp: false },
+  4: { kind: 4, fixed: 6, prop: 1.5, value: 52, sp: false },
+  5: { kind: 5, fixed: 4, prop: 1.5, value: 55, sp: false },
+  6: { kind: 6, fixed: 4, prop: 1.45, value: 40, sp: false },
+  7: { kind: 7, fixed: 3, prop: 1.35, value: 45, sp: false },
+  8: { kind: 8, fixed: 4, prop: 1.4, value: 50, sp: false },
+  9: { kind: 9, fixed: 2, prop: 1.3, value: 40, sp: false },
+  10: { kind: 10, fixed: 8, prop: 1.65, value: 60, sp: false },
+  11: { kind: 11, fixed: 6, prop: 1.5, value: 55, sp: false },
+  12: { kind: 12, fixed: 3, prop: 1.25, value: 45, sp: false },
+  13: { kind: 13, fixed: 4, prop: 1.35, value: 35, sp: false },
+  14: { kind: 14, fixed: 4, prop: 1.45, value: 64, sp: false },
+  15: { kind: 15, fixed: 3, prop: 1.3, value: 55, sp: false },
+  16: { kind: 16, fixed: 4, prop: 1.4, value: 63, sp: false },
+  17: { kind: 17, fixed: 2, prop: 1.25, value: 57, sp: false },
+  18: { kind: 18, fixed: 2, prop: 1.2, value: 60, sp: false },
+  19: { kind: 19, fixed: 5, prop: 1.45, value: 58, sp: false },
+  20: { kind: 20, fixed: 3, prop: 1.25, value: 66, sp: false },
+  21: { kind: 21, fixed: 5, prop: 1.45, value: 60, sp: false },
+  22: { kind: 22, fixed: 2, prop: 1.2, value: 59, sp: false },
+  23: { kind: 23, fixed: 1, prop: 1.05, value: 81, sp: false },
+  24: { kind: 24, fixed: 3, prop: 1.25, value: 56, sp: false },
+  25: { kind: 25, fixed: 7, prop: 1.55, value: 62, sp: false },
+  26: { kind: 26, fixed: 6, prop: 1.4, value: 61, sp: false },
   // 27:
-  28: { kind: 28, fixed: 4, prop: 1.4, value: 55 },
-  29: { kind: 29, fixed: 5, prop: 1.55, value: 61 },
-  30: { kind: 30, fixed: 3, prop: 1.3, value: 67 },
-  31: { kind: 31, fixed: 2, prop: 1.25, value: 54 },
-  32: { kind: 32, fixed: 3, prop: 1.2, value: 33 },
-  33: { kind: 33, fixed: 3, prop: 1.35, value: 45 },
-  34: { kind: 34, fixed: 7, prop: 1.6, value: 60 },
-  35: { kind: 35, fixed: 6, prop: 1.55, value: 55 },
-  36: { kind: 36, fixed: 6, prop: 1.55, value: 34 },
-  37: { kind: 37, fixed: 4, prop: 1.45, value: 40 },
+  28: { kind: 28, fixed: 4, prop: 1.4, value: 55, sp: false },
+  29: { kind: 29, fixed: 5, prop: 1.55, value: 61, sp: false },
+  30: { kind: 30, fixed: 3, prop: 1.3, value: 67, sp: false },
+  31: { kind: 31, fixed: 2, prop: 1.25, value: 54, sp: false },
+  32: { kind: 32, fixed: 3, prop: 1.2, value: 33, sp: false },
+  33: { kind: 33, fixed: 3, prop: 1.35, value: 45, sp: false },
+  34: { kind: 34, fixed: 7, prop: 1.6, value: 60, sp: true },
+  35: { kind: 35, fixed: 6, prop: 1.55, value: 55, sp: true },
+  36: { kind: 36, fixed: 6, prop: 1.55, value: 34, sp: true },
+  37: { kind: 37, fixed: 4, prop: 1.45, value: 40, sp: true },
   // 38:
-  39: { kind: 39, fixed: 10, prop: 1.7, value: 70 },
-  40: { kind: 40, fixed: 10, prop: 1.7, value: 57 },
-  41: { kind: 41, fixed: 9, prop: 1.65, value: 56 },
+  39: { kind: 39, fixed: 10, prop: 1.7, value: 70, sp: true },
+  40: { kind: 40, fixed: 10, prop: 1.7, value: 57, sp: true },
+  41: { kind: 41, fixed: 9, prop: 1.65, value: 56, sp: true },
 };
 
 export function getCanAACIList(
@@ -717,6 +723,9 @@ export function getCanAACIList(
   }>(
     (p, v) => {
       if (v.kind > 0) {
+        if (AA_CI_LIST[v.kind].sp) {
+          p.rateByShips[v.index] = 0;
+        }
         if (p.rateByShips[v.index] < AA_CI_LIST[v.kind].value) {
           const rate = p.rate;
           p.rate +=
