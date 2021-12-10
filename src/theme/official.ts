@@ -162,6 +162,15 @@ async function generateOfficialShipCanvasAsync(
     );
     const itemName = toTranslateEquipmentName(exItem.name, items);
     ctx.fillText(itemName, 438, 532);
+    if (exItem.lv === 10) {
+      ctx.drawImage(commonMain[29], 643, 511);
+    } else if (exItem.lv > 0) {
+      ctx.drawImage(resize(commonMain[28], 18, 18), 635, 517);
+      ctx.drawImage(commonMain[27], 652, 520);
+      ctx.fillStyle = "#44a8a4";
+      ctx.font = "21px Meiryo";
+      ctx.fillText(`${exItem.lv}`, 665, 534);
+    }
   }
 
   ctx.font = "22px Meiryo";

@@ -3,8 +3,24 @@ import { Lang } from "./lang";
 
 export const MASTER_URL = "https://gkcoi.vercel.app";
 
-const US_SHIPS = [65, 69, 83, 87, 84, 91, 93, 95, 99, 102, 105, 106, 107];
-const UK_SHIPS = [67, 78, 82, 88, 108];
+const US_SHIPS = [
+  65,
+  69,
+  83,
+  87,
+  84,
+  91,
+  93,
+  95,
+  99,
+  102,
+  105,
+  106,
+  107,
+  110,
+  114,
+];
+const UK_SHIPS = [67, 78, 82, 88, 108, 112];
 const RECON_PLANE = [9, 10, 41, 49, 94];
 
 export async function fetchStart2(url: string): Promise<MasterData> {
@@ -507,7 +523,7 @@ const AA_CI_LIST: {
   35: { kind: 35, fixed: 6, prop: 1.55, value: 55, sp: true },
   36: { kind: 36, fixed: 6, prop: 1.55, value: 34, sp: true },
   37: { kind: 37, fixed: 4, prop: 1.45, value: 40, sp: true },
-  // 38:
+  38: { kind: 38, fixed: 10, prop: 1.85, value: 60, sp: true },
   39: { kind: 39, fixed: 10, prop: 1.7, value: 70, sp: true },
   40: { kind: 40, fixed: 10, prop: 1.7, value: 57, sp: true },
   41: { kind: 41, fixed: 9, prop: 1.65, value: 56, sp: true },
@@ -573,6 +589,9 @@ export function getCanAACIList(
           aalist.push(0);
         }
         if (ship.ctype === 99) {
+          if (GFCSFiveInchM >= 2) {
+            aalist.push(38);
+          }
           if (GFCSFiveInchM && FiveInchM) {
             aalist.push(39);
           }
