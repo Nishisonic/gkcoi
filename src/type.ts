@@ -227,6 +227,9 @@ export class Ship {
       ([87, 91].includes(this.ctype) && this.items.some(({ id }) => id === 315)
         ? 1
         : 0) +
+      ([87, 91].includes(this.ctype) && this.items.some(({ id }) => id === 456)
+        ? 1
+        : 0) +
       ([553, 554, 196, 197].includes(this.id) &&
       this.items.some(({ id }) => id === 61)
         ? 1
@@ -256,6 +259,14 @@ export class Ship {
     const turbine = this.items.filter((item) => item.id === 33).length;
     const boiler = this.items.filter((item) => item.id === 34).length;
     const newBoiler = this.items.filter((item) => item.id === 87).length;
+
+    // タービンなしに高速化できる例外
+    // 低速D群:伊203
+    if (this.yomi === "い203") {
+      if (newBoiler && turbine) return 15;
+      if (newBoiler || (boiler && turbine)) return 10;
+    }
+
     if (!turbine) return this.sp;
     // 高速グループ
     if (this.sp === 10) {

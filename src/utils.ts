@@ -94,21 +94,9 @@ export function toTranslateEquipmentName(
 export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
   const itemBonus = (ship: Ship): number => {
     const items = ship.items.filter((item) => item.id > 0);
-    const count = (id: number, minLv = 0): number =>
-      items.filter((item) => item.id === id && item.lv >= minLv).length;
     const itemLoS = items.map((item) => item.los).reduce((p, v) => p + v, 0);
-    let bonus = 0;
 
-    if (US_SHIPS.includes(ship.ctype)) {
-      // bonus += count(278) && 1;
-      // bonus += count(279) && 2;
-      bonus += count(315) * 4;
-    }
-    // if (UK_SHIPS.includes(ship.ctype)) {
-    // bonus += count(279) && 1;
-    // }
-
-    return itemLoS + bonus;
+    return itemLoS;
   };
 
   return (
