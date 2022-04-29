@@ -12,8 +12,7 @@ import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
 import { Canvas, createCanvas2D, fetchImage } from "./canvas";
 import { stick } from "./stick";
 import { generateOfficialFleetCanvasAsync } from "./theme/official";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const steg = require("./steganography.js");
+import steg from "../dist/steganography";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lzjs = require("lzjs");
 

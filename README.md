@@ -245,11 +245,10 @@ $ npm install gkcoi
   - 翻訳で使用
   - [MIT License](https://github.com/KC3Kai/kc3-translations/blob/master/LICENSE)
 
-- steganography.js
+- steganography.ts
 
   - 画像に情報を埋め込む際に使用
-  - 本家:[MIT License](https://github.com/petereigenschink/steganography.js/blob/master/LICENSE) 改造版:[MIT License](https://github.com/KC3Kai/KC3Kai/blob/master/LICENSE)
-    - このライブラリでは改造版を使用しています
+  - [MIT License](https://github.com/Nishisonic/steganography.ts/blob/master/README.md)
 
 - lzjs
 
