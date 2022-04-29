@@ -18,10 +18,9 @@ gkcoi
 ## Requirement
 
 - [Chart.js](https://github.com/chartjs/Chart.js)
-- [chartjs-plugin-labels](https://github.com/emn178/chartjs-plugin-labels)
-- [chartjs-plugin-colorschemes](https://github.com/nagix/chartjs-plugin-colorschemes)
 - [chartjs-plugin-datalabels](https://github.com/chartjs/chartjs-plugin-datalabels)
 - [lzjs](https://github.com/polygonplanet/lzjs)
+- [steganography.ts](https://github.com/Nishisonic/steganography.ts)
 
 ## Usage
 
