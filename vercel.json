@@ -1,7 +1,25 @@
 {
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "(.*).jpg",
+      "headers":[
+        {
+          "key" : "Cache-Control",
+          "value" : "s-maxage=1, stale-while-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "(.*).png",
+      "headers":[
+        {
+          "key" : "Cache-Control",
+          "value" : "s-maxage=1, stale-while-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "(.*).json",
       "headers":[
         {
           "key" : "Cache-Control",
