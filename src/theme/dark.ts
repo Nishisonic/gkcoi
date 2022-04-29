@@ -19,10 +19,8 @@ import {
   ShipImageKind,
   Item,
 } from "../type";
-import Chart from "chart.js";
-import "chartjs-plugin-labels";
-import "chartjs-plugin-colorschemes";
-import "chartjs-plugin-datalabels";
+import Chart from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import {
   NONE,
   SPEED,
@@ -41,6 +39,8 @@ import {
   loadOfficialEquipmentIcons,
 } from "../icon";
 import { Context } from "chartjs-plugin-datalabels";
+
+Chart.register(ChartDataLabels);
 
 async function generateDarkShipInfoCanvasAsync(
   shipIdx: number,
@@ -474,11 +474,14 @@ export async function generateDarkParameterCanvasAsync(
 
   const touchCanvases = createCanvas2D(265, 150);
   const contacts = getContactValue(ships, airState);
+  const modifierColors = ["#729ece", "#ff9e4a", "#67bf5c", "#1A1A1A"];
   new Chart(touchCanvases.ctx, {
     type: "doughnut",
+    plugins: [ChartDataLabels],
     data: {
       datasets: [
         {
+          backgroundColor: modifierColors,
           data: contacts.map(({ rate }) => rate),
         },
       ],
@@ -489,34 +492,24 @@ export async function generateDarkParameterCanvasAsync(
       animation: {
         duration: 0,
       },
-      legend: {
-        position: "right",
-        labels: {
-          fontColor: "white",
-        },
-      },
       plugins: {
-        labels: {
-          fontSize: 14,
-          fontColor: "black",
-          fontStyle: "bold",
-          render: (args: {
-            value: number;
-            label: string;
-            percentage: number;
-          }): string =>
-            args.label !== NONE[lang] && args.percentage >= 10
-              ? `${args.percentage}%`
-              : "",
+        legend: {
+          position: "right",
+          labels: {
+            color: "white",
+          },
         },
         datalabels: {
-          display: (): boolean => false,
-        },
-        colorschemes: {
-          scheme: "tableau.ClassicMedium10",
-          custom: (schemeColors: string[]): string[] => {
-            schemeColors.splice(3, 0, "#1A1A1A");
-            return schemeColors;
+          color: "black",
+          font: {
+            size: 14,
+            weight: "bold",
+          },
+          formatter: function (value: number, context) {
+            if (value >= 0.1) {
+              return `${Math.round(value * 100)}%`;
+            }
+            return "";
           },
         },
       },
@@ -525,11 +518,30 @@ export async function generateDarkParameterCanvasAsync(
   ctx.drawImage(touchCanvases.canvas, 0, 55);
   const aaciCanvases = createCanvas2D(265, 150);
   const canAACIList = getCanAACIList(ships);
+  const ciColors = [
+    "#729ece",
+    "#ff9e4a",
+    "#67bf5c",
+    "#ed665d",
+    "#ad8bc9",
+    "#a8786e",
+    "#ed97ca",
+    "#a2a2a2",
+    "#cdcc5d",
+    "#6dccda",
+  ];
+  console.log(canAACIList);
   new Chart(aaciCanvases.ctx, {
     type: "doughnut",
     data: {
       datasets: [
         {
+          backgroundColor: (function () {
+            const count = canAACIList.length
+            return Array(count).fill(null).map(function (_, i) {
+              return i + 1 < count ? ciColors[i % ciColors.length] : "#1A1A1A";
+            });
+          })(),
           data: canAACIList.map(({ rate }) => rate),
         },
       ],
@@ -540,35 +552,25 @@ export async function generateDarkParameterCanvasAsync(
       animation: {
         duration: 0,
       },
-      legend: {
-        position: "right",
-        labels: {
-          fontColor: "white",
-        },
-      },
       plugins: {
-        labels: {
-          fontSize: 14,
-          fontColor: "black",
-          fontStyle: "bold",
-          render: (args: {
-            value: number;
-            label: string;
-            percentage: number;
-          }): string =>
-            args.label !== NONE[lang] && args.percentage >= 10
-              ? `${args.percentage}%`
-              : "",
-        },
-        colorschemes: {
-          scheme: "tableau.ClassicMedium10",
-          custom: (schemeColors: string[]): string[] => {
-            schemeColors.splice(canAACIList.length - 1, 0, "#1A1A1A");
-            return schemeColors;
+        legend: {
+          position: "right",
+          labels: {
+            color: "white",
           },
         },
         datalabels: {
-          display: (): boolean => false,
+          color: "black",
+          font: {
+            size: 14,
+            weight: "bold",
+          },
+          formatter: function (value: number, context) {
+            if (value >= 0.1) {
+              return `${Math.round(value * 100)}%`;
+            }
+            return "";
+          },
         },
       },
     },
@@ -606,10 +608,13 @@ export async function generateDarkExpeditionStatsCanvasAsync(
 
   const canvas2 = createCanvas2D(265, 545);
   new Chart(canvas2.ctx, {
-    type: "horizontalBar",
+    type: "bar",
+    plugins: [ChartDataLabels],
     data: {
       datasets: [
         {
+          xAxisID: "xAxis",
+          yAxisID: "yAxis",
           data: ships.reduce(
             (p, ship) => {
               p[0] += ship.firepower;
@@ -636,6 +641,8 @@ export async function generateDarkExpeditionStatsCanvasAsync(
           ],
         },
         {
+          xAxisID: "xAxis",
+          yAxisID: "yAxis",
           data: ships.reduce(
             (p, ship) => {
               p[0] += ship.expeditionFirepowerBonus;
@@ -670,9 +677,10 @@ export async function generateDarkExpeditionStatsCanvasAsync(
       ],
     },
     options: {
+      indexAxis: "y",
       plugins: {
         datalabels: {
-          formatter: (value, ctx: Context): string => {
+          formatter: (value: any, ctx: Context): string => {
             const datasets = ctx.chart.data.datasets;
             if (datasets && ctx.datasetIndex === datasets.length - 1) {
               const data = datasets
@@ -701,47 +709,63 @@ export async function generateDarkExpeditionStatsCanvasAsync(
             size: 16,
           },
         },
+        legend: {
+          position: "top",
+          labels: {
+            color: "white",
+            font: {
+              size: 16,
+            },
+          },
+        },
       },
       responsive: false,
       animation: {
         duration: 0,
       },
-      legend: {
-        position: "top",
-        labels: {
-          fontColor: "white",
-          fontSize: 16,
-        },
-      },
       scales: {
-        xAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-              max: 1000,
-              fontColor: "white",
-              fontSize: 16,
-            },
-            stacked: true,
-            gridLines: {
-              zeroLineColor: "#434343",
-              color: "#434343",
-            },
-          },
-        ],
-        yAxes: [
-          {
-            ticks: {
-              fontColor: "white",
-              fontSize: 16,
-            },
-            stacked: true,
-            gridLines: {
-              zeroLineColor: "#434343",
-              color: ["#434343"],
+        xAxis: {
+          beginAtZero: true,
+          max: 1000,
+          ticks: {
+            font: function (context) {
+              if (context.tick && context.tick.major) {
+                return {
+                  weight: "normal",
+                  color: "white",
+                  family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                  size: 16,
+                  lineHeight: "normal",
+                  style: "normal",
+                };
+              }
             },
           },
-        ],
+          stacked: true,
+          grid: {
+            color: "#434343",
+          },
+        },
+        yAxis: {
+          ticks: {
+            font: function (context) {
+              if (context.tick && context.tick.major) {
+                return {
+                  weight: "normal",
+                  color: "white",
+                  family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                  size: 16,
+                  lineHeight: "normal",
+                  style: "normal",
+                };
+              }
+            },
+          },
+          stacked: true,
+          grid: {
+            color: "#434343",
+          },
+        },
       },
     },
   });
