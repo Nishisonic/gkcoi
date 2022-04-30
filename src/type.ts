@@ -546,13 +546,7 @@ export class Fleet {
   }
 }
 
-export interface MasterData {
-  readonly api_result: number;
-  readonly api_result_msg: string;
-  readonly api_data: Apidata;
-}
-
-interface Apidata {
+export interface Apidata {
   readonly api_mst_ship: MasterShip[];
   readonly api_mst_slotitem: MasterItem[];
 }
@@ -782,12 +776,12 @@ export interface DeckBuilderAirbase {
 
 export function parse(
   deckbuilder: DeckBuilder,
-  master: MasterData,
+  apidata: Apidata,
   url: string
 ): FormatData {
   const masterShip: {
     [key: number]: MasterShip;
-  } = master.api_data.api_mst_ship.reduce(
+  } = apidata.api_mst_ship.reduce(
     (previous: { [key: number]: MasterShip }, current: MasterShip) => {
       previous[current.api_id] = current;
       return previous;
@@ -796,7 +790,7 @@ export function parse(
   );
   const masterItem: {
     [key: number]: MasterItem;
-  } = master.api_data.api_mst_slotitem.reduce(
+  } = apidata.api_mst_slotitem.reduce(
     (previous: { [key: number]: MasterItem }, current: MasterItem) => {
       previous[current.api_id] = current;
       return previous;

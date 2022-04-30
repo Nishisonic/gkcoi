@@ -1,4 +1,4 @@
-import { Ship, Item, AirState, AirPower, MasterData } from "./type";
+import { Ship, Item, AirState, AirPower } from "./type";
 import { Lang } from "./lang";
 
 export const MASTER_URL = "https://gkcoi.vercel.app";
@@ -6,14 +6,7 @@ export const MASTER_URL = "https://gkcoi.vercel.app";
 const UK_SHIPS = [67, 78, 82, 88, 108, 112];
 const RECON_PLANE = [9, 10, 41, 49, 94];
 
-export async function fetchStart2(url: string): Promise<MasterData> {
-  const res = await fetch(url);
-  return res.json();
-}
-
-export async function fetchLangData(
-  lang: Lang
-): Promise<{
+export async function fetchLangData(lang: Lang): Promise<{
   ships: {
     [key: string]:
       | string
@@ -517,18 +510,21 @@ export function getCanAACIList(
           aalist.push(3);
         }
       } else {
-        const FiveInch = ship.items.filter(({ id }) => [284, 313].includes(id))
-          .length;
+        const FiveInch = ship.items.filter(({ id }) =>
+          [284, 313].includes(id)
+        ).length;
         const FiveInchKai = ship.items.filter(({ id }) => id === 313).length;
         const FiveInchGFCS = ship.items.filter(({ id }) => id === 308).length;
         const GFCS = ship.items.filter(({ id }) => id === 307).length;
         const GFCSFiveInchM = ship.items.filter(({ id }) => id === 363).length;
         const FiveInchM = ship.items.filter(({ id }) => id === 362).length;
-        const RocketLauncherK2 = ship.items.filter(({ id }) => id === 274)
-          .length;
+        const RocketLauncherK2 = ship.items.filter(
+          ({ id }) => id === 274
+        ).length;
         const TenHAGunKai = ship.items.filter(({ id }) => id === 275).length;
-        const Type3Shell = ship.items.filter(({ type }) => type[2] === 18)
-          .length;
+        const Type3Shell = ship.items.filter(
+          ({ type }) => type[2] === 18
+        ).length;
         const AAGun = ship.items.filter(({ type }) => type[2] === 21).length;
         const AAFD = ship.items.filter(({ type }) => type[2] === 36).length;
         const LMainGun = ship.items.filter(({ type }) => type[2] === 3).length;

@@ -4,8 +4,8 @@ import {
   generateDarkParameterCanvasAsync,
   generateDarkExpeditionStatsCanvasAsync,
 } from "./theme/dark";
-import { parse, Ship, DeckBuilder, Speed, LoS, MasterData } from "./type";
-import { getLoSValue, fetchStart2, MASTER_URL } from "./utils";
+import { parse, Ship, DeckBuilder, Speed, LoS } from "./type";
+import { getLoSValue, MASTER_URL } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
@@ -31,10 +31,9 @@ async function createAsync(
     shipURL: string;
   }
 ): Promise<Canvas> {
-  const start2: MasterData = await fetchStart2(options.start2URL);
   const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
     deckbuilder,
-    start2,
+    await (await fetch(options.start2URL)).json(),
     options.shipURL
   );
   const has5slot = fleets.some(({ ships }) =>
