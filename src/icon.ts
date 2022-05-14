@@ -49,6 +49,7 @@ const EQUIPMENT_ICON_SOURCE = {
   45: "NightFighter",
   46: "NightTorpedo",
   47: "LandASPatrol",
+  48: "LandAttacker",
   49: "HeavyBomber",
 };
 
@@ -214,29 +215,8 @@ export async function loadOfficialCommonMainIcons(): Promise<{
   return (
     await Promise.all(
       [
-        12,
-        14,
-        18,
-        19,
-        26,
-        27,
-        28,
-        29,
-        41,
-        42,
-        48,
-        49,
-        50,
-        51,
-        52,
-        53,
-        54,
-        55,
-        56,
-        57,
-        58,
-        61,
-        62,
+        12, 14, 18, 19, 26, 27, 28, 29, 41, 42, 48, 49, 50, 51, 52, 53, 54, 55,
+        56, 57, 58, 61, 62,
       ].map(async (name) => {
         const src = `${MASTER_URL}/common_main/common_main_${name}.png`;
         const image = await fetchImage(src);
