@@ -1,85 +1,85 @@
 import { writeFile, existsSync, mkdirSync, accessSync } from "fs";
 
 const SERVER_LIST = [{
-    ip: "203.104.209.71",
-    name: "横須賀鎮守府",
-  },
-  {
-    ip: "203.104.209.87",
-    name: "呉鎮守府",
-  },
-  {
-    ip: "125.6.184.215",
-    name: "佐世保鎮守府",
-  },
-  {
-    ip: "203.104.209.183",
-    name: "舞鶴鎮守府",
-  },
-  {
-    ip: "203.104.209.150",
-    name: "大湊警備府",
-  },
-  {
-    ip: "203.104.209.134",
-    name: "トラック泊地",
-  },
-  {
-    ip: "203.104.209.167",
-    name: "リンガ泊地",
-  },
-  {
-    ip: "203.104.209.199",
-    name: "ラバウル基地",
-  },
-  {
-    ip: "125.6.189.7",
-    name: "ショートランド泊地",
-  },
-  {
-    ip: "125.6.189.39",
-    name: "ブイン基地",
-  },
-  {
-    ip: "125.6.189.71",
-    name: "タウイタウイ泊地",
-  },
-  {
-    ip: "125.6.189.103",
-    name: "パラオ泊地",
-  },
-  {
-    ip: "125.6.189.135",
-    name: "ブルネイ泊地",
-  },
-  {
-    ip: "125.6.189.167",
-    name: "単冠湾泊地",
-  },
-  {
-    ip: "125.6.189.215",
-    name: "幌筵泊地",
-  },
-  {
-    ip: "125.6.189.247",
-    name: "宿毛湾泊地",
-  },
-  {
-    ip: "203.104.209.23",
-    name: "鹿屋基地",
-  },
-  {
-    ip: "203.104.209.39",
-    name: "岩川基地",
-  },
-  {
-    ip: "203.104.209.55",
-    name: "佐伯湾泊地",
-  },
-  {
-    ip: "203.104.209.102",
-    name: "柱島泊地",
-  },
+  ip: "203.104.209.71",
+  name: "横須賀鎮守府",
+},
+{
+  ip: "203.104.209.87",
+  name: "呉鎮守府",
+},
+{
+  ip: "125.6.184.215",
+  name: "佐世保鎮守府",
+},
+{
+  ip: "203.104.209.183",
+  name: "舞鶴鎮守府",
+},
+{
+  ip: "203.104.209.150",
+  name: "大湊警備府",
+},
+{
+  ip: "203.104.209.134",
+  name: "トラック泊地",
+},
+{
+  ip: "203.104.209.167",
+  name: "リンガ泊地",
+},
+{
+  ip: "203.104.209.199",
+  name: "ラバウル基地",
+},
+{
+  ip: "125.6.189.7",
+  name: "ショートランド泊地",
+},
+{
+  ip: "125.6.189.39",
+  name: "ブイン基地",
+},
+{
+  ip: "125.6.189.71",
+  name: "タウイタウイ泊地",
+},
+{
+  ip: "125.6.189.103",
+  name: "パラオ泊地",
+},
+{
+  ip: "125.6.189.135",
+  name: "ブルネイ泊地",
+},
+{
+  ip: "125.6.189.167",
+  name: "単冠湾泊地",
+},
+{
+  ip: "125.6.189.215",
+  name: "幌筵泊地",
+},
+{
+  ip: "125.6.189.247",
+  name: "宿毛湾泊地",
+},
+{
+  ip: "203.104.209.23",
+  name: "鹿屋基地",
+},
+{
+  ip: "203.104.209.39",
+  name: "岩川基地",
+},
+{
+  ip: "203.104.209.55",
+  name: "佐伯湾泊地",
+},
+{
+  ip: "203.104.209.102",
+  name: "柱島泊地",
+},
 ];
 
 const KC_ASSETS = ["banner", "album_status", "remodel", "card"];
@@ -97,24 +97,24 @@ writeFile("static/START2.json", JSON.stringify(masterData), (err) => {
 
 const ships = masterData.api_mst_ship;
 Promise.all(
-    KC_ASSETS.map((assets) => {
-      if (!existsSync(`static/ship/${assets}`)) {
-        mkdirSync(`static/ship/${assets}`);
-      }
-      return ships
-        .map((ship) => ship.api_id)
-        .filter((id) => id < 1500)
-        .map((id) => `static/ship/${assets}/${id}.png`)
-        .filter((file) => {
-          try {
-            accessSync(file);
-            return false;
-          } catch (e) {
-            return true;
-          }
-        });
-    })
-  )
+  KC_ASSETS.map((assets) => {
+    if (!existsSync(`static/ship/${assets}`)) {
+      mkdirSync(`static/ship/${assets}`);
+    }
+    return ships
+      .filter(({ api_getmes }) => api_getmes)
+      .map((ship) => ship.api_id)
+      .map((id) => `static/ship/${assets}/${id}.png`)
+      .filter((file) => {
+        try {
+          accessSync(file);
+          return false;
+        } catch (e) {
+          return true;
+        }
+      });
+  })
+)
   .then((files) => files.flat())
   .then((files) => {
     files.forEach(async (file) => {
@@ -122,10 +122,10 @@ Promise.all(
         SERVER_LIST[Math.floor(Math.random() * SERVER_LIST.length)];
       const response = await fetch(
         `http://${server.ip}/kcs2/${getShip(
-            file.replace(/.*\/.*\/(.*).png/, "$1"),
-            file.includes("_dmg"),
-            file.replace(/.*\/(.*?)(_dmg)?\/.*/, "$1")
-          )}`
+          file.replace(/.*\/.*\/(.*).png/, "$1"),
+          file.includes("_dmg"),
+          file.replace(/.*\/(.*?)(_dmg)?\/.*/, "$1")
+        )}`
       );
       writeFile(file, Buffer.from(await response.arrayBuffer()), (err) => {
         if (err) {
@@ -326,9 +326,9 @@ function zeroPadding(t, e) {
   t = Math.abs(t);
   for (
     var n = t > 0 ? Math.floor(Math.log(t) * Math.LOG10E + 1) : 1,
-      o = "",
-      r = 0,
-      s = e - n; r < s; r++
+    o = "",
+    r = 0,
+    s = e - n; r < s; r++
   ) {
     o += "0";
   }
