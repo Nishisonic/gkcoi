@@ -84,12 +84,13 @@ generate(DeckBuilder, options)
    * テーマ
    * dark=オリジナル(default)
    * dark-ex=オリジナル(遠征パラメータ表示版/第一艦隊のみ表示)
+   * white=オリジナル
    * 74lc=七四式(大型)
    * 74mc=七四式(中型)
    * 74sb=七四式(小型)
    * official=公式
    */
-  theme?: "dark" | "dark-ex" | "74lc" | "74mc" | "74sb" | "official";
+  theme?: "dark" | "dark-ex" | "white" | "74lc" | "74mc" | "74sb" | "official";
   /** 司令部Lv(default=120) */
   hqlv?: number;
   /** 艦隊 */

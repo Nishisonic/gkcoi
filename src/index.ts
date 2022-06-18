@@ -10,9 +10,10 @@ import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
 import { Canvas, createCanvas2D, fetchImage } from "./canvas";
-import { stick } from "./stick";
+import { stick } from "./iutils";
 import { generateOfficialFleetCanvasAsync } from "./theme/official";
 import steg from "../dist/steganography";
+import { generateWhiteFleetCanvasAsync } from "./theme/white";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lzjs = require("lzjs");
 
@@ -74,6 +75,8 @@ async function createAsync(
             );
 
           switch (theme) {
+            case "white":
+              return await generateWhiteFleetCanvasAsync(i, ships, lang);
             case "dark":
             case "dark-ex":
               return await generateDarkFleetCanvasAsync(

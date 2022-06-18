@@ -135,7 +135,7 @@ async function generateDarkShipInfoCanvasAsync(
       if (ship.items[i] && ship.items[i].type[4] !== 0) {
         ctx.textAlign = "right";
         ctx.fillStyle = "#c3c3c3";
-        ctx.fillText(String(ship.slots[i]), 388, 52 + 23 * i);
+        ctx.fillText(String(ship.slots[i]), 389, 52 + 23 * i);
         ctx.textAlign = "left";
         ctx.fillStyle = "#fff";
       }

@@ -13,7 +13,7 @@ import {
   loadOfficialHpGaugeIcons,
   resize,
 } from "../icon";
-import { stick } from "../stick";
+import { stick } from "../iutils";
 
 function getOffset(type: number): { x: number; y: number } {
   switch (type) {
