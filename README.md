@@ -77,9 +77,10 @@ generate(DeckBuilder, options)
    * jp=日本語(default)
    * en=英語
    * kr=韓国語
-   * scn=中国語
+   * scn=中国語(簡体字)
+   * tcn=中国語(繁体字)
    */
-  lang?: "jp" | "en" | "kr" | "scn";
+  lang?: "jp" | "en" | "kr" | "scn" | "tcn";
   /**
    * テーマ
    * dark=オリジナル(default)
