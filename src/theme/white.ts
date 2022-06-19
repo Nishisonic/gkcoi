@@ -223,12 +223,12 @@ function calcColorStops(
       color: color1,
     },
     {
-      offset: (cx + 20) / textWidth,
+      offset: Math.min((cx + 20) / textWidth, 1),
       color: color2,
     },
     {
       // period
-      offset: width / textWidth > 1 ? 1 : width / textWidth,
+      offset: Math.min(width / textWidth, 1),
       color: color2,
     },
   ];
