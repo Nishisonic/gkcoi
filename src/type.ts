@@ -3,13 +3,15 @@ import { Lang } from "./lang";
 import { Image, fetchImage } from "./canvas";
 
 export type Theme =
-  | "white"
   | "dark"
+  | "dark-ex"
+  | "light"
+  | "light-ex"
+  | "white"
   | "74lc"
   | "74mc"
   | "74sb"
-  | "official"
-  | "dark-ex";
+  | "official";
 export type Range = 0 | 1 | 2 | 3 | 4;
 export type Speed = 0 | 5 | 10 | 15 | 20;
 export type AirState = "AS+" | "AS" | "AP";

@@ -2,3 +2,4 @@
 /dist/
 /esm/
 test/debug.log
+test/index.js

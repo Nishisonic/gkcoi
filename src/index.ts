@@ -14,6 +14,12 @@ import { stick } from "./iutils";
 import { generateOfficialFleetCanvasAsync } from "./theme/official";
 import steg from "../dist/steganography";
 import { generateWhiteFleetCanvasAsync } from "./theme/white";
+import {
+  generateLightAirbaseCanvasAsync,
+  generateLightExpeditionStatsCanvasAsync,
+  generateLightFleetCanvasAsync,
+  generateLightParameterCanvasAsync,
+} from "./theme/light";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lzjs = require("lzjs");
 
@@ -43,7 +49,7 @@ async function createAsync(
   const fimage = stick(
     await Promise.all(
       fleets
-        .filter((v, i) => (theme === "dark-ex" ? i === 0 : true))
+        .filter((v, i) => (["dark-ex", "light-ex"].includes(theme) ? i === 0 : true))
         .map(async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
           const los: LoS = {
             1: getLoSValue(ships, hqlv, 1),
@@ -77,6 +83,16 @@ async function createAsync(
           switch (theme) {
             case "white":
               return await generateWhiteFleetCanvasAsync(i, ships, lang);
+            case "light":
+            case "light-ex":
+              return await generateLightFleetCanvasAsync(
+                i,
+                ships,
+                los,
+                airPower,
+                speed,
+                lang
+              );
             case "dark":
             case "dark-ex":
               return await generateDarkFleetCanvasAsync(
@@ -122,7 +138,13 @@ async function createAsync(
       fleets.filter(({ ships }) => ships.length > 0).length > 2
       ? 2
       : 1,
-    theme === "dark" ? "#212121" : theme === "official" ? "#ece3d7" : "white"
+    theme === "dark"
+      ? "#212121"
+      : theme === "official"
+      ? "#ece3d7"
+      : theme === "light"
+      ? "#FAFAFA"
+      : "white"
   );
   if (theme === "dark-ex") {
     const eimage = await generateDarkExpeditionStatsCanvasAsync(
@@ -139,31 +161,69 @@ async function createAsync(
     ctx.drawImage(fimage, 0, 0);
     ctx.drawImage(eimage, fimage.width + 2, 0);
     return canvas;
+  } else if (theme === "light-ex") {
+    const eimage = await generateLightExpeditionStatsCanvasAsync(
+      fleets[0].ships,
+      lang
+    );
+    const { canvas, ctx } = createCanvas2D(
+      fimage.width + eimage.width + 2,
+      fimage.height
+    );
+    ctx.fillStyle = "#FAFAFA";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(fimage, 0, 0);
+    ctx.drawImage(eimage, fimage.width + 2, 0);
+    return canvas;
   }
   const useAirbase = airbases
     .map(({ items }) => items)
     .some((items) => items.some(({ id }) => id > 0));
-  if (theme === "dark" && useAirbase) {
-    const aimage = await generateDarkAirbaseCanvasAsync(airbases, lang);
-    const { canvas, ctx } = createCanvas2D(
-      fimage.width + aimage.width + 2,
-      fimage.height
-    );
-    ctx.fillStyle = "#212121";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.drawImage(fimage, 0, 0);
-    ctx.drawImage(aimage, fimage.width + 2, 0);
-    if (fleets.length > 1) {
-      const pimage = await generateDarkParameterCanvasAsync(
-        [fleets[0].ships, fleets[1].ships].flat(),
-        airState,
-        comment,
-        lang
+  if (useAirbase) {
+    if (theme === "dark") {
+      const aimage = await generateDarkAirbaseCanvasAsync(airbases, lang);
+      const { canvas, ctx } = createCanvas2D(
+        fimage.width + aimage.width + 2,
+        fimage.height
       );
-      ctx.drawImage(pimage, fimage.width + 2, aimage.height);
+      ctx.fillStyle = "#212121";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.drawImage(fimage, 0, 0);
+      ctx.drawImage(aimage, fimage.width + 2, 0);
+      if (fleets.length > 1) {
+        const pimage = await generateDarkParameterCanvasAsync(
+          [fleets[0].ships, fleets[1].ships].flat(),
+          airState,
+          comment,
+          lang
+        );
+        ctx.drawImage(pimage, fimage.width + 2, aimage.height);
+      }
+      return canvas;
+    } else if (theme === "light") {
+      const aimage = await generateLightAirbaseCanvasAsync(airbases, lang);
+      const { canvas, ctx } = createCanvas2D(
+        fimage.width + aimage.width + 2,
+        fimage.height
+      );
+      ctx.fillStyle = "#FAFAFA";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.drawImage(fimage, 0, 0);
+      ctx.drawImage(aimage, fimage.width + 2, 0);
+      if (fleets.length > 1) {
+        const pimage = await generateLightParameterCanvasAsync(
+          [fleets[0].ships, fleets[1].ships].flat(),
+          airState,
+          comment,
+          lang
+        );
+        ctx.drawImage(pimage, fimage.width + 2, aimage.height);
+      }
+      return canvas;
     }
-    return canvas;
   }
   return fimage;
 }
