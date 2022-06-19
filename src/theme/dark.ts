@@ -530,7 +530,6 @@ export async function generateDarkParameterCanvasAsync(
     "#cdcc5d",
     "#6dccda",
   ];
-  console.log(canAACIList);
   new Chart(aaciCanvases.ctx, {
     type: "doughnut",
     data: {

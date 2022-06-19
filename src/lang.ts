@@ -96,7 +96,7 @@ export const DISTANCE = new Language(
 export const LOS = new Language("索敵能力", "LoS(1)", "색적능력", "索敌容量", "索敵能力");
 
 export const CONTACT = {
-  LABEL: new Language("触接率", "Contact", "촉접률", "接触率", "觸接率"),
+  LABEL: new Language("触接率", "Contact", "촉접율", "接触率", "觸接率"),
   "AS+": new Language("確保", "AS+", "확보", "确保", "確保"),
   AS: new Language("優勢", "AS", "우세", "优势", "空優"),
   AP: new Language("劣勢", "AP", "열세", "劣势", "空劣"),

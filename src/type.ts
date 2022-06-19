@@ -2,7 +2,14 @@ import { getAirPower, MASTER_URL } from "./utils";
 import { Lang } from "./lang";
 import { Image, fetchImage } from "./canvas";
 
-export type Theme = "white" | "dark" | "74lc" | "74mc" | "74sb" | "official" | "dark-ex";
+export type Theme =
+  | "white"
+  | "dark"
+  | "74lc"
+  | "74mc"
+  | "74sb"
+  | "official"
+  | "dark-ex";
 export type Range = 0 | 1 | 2 | 3 | 4;
 export type Speed = 0 | 5 | 10 | 15 | 20;
 export type AirState = "AS+" | "AS" | "AP";
@@ -472,23 +479,22 @@ export class Item {
 
   get expeditionFirepowerBonus(): number {
     switch (this.type[2]) {
-      /** 小口径主砲 */
-      case 1:
+      case 1: // 小口径主砲
         return 0.5 * Math.sqrt(this.lv);
-      /** 中口径主砲 */
-      case 2:
+      case 2: // 中口径主砲
         return Math.sqrt(this.lv);
-      /** 大口径主砲 */
-      case 3:
-        return 0.95 * Math.sqrt(this.lv);
-      /** 副砲 */
-      case 4:
-        return 0.15 * this.lv;
-      /** 徹甲弾 */
-      case 19:
+      case 3: // 大口径主砲
+        return Math.sqrt(this.lv);
+      case 4: // 副砲
         return 0.5 * Math.sqrt(this.lv);
-      /** 機銃 */
-      case 21:
+      case 12: // 小型電探
+        return 0.5 * Math.sqrt(this.lv);
+      case 13: // 大型電探
+      case 93: // 大型電探(II)
+        return Math.sqrt(this.lv);
+      case 19: // 徹甲弾
+        return 0.5 * Math.sqrt(this.lv);
+      case 21: // 機銃
         return 0.5 * Math.sqrt(this.lv);
     }
     return 0;
@@ -496,11 +502,9 @@ export class Item {
 
   get expeditionAABonus(): number {
     switch (this.type[3]) {
-      /** 機銃 */
-      case 15:
+      case 15: // 機銃
         return Math.sqrt(this.lv);
-      /** 高角砲 */
-      case 16:
+      case 16: // 高角砲
         return 0.3 * this.lv;
     }
     return 0;
@@ -508,19 +512,34 @@ export class Item {
 
   get expeditionASWBonus(): number {
     switch (this.type[2]) {
-      /** ソナー */
-      case 14:
-      /** 爆雷 */
-      case 15:
+      case 10: // 水上偵察機
+      case 11: // 水上爆撃機
+      case 7: // 艦上爆撃機
+      case 8: // 艦上攻撃機
+      case 25: // オートジャイロ
+        if (this.asw < 5) {
+          return 0;
+        } else if (this.asw < 7) {
+          // 6かも
+          return 0.5 * Math.sqrt(this.lv);
+        } else {
+          return Math.sqrt(this.lv);
+        }
+      case 14: // ソナー
+        return Math.sqrt(this.lv);
+      case 15: // 爆雷
         return Math.sqrt(this.lv);
     }
     return 0;
   }
 
   get expeditionLoSBonus(): number {
-    switch (this.type[3]) {
-      /** 電探 */
-      case 11:
+    switch (this.type[2]) {
+      case 10: // 水上偵察機
+        return Math.sqrt(this.lv);
+      case 12: // 小型電探
+      case 13: // 大型電探
+      case 93: // 大型電探(II)
         return Math.sqrt(this.lv);
     }
     return 0;
