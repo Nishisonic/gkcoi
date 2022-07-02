@@ -176,7 +176,7 @@ export async function load74eoEquipmentIcons(
 ): Promise<{ [key: string]: Image }> {
   return (
     await Promise.all(
-      Object.values(EQUIPMENT_ICON_SOURCE).map(
+      [...Object.values(EQUIPMENT_ICON_SOURCE), "Unknown"].map(
         async (id: string, idx: number) => {
           const src = `${MASTER_URL}/74eo/Equipment/${id}.png`;
           const img = await fetchImage(src);
@@ -203,6 +203,9 @@ export async function load74eoEquipmentIcons(
             canvas.height
           );
           const image = await fetchImage(canvas.toDataURL());
+          if (id === "Unknown") {
+            return { id: "unknown", image };
+          }
           return { id: idx + 1, image };
         }
       )

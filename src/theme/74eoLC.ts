@@ -103,7 +103,7 @@ async function generate74eoLargeCardShipCanvasAsync(
       const name = toTranslateEquipmentName(ship.items[i].name, items);
       ctx.fillText(name, 45, 53 + 22 * itemIdx);
       ctx.drawImage(
-        equipmentIcons[ship.items[i].type[3]],
+        equipmentIcons[ship.items[i].type[3]] ?? equipmentIcons.unknown,
         26,
         39 + 22 * itemIdx
       );

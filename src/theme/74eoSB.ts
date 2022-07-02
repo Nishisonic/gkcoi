@@ -56,7 +56,7 @@ async function generate74eoSmallBannerShipCanvasAsync(
       const nameWidth = ctx.measureText(name).width;
       ctx.fillText(name, 40, 55 + 18 * itemIdx);
       ctx.drawImage(
-        equipmentIcons[ship.items[i].type[3]],
+        equipmentIcons[ship.items[i].type[3]] ?? equipmentIcons.unknown,
         22,
         42 + 18 * itemIdx
       );

@@ -109,11 +109,13 @@ async function generateOfficialShipCanvasAsync(
     const item = ship.items[i];
     if (item.id > 0) {
       const offset = getOffset(item.type[3]);
-      ctx.drawImage(
-        equipmentIcons[ship.items[i].type[3]],
-        34 + offset.x,
-        87 + offset.y + 47 * i
-      );
+      if (equipmentIcons[ship.items[i].type[3]]) {
+        ctx.drawImage(
+          equipmentIcons[ship.items[i].type[3]],
+          34 + offset.x,
+          87 + offset.y + 47 * i
+        );
+      }
       const grd = ctx.createLinearGradient(84, 0, 324, 0);
       grd.addColorStop(0, "#54483c");
       grd.addColorStop(0.6, "#54483c");
@@ -154,12 +156,14 @@ async function generateOfficialShipCanvasAsync(
     grd.addColorStop(0.6, "#54483c");
     grd.addColorStop(0.95, "rgba(0, 0, 0, 0)");
     ctx.fillStyle = grd;
-    const offset = getOffset(exItem.type[3]);
-    ctx.drawImage(
-      equipmentIcons[exItem.type[3]],
-      388 + offset.x,
-      503 + offset.y
-    );
+    if (equipmentIcons[exItem.type[3]]) {
+      const offset = getOffset(exItem.type[3]);
+      ctx.drawImage(
+        equipmentIcons[exItem.type[3]],
+        388 + offset.x,
+        503 + offset.y
+      );
+    }
     const itemName = toTranslateEquipmentName(exItem.name, items);
     ctx.fillText(itemName, 438, 532);
     if (exItem.lv === 10) {

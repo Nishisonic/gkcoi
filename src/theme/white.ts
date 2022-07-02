@@ -119,11 +119,13 @@ export async function generateWhiteShipCanvasAsync(ship: Ship, lang: Lang) {
   for (let i = 0; i < 6; i++) {
     if (ship.items[i].id > 0) {
       ctx.textAlign = "left";
-      ctx.drawImage(
-        equipmentIcons[String(ship.items[i].type[3])],
-        itemX,
-        itemY + 23 * i
-      );
+      if (equipmentIcons[String(ship.items[i].type[3])]) {
+        ctx.drawImage(
+          equipmentIcons[String(ship.items[i].type[3])],
+          itemX,
+          itemY + 23 * i
+        );
+      }
       ctx.fillStyle = "#434343";
 
       const ename = toTranslateEquipmentName(ship.items[i].name, items);

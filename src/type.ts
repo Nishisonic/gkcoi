@@ -270,8 +270,8 @@ export class Ship {
     const newBoiler = this.items.filter((item) => item.id === 87).length;
 
     // タービンなしに高速化できる例外
-    // 低速D群:伊203
-    if (this.yomi === "い203") {
+    // 低速D群:伊203、伊201
+    if (["い203", "い201"].includes(this.yomi)) {
       if (newBoiler && turbine) return 15;
       if (newBoiler || (boiler && turbine)) return 10;
     }
@@ -284,9 +284,9 @@ export class Ship {
         if (newBoiler || boiler >= 2) return 20;
         if (boiler) return 15;
       }
-      // 高速B1群:天津風、阿賀野型、蒼龍、飛龍、雲龍、天城、金剛型、Iowa
+      // 高速B1群:天津風、阿賀野型、蒼龍、飛龍、雲龍、天城、金剛型、Iowa、大和改二
       else if (
-        [41, 17, 25, 6, 65].includes(this.ctype) ||
+        [41, 17, 25, 6, 65, 37].includes(this.ctype) ||
         ["あまつかぜ", "うんりゅう", "あまぎ"].includes(this.yomi)
       ) {
         if (newBoiler >= 2 || (newBoiler && boiler)) return 20;

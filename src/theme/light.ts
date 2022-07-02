@@ -129,11 +129,13 @@ async function generateLightShipInfoCanvasAsync(
         420,
         52 + 23 * i
       );
-      ctx.drawImage(
-        equipmentIcons[String(ship.items[i].type[3])],
-        389,
-        33 + 23 * i
-      );
+      if (equipmentIcons[String(ship.items[i].type[3])]) {
+        ctx.drawImage(
+          equipmentIcons[String(ship.items[i].type[3])],
+          389,
+          33 + 23 * i
+        );
+      }
     } else {
       const none = NONE[lang];
       ctx.fillText(`(${none})`, 420, 52 + 23 * i);
@@ -345,11 +347,13 @@ export async function generateLightAirbaseCanvasAsync(
           35,
           90 + i * 182 + 23 * j
         );
-        ctx.drawImage(
-          equipmentIcons[String(type[3])],
-          4,
-          71 + i * 182 + 23 * j
-        );
+        if (equipmentIcons[String(type[3])]) {
+          ctx.drawImage(
+            equipmentIcons[String(type[3])],
+            4,
+            71 + i * 182 + 23 * j
+          );
+        }
       } else {
         const none = NONE[lang];
         ctx.fillText(`(${none})`, 35, 90 + i * 182 + 23 * j);

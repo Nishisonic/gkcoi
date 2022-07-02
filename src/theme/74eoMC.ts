@@ -86,7 +86,7 @@ async function generate74eoMediumCutinShipCanvasAsync(
       const name = toTranslateEquipmentName(ship.items[i].name, items);
       ctx.fillText(name, 463, 48 + 23 * itemIdx + itemOffset);
       ctx.drawImage(
-        equipmentIcons[ship.items[i].type[3]],
+        equipmentIcons[ship.items[i].type[3]] ?? equipmentIcons.unknown,
         444,
         34 + 23 * itemIdx + itemOffset
       );

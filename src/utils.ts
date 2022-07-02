@@ -149,6 +149,7 @@ function getImprovementBonus(item: Item): number {
     60, // 零式艦戦62型(爆戦)
     154, // 零戦62型(爆戦/岩井隊)
     219, // 零式艦戦63型(爆戦)
+    447, // 零式艦戦64型(複座KMX搭載機)
   ];
 
   if (item.lv > 0) {
