@@ -120,9 +120,9 @@ async function generateLightShipInfoCanvasAsync(
   ctx.fillText(String(ship.luck), 638, 28);
   // equipment
   ctx.font = "14px Meiryo";
-  ctx.fillStyle = fontColor;
   ctx.textAlign = "left";
   for (let i = 0; i < 6; i++) {
+    ctx.fillStyle = fontColor;
     if (ship.items[i].id > 0) {
       ctx.fillText(
         toTranslateEquipmentName(ship.items[i].name, items),
@@ -192,7 +192,7 @@ async function generateLightShipCanvasAsync(
 }
 
 /**
- * 【オリジナル】ダークバージョンを出力する
+ * 【オリジナル】ライトバージョンを出力する
  * @param fleetIdx 艦隊番号
  * @param ships 艦
  * @param los 索敵
