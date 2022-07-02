@@ -51,6 +51,7 @@ const EQUIPMENT_ICON_SOURCE = {
   47: "LandASPatrol",
   48: "LandAttacker",
   49: "HeavyBomber",
+  50: "NightSeaplane",
 };
 
 export async function loadOfficialParameterIcons(): Promise<{
