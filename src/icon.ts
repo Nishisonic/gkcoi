@@ -49,7 +49,7 @@ const EQUIPMENT_ICON_SOURCE = {
   45: "NightFighter",
   46: "NightTorpedo",
   47: "LandASPatrol",
-  48: "LandAssulter",
+  48: "LandAssaulter",
   49: "HeavyBomber",
   50: "NightSeaplane",
 };
