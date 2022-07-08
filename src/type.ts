@@ -820,30 +820,29 @@ export function parse(
   );
 
   function parseItem(item?: DeckBuilderItem): Item {
-    if (!item || !item.id) {
+    if (!item || Number(item.id) <= 0) {
       return Item.UNKNOWN;
     }
-    const itemid: number = item.id;
     const lv: number = item.rf || 0;
     const alv: number = item.mas || 0;
-    return new Item(masterItem[itemid], lv, alv);
+    return new Item(masterItem[Number(item.id)], lv, alv);
   }
 
   function parseShip(ship?: DeckBuilderShip): Ship {
     if (!ship || Number(ship.id) <= 0) {
       return Ship.UNKNOWN;
     }
-    const id: number = ship.id;
-    const lv: number = ship.lv;
-    const hp: number = ship.hp;
-    const firepower: number = ship.fp;
-    const torpedo: number = ship.tp;
-    const aa: number = ship.aa;
-    const armor: number = ship.ar;
-    const asw: number = ship.asw;
-    const evasion: number = ship.ev;
-    const los: number = ship.los;
-    const luck: number = ship.luck;
+    const id: number = Number(ship.id);
+    const lv: number = Number(ship.lv);
+    const hp: number = Number(ship.hp);
+    const firepower: number = Number(ship.fp);
+    const torpedo: number = Number(ship.tp);
+    const aa: number = Number(ship.aa);
+    const armor: number = Number(ship.ar);
+    const asw: number = Number(ship.asw);
+    const evasion: number = Number(ship.ev);
+    const los: number = Number(ship.los);
+    const luck: number = Number(ship.luck);
     const _items = [
       ship.items.i1,
       ship.items.i2,

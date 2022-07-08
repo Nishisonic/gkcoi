@@ -498,7 +498,7 @@ const AA_CI_LIST: {
   45: { kind: 45, fixed: 5, prop: 1.55, value: 65, sp: false },
 };
 
-export function getCanAACIList(
+export function calcCanAACIList(
   ships: Ship[]
 ): { kind: number; rate: number }[] {
   const aalists = ships

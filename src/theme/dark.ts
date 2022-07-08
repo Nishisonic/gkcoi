@@ -5,7 +5,7 @@ import {
   toAirPowerString,
   getDistance,
   getAirbaseAirPower,
-  getCanAACIList,
+  calcCanAACIList,
   getContactValue,
 } from "../utils";
 import { createCanvas2D, Canvas } from "../canvas";
@@ -471,12 +471,13 @@ export async function generateDarkParameterCanvasAsync(
   ctx.textAlign = "center";
   ctx.fillStyle = "#fff";
   ctx.fillText("Details(Combined Fleet)", 132, 24);
-  ctx.fillText(CONTACT.LABEL[lang], 85, 125);
-  ctx.fillText(`(${CONTACT[airState][lang]})`, 85, 146);
-  ctx.fillText(AA_CI[lang], 85, 318);
+  ctx.fillText(CONTACT.LABEL[lang], 82, 125);
+  ctx.fillText(`(${CONTACT[airState][lang]})`, 82, 146);
+  ctx.fillText(AA_CI[lang], 83, 318);
   ctx.strokeRect(1, 1, 263, 36);
 
-  const touchCanvases = createCanvas2D(265, 150);
+  const zoomLevel = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
+  const touchCanvases = createCanvas2D(265 / zoomLevel, 150 / zoomLevel);
   const contacts = getContactValue(ships, airState);
   const modifierColors = ["#729ece", "#ff9e4a", "#67bf5c", "#1A1A1A"];
   new Chart(touchCanvases.ctx, {
@@ -500,13 +501,16 @@ export async function generateDarkParameterCanvasAsync(
         legend: {
           position: "right",
           labels: {
+            font: {
+              size: 14 / zoomLevel,
+            },
             color: "white",
           },
         },
         datalabels: {
           color: "black",
           font: {
-            size: 14,
+            size: 14 / zoomLevel,
             weight: "bold",
           },
           formatter: function (value: number, context) {
@@ -519,9 +523,9 @@ export async function generateDarkParameterCanvasAsync(
       },
     },
   });
-  ctx.drawImage(touchCanvases.canvas, 0, 55);
-  const aaciCanvases = createCanvas2D(265, 150);
-  const canAACIList = getCanAACIList(ships);
+  ctx.drawImage(touchCanvases.canvas, -265 * (1 - zoomLevel) * 0.1, 55);
+  const aaciCanvases = createCanvas2D(265 / zoomLevel, 150 / zoomLevel);
+  const canAACIList = calcCanAACIList(ships);
   const ciColors = [
     "#729ece",
     "#ff9e4a",
@@ -560,12 +564,15 @@ export async function generateDarkParameterCanvasAsync(
           position: "right",
           labels: {
             color: "white",
+            font: {
+              size: 14 / zoomLevel,
+            },
           },
         },
         datalabels: {
           color: "black",
           font: {
-            size: 14,
+            size: 14 / zoomLevel,
             weight: "bold",
           },
           formatter: function (value: number, context) {
@@ -578,7 +585,7 @@ export async function generateDarkParameterCanvasAsync(
       },
     },
   });
-  ctx.drawImage(aaciCanvases.canvas, 0, 237);
+  ctx.drawImage(aaciCanvases.canvas, -265 * (1 - zoomLevel) * 0.1, 237);
   fillTextLine(ctx, comment, 12, 430, 250);
   return canvas;
 }
@@ -609,7 +616,8 @@ export async function generateDarkExpeditionStatsCanvasAsync(
   ctx.fillText("Expedition", 132, 24);
   ctx.strokeRect(1, 1, 263, 36);
 
-  const canvas2 = createCanvas2D(265, 545);
+  const zoomLevel = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
+  const canvas2 = createCanvas2D(265 / zoomLevel, 545 / zoomLevel);
   new Chart(canvas2.ctx, {
     type: "bar",
     plugins: [ChartDataLabels],
