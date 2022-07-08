@@ -303,10 +303,10 @@ TsunDBの統計結果を元にした確率を採用しています。
   - 翻訳で使用
   - [MIT License](https://github.com/KC3Kai/kc3-translations/blob/master/LICENSE)
 
-- steganography.ts
+- ts-steganography
 
   - 画像に情報を埋め込む際に使用
-  - [MIT License](https://github.com/Nishisonic/steganography.ts/blob/master/README.md)
+  - [MIT License](https://github.com/Nishisonic/ts-steganography/blob/master/LICENSE)
 
 - lzjs
 

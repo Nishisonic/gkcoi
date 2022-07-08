@@ -12,7 +12,7 @@ import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
 import { Canvas, createCanvas2D, fetchImage } from "./canvas";
 import { stick } from "./iutils";
 import { generateOfficialFleetCanvasAsync } from "./theme/official";
-import steg from "../dist/steganography";
+import steg from "ts-steganography";
 import { generateWhiteFleetCanvasAsync } from "./theme/white";
 import {
   generateLightAirbaseCanvasAsync,
@@ -49,7 +49,9 @@ async function createAsync(
   const fimage = stick(
     await Promise.all(
       fleets
-        .filter((v, i) => (["dark-ex", "light-ex"].includes(theme) ? i === 0 : true))
+        .filter((v, i) =>
+          ["dark-ex", "light-ex"].includes(theme) ? i === 0 : true
+        )
         .map(async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
           const los: LoS = {
             1: getLoSValue(ships, hqlv, 1),
@@ -228,24 +230,6 @@ async function createAsync(
   return fimage;
 }
 
-function encodeAsync(data: string, url: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    steg.encode(data, url, {
-      success: (value: string) => resolve(value),
-      error: (e: string) => reject(e),
-    });
-  });
-}
-
-function decodeAsync(url: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    steg.decode(url, {
-      success: (value: string) => resolve(value),
-      error: (e: string) => reject(e),
-    });
-  });
-}
-
 /**
  * 画像を生成する
  * @param deckbuilder フォーマット
@@ -263,7 +247,7 @@ export async function generate(
   }
 ): Promise<Canvas> {
   const original = await createAsync(deckbuilder, options);
-  const src = await encodeAsync(
+  const src = await steg.encode(
     lzjs.compress(JSON.stringify(deckbuilder)),
     original.toDataURL()
   );
@@ -277,6 +261,6 @@ export async function generate(
  * @param src ソース
  * @return フォーマット
  */
-export async function decode(src: string): Promise<string> {
-  return JSON.parse(lzjs.decompress(await decodeAsync(src)));
+export async function decode(src: string) {
+  return JSON.parse(lzjs.decompress(await steg.decode(src)));
 }
