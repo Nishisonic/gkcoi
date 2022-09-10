@@ -477,7 +477,7 @@ const AA_CI_LIST: {
   24: { kind: 24, fixed: 3, prop: 1.25, value: 54, sp: false },
   25: { kind: 25, fixed: 7, prop: 1.55, value: 61, sp: false },
   26: { kind: 26, fixed: 6, prop: 1.4, value: 60, sp: false },
-  // 27:
+  27: { kind: 27, fixed: 5, prop: 1.55, value: 55, sp: false },
   28: { kind: 28, fixed: 4, prop: 1.4, value: 55, sp: false },
   29: { kind: 29, fixed: 5, prop: 1.55, value: 60, sp: false },
   30: { kind: 30, fixed: 3, prop: 1.3, value: 44, sp: false },
@@ -646,6 +646,9 @@ export function calcCanAACIList(
         }
         if ([546, 911, 916].includes(ship.id) && tenHAGunKai && aaRadar) {
           aalist.push(26);
+        }
+        if (ship.id === 321 && tenHAGunKai && rocketLauncherK2 && aaRadar) {
+          aalist.push(27);
         }
         if (
           [82, 88, 553, 554, 148, 546].includes(ship.id) &&

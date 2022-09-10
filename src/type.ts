@@ -825,7 +825,7 @@ export function parse(
     }
     const lv: number = item.rf || 0;
     const alv: number = item.mas || 0;
-    return new Item(masterItem[Number(item.id)], lv, alv);
+    return new Item(masterItem[Number(item.id)], Number(lv), Number(alv));
   }
 
   function parseShip(ship?: DeckBuilderShip): Ship {
