@@ -232,17 +232,16 @@ export class Ship {
   }
 
   get range(): Range {
+    const isSgRangeBonusShip =
+      [87, 91].includes(this.ctype) || [651, 656].includes(this.id);
+    const hasSgRadarInitialModel = this.items.some(({ id }) => id === 315);
+    const hasSgRadarLateModel = this.items.some(({ id }) => id === 456);
+    const hasType2ReconAircraft = this.items.some(({ id }) => id === 61);
+    const isT2RangeBonusShip = [553, 554, 196, 197].includes(this.id);
     const bonus: number =
-      ([87, 91].includes(this.ctype) && this.items.some(({ id }) => id === 315)
-        ? 1
-        : 0) +
-      ([87, 91].includes(this.ctype) && this.items.some(({ id }) => id === 456)
-        ? 1
-        : 0) +
-      ([553, 554, 196, 197].includes(this.id) &&
-      this.items.some(({ id }) => id === 61)
-        ? 1
-        : 0);
+      +(isSgRangeBonusShip && hasSgRadarInitialModel) +
+      +(isSgRangeBonusShip && hasSgRadarLateModel) +
+      +(isT2RangeBonusShip && hasType2ReconAircraft);
     let max: Range = this.rn;
     for (const { range } of this.items) {
       if (range > max) {
