@@ -127,6 +127,10 @@ const SKILLED_BONUS_LIST: {
   8: [0, 0, 0, 0, 0, 0, 0, 0],
   /** 水上爆撃機 */
   11: [0, 0, 1, 1, 1, 3, 3, 6],
+  // /** オートジャイロ */  st1に参加するが制空計算寄与なし
+  // 25: [0, 0, 0, 0, 0, 0, 0, 0],
+  // /** 対潜哨戒機 */      st1に参加するが制空計算寄与なし
+  // 26: [0, 0, 0, 0, 0, 0, 0, 0],
   /** 水上戦闘機 */
   45: [0, 0, 2, 5, 9, 14, 14, 22],
   /** 局地戦闘機 */
@@ -137,6 +141,13 @@ const SKILLED_BONUS_LIST: {
   57: [0, 0, 0, 0, 0, 0, 0, 0],
   /** 噴式攻撃機 */
   58: [0, 0, 0, 0, 0, 0, 0, 0],
+};
+
+const SPECIAL_SKILLED_BONUS_LIST: {
+  [key: number]: number[];
+} = {
+  /** 一式戦 隼II型改(20戦隊) */
+  489: [0, 0, 2, 5, 9, 14, 14, 22],
 };
 
 const SKILLED_BONUS = {
@@ -172,14 +183,19 @@ function getImprovementBonus(item: Item): number {
 export function getAirPower(items: Item[], slots: number[]): AirPower {
   return items
     .map((item, i) => {
-      if (slots[i] > 0 && item && SKILLED_BONUS_LIST[item.type[2]]) {
-        const bonus =
-          SKILLED_BONUS_LIST[item.type[2]][7] +
-          Math.sqrt(slots[i]) * (item.aa + getImprovementBonus(item));
-        return {
-          min: Math.floor(bonus + Math.sqrt(SKILLED_BONUS.MIN[7] / 10)),
-          max: Math.floor(bonus + Math.sqrt(SKILLED_BONUS.MAX[7] / 10)),
-        };
+      if (slots[i] > 0 && item) {
+        const appliedSKilledBonus: number[] | undefined =
+          SPECIAL_SKILLED_BONUS_LIST[item.id] ||
+          SKILLED_BONUS_LIST[item.type[2]];
+        if (appliedSKilledBonus !== undefined) {
+          const bonus =
+            appliedSKilledBonus[7] +
+            Math.sqrt(slots[i]) * (item.aa + getImprovementBonus(item));
+          return {
+            min: Math.floor(bonus + Math.sqrt(SKILLED_BONUS.MIN[7] / 10)),
+            max: Math.floor(bonus + Math.sqrt(SKILLED_BONUS.MAX[7] / 10)),
+          };
+        }
       }
       return { min: 0, max: 0 };
     })
@@ -213,7 +229,9 @@ export function getAirbaseAirPower(
     .map((item) => {
       if (item && item.type[4] > 0) {
         const bonus =
-          (SKILLED_BONUS_LIST[item.type[2]] || SKILLED_BONUS_LIST[9999])[7] +
+          (SPECIAL_SKILLED_BONUS_LIST[item.id] ||
+            SKILLED_BONUS_LIST[item.type[2]] ||
+            SKILLED_BONUS_LIST[9999])[7] +
           Math.sqrt(slot(item)) *
             (item.aa +
               (item.type[2] === 48
@@ -528,13 +546,19 @@ export function calcCanAACIList(
         ).length;
         const tenHAGunKai = ship.items.filter(({ id }) => id === 275).length;
         const tenHAGunCD = ship.items.filter(({ id }) => id === 464).length;
-        const yamatoClassRadar = ship.items.filter(({ id }) => [142, 460].includes(id)).length;
+        const yamatoClassRadar = ship.items.filter(({ id }) =>
+          [142, 460].includes(id)
+        ).length;
         const type3Shell = ship.items.filter(
           ({ type }) => type[2] === 18
         ).length;
         const aaGun = ship.items.filter(({ type }) => type[2] === 21).length;
-        const aaGun4 = ship.items.filter(({ type, aa }) => type[2] === 21 && aa >= 4).length;
-        const aaGun6 = ship.items.filter(({ type, aa }) => type[2] === 21 && aa >= 6).length;
+        const aaGun4 = ship.items.filter(
+          ({ type, aa }) => type[2] === 21 && aa >= 4
+        ).length;
+        const aaGun6 = ship.items.filter(
+          ({ type, aa }) => type[2] === 21 && aa >= 6
+        ).length;
         const aaFD = ship.items.filter(({ type }) => type[2] === 36).length;
         const lMainGun = ship.items.filter(({ type }) => type[2] === 3).length;
         const haGunFD = ship.items.filter(
@@ -617,16 +641,34 @@ export function calcCanAACIList(
         ) {
           aalist.push(25);
         }
-        if ([546, 911, 916].includes(ship.id) && tenHAGunCD >= 2 && aaGun6 && yamatoClassRadar) {
+        if (
+          [546, 911, 916].includes(ship.id) &&
+          tenHAGunCD >= 2 &&
+          aaGun6 &&
+          yamatoClassRadar
+        ) {
           aalist.push(42);
         }
-        if ([546, 911, 916].includes(ship.id) && tenHAGunCD >= 2 && yamatoClassRadar) {
+        if (
+          [546, 911, 916].includes(ship.id) &&
+          tenHAGunCD >= 2 &&
+          yamatoClassRadar
+        ) {
           aalist.push(43);
         }
-        if ([546, 911, 916].includes(ship.id) && tenHAGunCD && aaGun6 && yamatoClassRadar) {
+        if (
+          [546, 911, 916].includes(ship.id) &&
+          tenHAGunCD &&
+          aaGun6 &&
+          yamatoClassRadar
+        ) {
           aalist.push(44);
         }
-        if ([546, 911, 916].includes(ship.id) && tenHAGunCD && yamatoClassRadar) {
+        if (
+          [546, 911, 916].includes(ship.id) &&
+          tenHAGunCD &&
+          yamatoClassRadar
+        ) {
           aalist.push(45);
         }
         if (aaFD && lMainGun && type3Shell && aaRadar) {

@@ -274,6 +274,12 @@ export class Ship {
       if (newBoiler && turbine) return 15;
       if (newBoiler || (boiler && turbine)) return 10;
     }
+    // 低速E群:鳳翔改二、鳳翔改二戦
+    if ([894, 899].includes(this.id)) {
+      if ((newBoiler >= 2 || newBoiler && boiler >= 2) && turbine) return 20;
+      if (newBoiler && turbine) return 15;
+      if (newBoiler || (boiler && turbine)) return 10;
+    }
 
     if (!turbine) return this.sp;
     // 高速グループ
