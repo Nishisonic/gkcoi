@@ -52,7 +52,8 @@ const EQUIPMENT_ICON_SOURCE = {
   48: "LandAssaulter",
   49: "HeavyBomber",
   50: "NightSeaplane",
-  51: "Unknown", // NightSeaplaneBombers TODO: アイコン募集中
+  51: "NightSeaplaneBomber",
+  52: "Unknown", // TODO: アイコン募集中
 };
 
 export async function loadOfficialParameterIcons(): Promise<{
