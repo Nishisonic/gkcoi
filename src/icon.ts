@@ -53,7 +53,8 @@ const EQUIPMENT_ICON_SOURCE = {
   49: "HeavyBomber",
   50: "NightSeaplane",
   51: "NightSeaplaneBomber",
-  52: "Unknown", // TODO: アイコン募集中
+  52: "ArmyInfantry",
+  54: "SmokeGenerator",
 };
 
 export async function loadOfficialParameterIcons(): Promise<{
