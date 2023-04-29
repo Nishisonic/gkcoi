@@ -34,7 +34,7 @@ async function generate74eoLargeCardShipCanvasAsync(
   ctx.font = "24px Meiryo";
   ctx.fillText(toTranslateShipName(ship.name, ships), 39, 26);
   ctx.fillStyle = "white";
-  ctx.fillRect(188, 3, 55, 30);
+  ctx.fillRect(194, 3, 55, 30);
   ctx.strokeStyle = ctx.fillStyle = "#088";
   ctx.lineWidth = 1;
   ctx.beginPath();
