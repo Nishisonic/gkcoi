@@ -267,70 +267,80 @@ export class Ship {
     const turbine = this.items.filter((item) => item.id === 33).length;
     const boiler = this.items.filter((item) => item.id === 34).length;
     const newBoiler = this.items.filter((item) => item.id === 87).length;
+    // 雑
+    const newBoiler7 = this.items.filter(
+      (item) => item.id === 87 && item.lv >= 7
+    ).length;
 
-    // タービンなしに高速化できる例外
-    // 低速D群:伊203、伊201
-    if (["い203", "い201"].includes(this.yomi)) {
-      if (newBoiler && turbine) return 15;
-      if (newBoiler || (boiler && turbine)) return 10;
-    }
-    // 低速E群:鳳翔改二、鳳翔改二戦
-    if ([894, 899].includes(this.id)) {
-      if ((newBoiler >= 2 || newBoiler && boiler >= 2) && turbine) return 20;
-      if (newBoiler && turbine) return 15;
-      if (newBoiler || (boiler && turbine)) return 10;
-    }
-
-    if (!turbine) return this.sp;
     // 高速グループ
     if (this.sp === 10) {
-      // 高速A群:島風、Ташкент、大鳳、翔鶴型、利根型、最上型
-      if ([22, 81, 43, 33, 31, 9].includes(this.ctype)) {
-        if (newBoiler || boiler >= 2) return 20;
-        if (boiler) return 15;
+      // 高速A群:大鳳、翔鶴型、利根型、最上型、島風、天津風改二、Ташкент
+      if ([43, 33, 31, 9, 22, 81].includes(this.ctype) || this.id === 951) {
+        if ((turbine && (newBoiler || boiler >= 2)) || newBoiler7 >= 2)
+          return 20;
+        if ((turbine && boiler) || newBoiler7) return 15;
       }
-      // 高速B1群:天津風、阿賀野型、蒼龍、飛龍、雲龍、天城、金剛型、Iowa、大和改二
+      // 高速B1群:Iowa、大和改二、金剛型、蒼龍、飛龍、雲龍、天城、阿賀野型、天津風/改
       else if (
-        [41, 17, 25, 6, 65, 37].includes(this.ctype) ||
+        [65, 37, 6, 17, 25, 41].includes(this.ctype) ||
         ["あまつかぜ", "うんりゅう", "あまぎ"].includes(this.yomi)
       ) {
-        if (newBoiler >= 2 || (newBoiler && boiler)) return 20;
-        if (newBoiler || boiler) return 15;
+        if (turbine && (newBoiler >= 2 || (newBoiler && boiler))) return 20;
+        if (turbine && (newBoiler || boiler)) return 15;
       }
-      // 高速C群:加賀、夕張/夕張改、水母
+      // 高速C群:加賀、水母、夕張/夕張改
       else if ([16].includes(this.stype) || [3, 34].includes(this.ctype)) {
-        if (newBoiler || boiler) return 15;
+        if (turbine && (newBoiler || boiler)) return 15;
       }
-      // 高速B2群(汎用):駆逐、軽巡、雷巡、重巡、軽空母、赤城、葛城、Bismarck、Littorioなど
+      // 高速B2群(汎用):Bismarck、Littorio等、赤城、葛城、重巡、軽空母、軽巡、雷巡、駆逐
       else {
-        if (newBoiler >= 2 || newBoiler + boiler >= 3) return 20;
-        if (newBoiler || boiler) return 15;
+        if (turbine && (newBoiler >= 2 || newBoiler + boiler >= 3)) return 20;
+        if (turbine && (newBoiler || boiler)) return 15;
       }
     }
     // 低速グループ
     if (this.sp === 5) {
       // 低速A群:大和型、長門型改二
       if ([37].includes(this.ctype) || [541, 573].includes(this.id)) {
-        if ((newBoiler >= 2 && boiler) || (newBoiler && boiler >= 2)) return 20;
-        if (newBoiler && (newBoiler >= 2 || boiler)) return 15;
-        if (newBoiler || boiler) return 10;
+        if (
+          turbine &&
+          ((newBoiler >= 2 && boiler) ||
+            (newBoiler && boiler >= 2) ||
+            newBoiler7 >= 2)
+        )
+          return 20;
+        if (turbine && newBoiler && (newBoiler >= 2 || boiler || newBoiler7))
+          return 15;
+        if (turbine && (newBoiler || boiler)) return 10;
       }
       // 低速特殊B群:Samuel B.Roberts、夕張改二特
       else if (["サミュエル・B・ロバーツ", "ゆうばり"].includes(this.yomi)) {
-        if (newBoiler >= 2 || newBoiler + boiler >= 3) return 15;
-        return 10;
+        if (turbine && (newBoiler >= 2 || newBoiler + boiler >= 3)) return 15;
+        if (turbine) return 10;
       }
-      // 低速C群:潜水艦、潜水空母、あきつ丸、明石、速吸
+      // 低速C群:潜水艦、潜水空母、あきつ丸、速吸、明石
       else if (
         [13, 14].includes(this.stype) ||
-        [45, 49, 60].includes(this.ctype)
+        [45, 60, 49].includes(this.ctype)
       ) {
-        if (newBoiler || boiler) return 10;
+        if (turbine && (newBoiler || boiler)) return 10;
       }
-      // 低速B群(汎用):戦艦、航戦、軽空母、水母、練巡、大鯨など
+      // 低速D群:伊201、伊203
+      else if (["い201", "い203"].includes(this.yomi)) {
+        if (turbine && newBoiler) return 15;
+        if (newBoiler || (boiler && turbine)) return 10;
+      }
+      // 低速E群:鳳翔改二、鳳翔改二戦
+      else if ([894, 899].includes(this.id)) {
+        if (turbine && (newBoiler >= 2 || (newBoiler && boiler >= 2)))
+          return 20;
+        if (turbine && newBoiler) return 15;
+        if ((turbine && boiler) || newBoiler) return 10;
+      }
+      // 低速B群(汎用):戦艦、航戦、軽空母、水母、練巡、潜水母艦、神威、神州丸など
       else {
-        if (newBoiler >= 2 || newBoiler + boiler >= 3) return 15;
-        if (newBoiler || boiler) return 10;
+        if (turbine && (newBoiler >= 2 || newBoiler + boiler >= 3)) return 15;
+        if (turbine && (newBoiler || boiler)) return 10;
       }
     }
     return this.sp;

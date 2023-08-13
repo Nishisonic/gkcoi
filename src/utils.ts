@@ -465,57 +465,58 @@ export function getContactValue(
 const AA_CI_LIST: {
   [key: number]: {
     kind: number;
+    priority: number;
     fixed: number;
     prop: number;
     value: number;
-    sp: boolean;
   };
 } = {
-  1: { kind: 1, fixed: 7, prop: 1.7, value: 65, sp: false },
-  2: { kind: 2, fixed: 6, prop: 1.7, value: 58, sp: false },
-  3: { kind: 3, fixed: 4, prop: 1.6, value: 50, sp: false },
-  4: { kind: 4, fixed: 6, prop: 1.5, value: 52, sp: false },
-  5: { kind: 5, fixed: 4, prop: 1.5, value: 55, sp: false },
-  6: { kind: 6, fixed: 4, prop: 1.45, value: 40, sp: false },
-  7: { kind: 7, fixed: 3, prop: 1.35, value: 45, sp: false },
-  8: { kind: 8, fixed: 4, prop: 1.4, value: 50, sp: false },
-  9: { kind: 9, fixed: 2, prop: 1.3, value: 40, sp: false },
-  10: { kind: 10, fixed: 8, prop: 1.65, value: 60, sp: false },
-  11: { kind: 11, fixed: 6, prop: 1.5, value: 55, sp: false },
-  12: { kind: 12, fixed: 3, prop: 1.25, value: 45, sp: false },
-  13: { kind: 13, fixed: 4, prop: 1.35, value: 35, sp: false },
-  14: { kind: 14, fixed: 4, prop: 1.45, value: 63, sp: false },
-  15: { kind: 15, fixed: 3, prop: 1.3, value: 56, sp: false },
-  16: { kind: 16, fixed: 4, prop: 1.4, value: 62, sp: false },
-  17: { kind: 17, fixed: 2, prop: 1.25, value: 55, sp: false },
-  18: { kind: 18, fixed: 2, prop: 1.2, value: 60, sp: false },
-  19: { kind: 19, fixed: 5, prop: 1.45, value: 58, sp: false },
-  20: { kind: 20, fixed: 3, prop: 1.25, value: 65, sp: false },
-  21: { kind: 21, fixed: 5, prop: 1.45, value: 60, sp: false },
-  22: { kind: 22, fixed: 2, prop: 1.2, value: 59, sp: false },
-  23: { kind: 23, fixed: 1, prop: 1.05, value: 80, sp: false },
-  24: { kind: 24, fixed: 3, prop: 1.25, value: 54, sp: false },
-  25: { kind: 25, fixed: 7, prop: 1.55, value: 61, sp: false },
-  26: { kind: 26, fixed: 6, prop: 1.4, value: 60, sp: false },
-  27: { kind: 27, fixed: 5, prop: 1.55, value: 55, sp: false },
-  28: { kind: 28, fixed: 4, prop: 1.4, value: 55, sp: false },
-  29: { kind: 29, fixed: 5, prop: 1.55, value: 60, sp: false },
-  30: { kind: 30, fixed: 3, prop: 1.3, value: 44, sp: false },
-  31: { kind: 31, fixed: 2, prop: 1.25, value: 53, sp: false },
-  32: { kind: 32, fixed: 3, prop: 1.2, value: 37, sp: false },
-  33: { kind: 33, fixed: 3, prop: 1.35, value: 44, sp: false },
-  34: { kind: 34, fixed: 7, prop: 1.6, value: 60, sp: true },
-  35: { kind: 35, fixed: 6, prop: 1.55, value: 55, sp: true },
-  36: { kind: 36, fixed: 6, prop: 1.55, value: 55, sp: true },
-  37: { kind: 37, fixed: 4, prop: 1.45, value: 40, sp: true },
-  38: { kind: 38, fixed: 10, prop: 1.85, value: 62, sp: true },
-  39: { kind: 39, fixed: 10, prop: 1.7, value: 60, sp: true },
-  40: { kind: 40, fixed: 10, prop: 1.7, value: 56, sp: true },
-  41: { kind: 41, fixed: 9, prop: 1.65, value: 55, sp: true },
-  42: { kind: 42, fixed: 10, prop: 1.65, value: 65, sp: false },
-  43: { kind: 43, fixed: 8, prop: 1.6, value: 65, sp: false },
-  44: { kind: 44, fixed: 6, prop: 1.6, value: 65, sp: false },
-  45: { kind: 45, fixed: 5, prop: 1.55, value: 65, sp: false },
+  1: { kind: 1, priority: 11, fixed: 7, prop: 1.7, value: 65 },
+  2: { kind: 2, priority: 16, fixed: 6, prop: 1.7, value: 58 },
+  3: { kind: 3, priority: 26, fixed: 4, prop: 1.6, value: 50 },
+  4: { kind: 4, priority: 15, fixed: 6, prop: 1.5, value: 52 },
+  5: { kind: 5, priority: 27, fixed: 4, prop: 1.5, value: 55 },
+  6: { kind: 6, priority: 28, fixed: 4, prop: 1.45, value: 40 },
+  7: { kind: 7, priority: 36, fixed: 3, prop: 1.35, value: 45 },
+  8: { kind: 8, priority: 33, fixed: 4, prop: 1.4, value: 50 },
+  9: { kind: 9, priority: 45, fixed: 2, prop: 1.3, value: 40 },
+  10: { kind: 10, priority: 6, fixed: 8, prop: 1.65, value: 60 },
+  11: { kind: 11, priority: 9, fixed: 6, prop: 1.5, value: 55 },
+  12: { kind: 12, priority: 40, fixed: 3, prop: 1.25, value: 45 },
+  13: { kind: 13, priority: 34, fixed: 4, prop: 1.35, value: 35 },
+  14: { kind: 14, priority: 25, fixed: 4, prop: 1.45, value: 63 },
+  15: { kind: 15, priority: 35, fixed: 3, prop: 1.3, value: 56 },
+  16: { kind: 16, priority: 24, fixed: 4, prop: 1.4, value: 62 },
+  17: { kind: 17, priority: 42, fixed: 2, prop: 1.25, value: 55 },
+  18: { kind: 18, priority: 43, fixed: 2, prop: 1.2, value: 60 },
+  19: { kind: 19, priority: 21, fixed: 5, prop: 1.45, value: 58 },
+  20: { kind: 20, priority: 37, fixed: 3, prop: 1.25, value: 65 },
+  21: { kind: 21, priority: 22, fixed: 5, prop: 1.45, value: 60 },
+  22: { kind: 22, priority: 44, fixed: 2, prop: 1.2, value: 59 },
+  23: { kind: 23, priority: 46, fixed: 1, prop: 1.05, value: 80 },
+  24: { kind: 24, priority: 38, fixed: 3, prop: 1.25, value: 54 },
+  25: { kind: 25, priority: 10, fixed: 7, prop: 1.55, value: 61 },
+  26: { kind: 26, priority: 14, fixed: 6, prop: 1.4, value: 60 },
+  27: { kind: 27, priority: 19, fixed: 5, prop: 1.55, value: 55 },
+  28: { kind: 28, priority: 29, fixed: 4, prop: 1.4, value: 55 },
+  29: { kind: 29, priority: 23, fixed: 5, prop: 1.55, value: 60 },
+  30: { kind: 30, priority: 32, fixed: 3, prop: 1.3, value: 44 },
+  31: { kind: 31, priority: 41, fixed: 2, prop: 1.25, value: 53 },
+  32: { kind: 32, priority: 39, fixed: 3, prop: 1.2, value: 37 },
+  33: { kind: 33, priority: 31, fixed: 3, prop: 1.35, value: 44 },
+  34: { kind: 34, priority: 12, fixed: 7, prop: 1.6, value: 60 },
+  35: { kind: 35, priority: 17, fixed: 6, prop: 1.55, value: 55 },
+  36: { kind: 36, priority: 18, fixed: 6, prop: 1.55, value: 55 },
+  37: { kind: 37, priority: 30, fixed: 4, prop: 1.45, value: 40 },
+  38: { kind: 38, priority: 1, fixed: 10, prop: 1.85, value: 59 },
+  39: { kind: 39, priority: 2, fixed: 10, prop: 1.7, value: 55 },
+  40: { kind: 40, priority: 3, fixed: 10, prop: 1.7, value: 55 },
+  41: { kind: 41, priority: 5, fixed: 9, prop: 1.65, value: 59 },
+  42: { kind: 42, priority: 4, fixed: 10, prop: 1.65, value: 64 },
+  43: { kind: 43, priority: 7, fixed: 8, prop: 1.6, value: 59 },
+  44: { kind: 44, priority: 13, fixed: 6, prop: 1.6, value: 54 },
+  45: { kind: 45, priority: 20, fixed: 5, prop: 1.55, value: 50 },
+  46: { kind: 46, priority: 8, fixed: 8, prop: 1.55, value: 50 },
 };
 
 export function calcCanAACIList(
@@ -526,280 +527,252 @@ export function calcCanAACIList(
       const aalist: number[] = [];
       const haGun = ship.items.filter(({ type }) => type[3] === 16).length;
       const radar = ship.items.filter(({ type }) => type[3] === 11).length;
-      if (ship.ctype === 54 && haGun) {
+      const FiveInch = ship.items.filter(({ id }) =>
+        [284, 313].includes(id)
+      ).length;
+      const fiveInchKai = ship.items.filter(({ id }) => id === 313).length;
+      const fiveInchGFCS = ship.items.filter(({ id }) => id === 308).length;
+      const gfcs = ship.items.filter(({ id }) => id === 307).length;
+      const gfcsFiveInchM = ship.items.filter(({ id }) => id === 363).length;
+      const fiveInchM = ship.items.filter(({ id }) => id === 362).length;
+      const rocketLauncherK2 = ship.items.filter(({ id }) => id === 274).length;
+      const tenHAGunKai = ship.items.filter(({ id }) => id === 275).length;
+      const tenHAGunCD = ship.items.filter(({ id }) => id === 464).length;
+      const yamatoClassRadar = ship.items.filter(({ id }) =>
+        [142, 460].includes(id)
+      ).length;
+      const type3Shell = ship.items.filter(({ type }) => type[2] === 18).length;
+      const aaGun = ship.items.filter(({ type }) => type[2] === 21).length;
+      const aaGun4 = ship.items.filter(
+        ({ type, aa }) => type[2] === 21 && aa >= 4
+      ).length;
+      const aaGun6 = ship.items.filter(
+        ({ type, aa }) => type[2] === 21 && aa >= 6
+      ).length;
+      const aaFD = ship.items.filter(({ type }) => type[2] === 36).length;
+      const lMainGun = ship.items.filter(({ type }) => type[2] === 3).length;
+      const haGunFD = ship.items.filter(
+        ({ type, aa }) => type[3] === 16 && aa >= 8
+      ).length;
+      const aaGunNormal = ship.items.filter(
+        ({ type, aa }) => type[2] === 21 && aa >= 3 && aa <= 8
+      ).length;
+      const aaGunCD = ship.items.filter(
+        ({ type, aa }) => type[2] === 21 && aa >= 9
+      ).length;
+      const aaRadar = ship.items.filter(
+        ({ type, aa }) => type[3] === 11 && aa >= 2
+      ).length;
+
+      // 秋月型は5, 7, 8種が出ない
+      if (ship.ctype === 54) {
         if (haGun >= 2 && radar) {
           aalist.push(1);
-        } else if (radar) {
+        }
+        if (haGun && radar) {
           aalist.push(2);
-        } else if (haGun >= 2) {
+        }
+        if (haGun >= 2) {
           aalist.push(3);
         }
       } else {
-        const FiveInch = ship.items.filter(({ id }) =>
-          [284, 313].includes(id)
-        ).length;
-        const fiveInchKai = ship.items.filter(({ id }) => id === 313).length;
-        const fiveInchGFCS = ship.items.filter(({ id }) => id === 308).length;
-        const gfcs = ship.items.filter(({ id }) => id === 307).length;
-        const gfcsFiveInchM = ship.items.filter(({ id }) => id === 363).length;
-        const fiveInchM = ship.items.filter(({ id }) => id === 362).length;
-        const rocketLauncherK2 = ship.items.filter(
-          ({ id }) => id === 274
-        ).length;
-        const tenHAGunKai = ship.items.filter(({ id }) => id === 275).length;
-        const tenHAGunCD = ship.items.filter(({ id }) => id === 464).length;
-        const yamatoClassRadar = ship.items.filter(({ id }) =>
-          [142, 460].includes(id)
-        ).length;
-        const type3Shell = ship.items.filter(
-          ({ type }) => type[2] === 18
-        ).length;
-        const aaGun = ship.items.filter(({ type }) => type[2] === 21).length;
-        const aaGun4 = ship.items.filter(
-          ({ type, aa }) => type[2] === 21 && aa >= 4
-        ).length;
-        const aaGun6 = ship.items.filter(
-          ({ type, aa }) => type[2] === 21 && aa >= 6
-        ).length;
-        const aaFD = ship.items.filter(({ type }) => type[2] === 36).length;
-        const lMainGun = ship.items.filter(({ type }) => type[2] === 3).length;
-        const haGunFD = ship.items.filter(
-          ({ type, aa }) => type[3] === 16 && aa >= 8
-        ).length;
-        const aaGunNormal = ship.items.filter(
-          ({ type, aa }) => type[2] === 21 && aa >= 3 && aa <= 8
-        ).length;
-        const aaGunCD = ship.items.filter(
-          ({ type, aa }) => type[2] === 21 && aa >= 9
-        ).length;
-        const aaRadar = ship.items.filter(
-          ({ type, aa }) => type[3] === 11 && aa >= 2
-        ).length;
-        if (ship.ctype === 91) {
-          if (fiveInchGFCS >= 2) {
-            aalist.push(34);
-          }
-          if (fiveInchGFCS && FiveInch) {
-            aalist.push(35);
-          }
-          if (FiveInch >= 2 && gfcs) {
-            aalist.push(36);
-          }
-          if (fiveInchKai >= 2) {
-            aalist.push(37);
-          }
-          aalist.push(0);
-        }
-        if (ship.ctype === 99) {
-          if (gfcsFiveInchM >= 2) {
-            aalist.push(38);
-          }
-          if (gfcsFiveInchM && fiveInchM) {
-            aalist.push(39);
-          }
-          aalist.push(0);
-          if (gfcsFiveInchM + fiveInchM >= 2 && gfcs) {
-            aalist.push(40);
-          }
-          aalist.push(0);
-          if (gfcsFiveInchM + fiveInchM >= 2) {
-            aalist.push(41);
-          }
-          aalist.push(0);
-        }
-        if (ship.id === 428 && haGun && aaGunCD) {
-          if (aaRadar) {
-            aalist.push(10);
-          }
-          aalist.push(11);
-        }
-        if (ship.id === 141 && haGun && aaGun) {
-          if (aaRadar) {
-            aalist.push(14);
-          }
-          aalist.push(15);
-        }
-        if ([470, 622].includes(ship.id) && haGun && aaGun) {
-          if (aaRadar) {
-            aalist.push(16);
-          }
-          aalist.push(17);
-        }
-        if (
-          ship.id === 487 &&
-          aaGunCD &&
-          ship.items.some(({ type, aa }) => type[3] === 16 && aa <= 7)
-        ) {
-          aalist.push(19);
-        }
-        if (ship.id === 488 && haGun && aaRadar) {
-          aalist.push(21);
-        }
-        if (
-          [82, 88, 553, 554].includes(ship.id) &&
-          rocketLauncherK2 &&
-          type3Shell &&
-          aaRadar
-        ) {
-          aalist.push(25);
-        }
-        if (
-          [546, 911, 916].includes(ship.id) &&
-          tenHAGunCD >= 2 &&
-          aaGun6 &&
-          yamatoClassRadar
-        ) {
-          aalist.push(42);
-        }
-        if (
-          [546, 911, 916].includes(ship.id) &&
-          tenHAGunCD >= 2 &&
-          yamatoClassRadar
-        ) {
-          aalist.push(43);
-        }
-        if (
-          [546, 911, 916].includes(ship.id) &&
-          tenHAGunCD &&
-          aaGun6 &&
-          yamatoClassRadar
-        ) {
-          aalist.push(44);
-        }
-        if (
-          [546, 911, 916].includes(ship.id) &&
-          tenHAGunCD &&
-          yamatoClassRadar
-        ) {
-          aalist.push(45);
-        }
-        if (aaFD && lMainGun && type3Shell && aaRadar) {
-          aalist.push(4);
-        }
         if (haGunFD >= 2 && aaRadar) {
           aalist.push(5);
-        }
-        if (aaFD && lMainGun && type3Shell) {
-          aalist.push(6);
-        }
-        if (haGunFD && aaRadar) {
-          aalist.push(8);
         }
         if (aaFD && haGun && aaRadar) {
           aalist.push(7);
         }
-        if ([546, 911, 916].includes(ship.id) && tenHAGunKai && aaRadar) {
-          aalist.push(26);
+        if (haGunFD && aaRadar) {
+          aalist.push(8);
         }
-        if (ship.id === 321 && tenHAGunKai && rocketLauncherK2 && aaRadar) {
-          aalist.push(27);
+      }
+      if (aaFD && lMainGun && type3Shell && aaRadar) {
+        aalist.push(4);
+      }
+      if (aaFD && lMainGun && type3Shell) {
+        aalist.push(6);
+      }
+      if (aaFD && haGun) {
+        aalist.push(9);
+      }
+      // 摩耶改二は13種が出ない
+      if (ship.id === 428) {
+        if (haGun && aaGunCD && aaRadar) {
+          aalist.push(10);
         }
-        if (
-          [82, 88, 553, 554, 148, 546].includes(ship.id) &&
-          rocketLauncherK2 &&
-          aaRadar
-        ) {
-          aalist.push(28);
+        if (haGun && aaGunCD) {
+          aalist.push(11);
         }
-        if ([557, 558].includes(ship.id) && haGun && aaRadar) {
-          aalist.push(29);
+      } else {
+        if (haGunFD && aaGunCD && aaRadar) {
+          aalist.push(13);
         }
-        if (aaFD && haGun) {
-          aalist.push(9);
+      }
+      if (aaGunCD && aaGun >= 2 && aaRadar) {
+        aalist.push(12);
+      }
+      if (ship.id === 141 && haGun && aaGun) {
+        if (aaRadar) {
+          aalist.push(14);
         }
-        if ([579, 630].includes(ship.id) && haGun && aaGun4) {
-          aalist.push(33);
+        aalist.push(15);
+      }
+      if ([470, 622].includes(ship.id) && haGun && aaGun) {
+        if (aaRadar) {
+          aalist.push(16);
         }
-        if (aaGunCD && aaGun >= 2 && aaRadar) {
-          aalist.push(12);
+        aalist.push(17);
+      }
+      if (ship.id === 418 && aaGunCD) {
+        aalist.push(18);
+      }
+      if (
+        ship.id === 487 &&
+        aaGunCD &&
+        ship.items.some(({ type, aa }) => type[3] === 16 && aa <= 7)
+      ) {
+        aalist.push(19);
+      }
+      if (ship.id === 487 && aaGunCD) {
+        aalist.push(20);
+      }
+      if (ship.id === 488 && haGun && aaRadar) {
+        aalist.push(21);
+      }
+      if (ship.id === 548 && aaGunCD) {
+        aalist.push(22);
+      }
+      if ([539, 530].includes(ship.id) && aaGunNormal) {
+        aalist.push(23);
+      }
+      if ([477, 478].includes(ship.id) && haGun && aaGunNormal) {
+        aalist.push(24);
+      }
+      if (
+        [82, 88, 553, 554].includes(ship.id) &&
+        rocketLauncherK2 &&
+        type3Shell &&
+        aaRadar
+      ) {
+        aalist.push(25);
+      }
+      if ([546, 911, 916].includes(ship.id) && tenHAGunKai && aaRadar) {
+        aalist.push(26);
+      }
+      if (ship.id === 321 && tenHAGunKai && rocketLauncherK2 && aaRadar) {
+        aalist.push(27);
+      }
+      if (
+        [82, 88, 553, 554, 148, 546].includes(ship.id) &&
+        rocketLauncherK2 &&
+        aaRadar
+      ) {
+        aalist.push(28);
+      }
+      if ([557, 558].includes(ship.id) && haGun && aaRadar) {
+        aalist.push(29);
+      }
+      if ([477, 579, 630].includes(ship.id) && haGun >= 3) {
+        aalist.push(30);
+      }
+      if (ship.id === 477 && haGun >= 2) {
+        aalist.push(31);
+      }
+      if (
+        (UK_SHIPS.includes(ship.ctype) ||
+          [149, 150, 151, 152, 591, 592, 593, 954].includes(ship.id)) &&
+        (ship.items.filter(({ id }) => id === 301).length >= 2 ||
+          (ship.items.some(({ id }) => id === 300) &&
+            ship.items.some(({ id }) => [191, 301].includes(id))))
+      ) {
+        aalist.push(32);
+      }
+      if ([579, 630].includes(ship.id) && haGun && aaGun4) {
+        aalist.push(33);
+      }
+      if (ship.ctype === 91) {
+        if (fiveInchGFCS >= 2) {
+          aalist.push(34);
         }
-        if (ship.id === 418 && aaGunCD) {
-          aalist.push(18);
+        if (fiveInchGFCS && FiveInch) {
+          aalist.push(35);
         }
-        if (ship.id === 487 && aaGunCD) {
-          aalist.push(20);
+        if (FiveInch >= 2 && gfcs) {
+          aalist.push(36);
         }
-        if (ship.id === 548 && aaGunCD) {
-          aalist.push(22);
+        if (fiveInchKai >= 2) {
+          aalist.push(37);
         }
-        if ([539, 530].includes(ship.id) && aaGunNormal) {
-          aalist.push(23);
+      }
+      if (ship.ctype === 99) {
+        if (gfcsFiveInchM >= 2) {
+          aalist.push(38);
         }
-        if ([477, 478].includes(ship.id) && haGun && aaGunNormal) {
-          aalist.push(24);
+        if (gfcsFiveInchM && fiveInchM) {
+          aalist.push(39);
         }
-        if ([477, 579, 630].includes(ship.id) && haGun >= 3) {
-          aalist.push(30);
+        if (gfcsFiveInchM + fiveInchM >= 2 && gfcs) {
+          aalist.push(40);
         }
-        if (ship.id === 477 && haGun >= 2) {
-          aalist.push(31);
+        if (gfcsFiveInchM + fiveInchM >= 2) {
+          aalist.push(41);
         }
-        if (
-          (UK_SHIPS.includes(ship.ctype) ||
-            [149, 150, 151, 152, 591, 592].includes(ship.id)) &&
-          (ship.items.filter(({ id }) => id === 301).length >= 2 ||
-            (ship.items.some(({ id }) => id === 300) &&
-              ship.items.some(({ id }) => [191, 301].includes(id))))
-        ) {
-          aalist.push(32);
-        }
+      }
+      if (
+        [546, 911, 916].includes(ship.id) &&
+        tenHAGunCD >= 2 &&
+        aaGun6 &&
+        yamatoClassRadar
+      ) {
+        aalist.push(42);
+      }
+      if (
+        [546, 911, 916].includes(ship.id) &&
+        tenHAGunCD >= 2 &&
+        yamatoClassRadar
+      ) {
+        aalist.push(43);
+      }
+      if (
+        [546, 911, 916].includes(ship.id) &&
+        tenHAGunCD &&
+        aaGun6 &&
+        yamatoClassRadar
+      ) {
+        aalist.push(44);
+      }
+      if ([546, 911, 916].includes(ship.id) && tenHAGunCD && yamatoClassRadar) {
+        aalist.push(45);
+      }
+      if (
+        ship.id === 593 &&
+        ship.items.some(({ id }) => [502, 503].includes(id)) &&
+        aaGunCD &&
+        aaRadar
+      ) {
+        aalist.push(46);
       }
       return aalist;
     })
     .filter((aalist) => aalist.length > 0);
 
-  const orderByAAlist = ((
-    aalists: number[][]
-  ): { index: number; kind: number }[] => {
-    const count = aalists.flat().length;
-    const result = [];
-
-    while (count > result.length) {
-      let index = 0;
-      for (let i = 0; i < aalists.length; i++) {
-        if (aalists[i][0] === 0) {
-          index = i;
-          continue;
-        }
-        if (aalists[index].length === 0 || aalists[index][0] < aalists[i][0]) {
-          index = i;
-        }
-      }
-      const kind = aalists[index].shift() || 0;
-      result.push({ index, kind });
-    }
-    return result;
-  })(aalists);
+  const orderByAAlist = aalists
+    .flat()
+    .sort((a, b) => Math.sign(AA_CI_LIST[a].priority - AA_CI_LIST[b].priority))
+    .map((id) => AA_CI_LIST[id]);
   const aaRates = orderByAAlist.reduce<{
     rate: number;
     rates: { kind: number; rate: number }[];
-    rateByShips: { [key: number]: number };
   }>(
-    (p, v) => {
-      if (v.kind > 0) {
-        if (AA_CI_LIST[v.kind].sp) {
-          p.rateByShips[v.index] = 0;
-        }
-        if (p.rateByShips[v.index] < AA_CI_LIST[v.kind].value) {
-          const rate = p.rate;
-          p.rate +=
-            ((1 - p.rate) *
-              (AA_CI_LIST[v.kind].value - p.rateByShips[v.index])) /
-            100;
-          p.rates.push({ kind: v.kind, rate: p.rate - rate });
-          p.rateByShips[v.index] = AA_CI_LIST[v.kind].value;
-        }
-      } else {
-        p.rateByShips[v.index] = 0;
-      }
+    (p, { kind }) => {
+      const rate = (1 - p.rate) * AA_CI_LIST[kind].value / 100;
+      p.rate += rate;
+      p.rates.push({ kind: kind, rate });
       return p;
     },
     {
       rate: 0,
       rates: [],
-      rateByShips: Array.from(
-        new Set(orderByAAlist.map(({ index }) => index))
-      ).reduce((p, v) => Object.assign(p, { [v]: 0 }), {}),
     }
   ).rates;
 
