@@ -18,6 +18,7 @@ import {
   AirPower,
   ShipImageKind,
   Item,
+  Apidata,
 } from "../type";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -445,6 +446,7 @@ function fillTextLine(
 }
 
 export async function generateDarkParameterCanvasAsync(
+  apidata: Apidata,
   ships: Ship[],
   airState: AirState,
   comment: string,
@@ -525,7 +527,7 @@ export async function generateDarkParameterCanvasAsync(
   });
   ctx.drawImage(touchCanvases.canvas, -265 * (1 - zoomLevel) * 0.1, 55);
   const aaciCanvases = createCanvas2D(265 / zoomLevel, 150 / zoomLevel);
-  const canAACIList = calcCanAACIList(ships);
+  const canAACIList = calcCanAACIList(apidata, ships);
   const ciColors = [
     "#729ece",
     "#ff9e4a",

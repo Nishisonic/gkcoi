@@ -38,9 +38,10 @@ async function createAsync(
     shipURL: string;
   }
 ): Promise<Canvas> {
+  const apidata = await (await fetch(options.start2URL)).json();
   const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
     deckbuilder,
-    await (await fetch(options.start2URL)).json(),
+    apidata,
     options.shipURL
   );
   const has5slot = fleets.some(({ ships }) =>
@@ -196,6 +197,7 @@ async function createAsync(
       ctx.drawImage(aimage, fimage.width + 2, 0);
       if (fleets.length > 1) {
         const pimage = await generateDarkParameterCanvasAsync(
+          apidata,
           [fleets[0].ships, fleets[1].ships].flat(),
           airState,
           comment,
@@ -217,6 +219,7 @@ async function createAsync(
       ctx.drawImage(aimage, fimage.width + 2, 0);
       if (fleets.length > 1) {
         const pimage = await generateLightParameterCanvasAsync(
+          apidata,
           [fleets[0].ships, fleets[1].ships].flat(),
           airState,
           comment,
