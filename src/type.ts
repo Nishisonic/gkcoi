@@ -1,6 +1,6 @@
-import { getAirPower, MASTER_URL } from "./utils";
+import { fetchImage, Image } from "./canvas";
 import { Lang } from "./lang";
-import { Image, fetchImage } from "./canvas";
+import { getAirPower, MASTER_URL } from "./utils";
 
 export type Theme =
   | "dark"
@@ -660,6 +660,10 @@ interface FormatData {
   readonly comment: string;
 }
 
+export interface DeckBuilderOptions {
+  hideShipImage?: boolean
+}
+
 /**
  * デッキビルダー型のフォーマット
  * 数値のパラメータが直接出力されるので、表示値をそのまま入れること
@@ -721,6 +725,8 @@ export interface DeckBuilder {
    * コメント表示に使用
    */
   readonly cmt?: string;
+
+  readonly options?: DeckBuilderOptions;
 }
 
 /**

@@ -104,7 +104,8 @@ async function createAsync(
                 los,
                 airPower,
                 speed,
-                lang
+                lang,
+                deckbuilder?.options,
               );
             case "74lc":
               return await generate74eoLargeCardFleetCanvasAsync(
@@ -144,10 +145,10 @@ async function createAsync(
     theme === "dark"
       ? "#212121"
       : theme === "official"
-      ? "#ece3d7"
-      : theme === "light"
-      ? "#FAFAFA"
-      : "white"
+        ? "#ece3d7"
+        : theme === "light"
+          ? "#FAFAFA"
+          : "white"
   );
   if (theme === "dark-ex") {
     const eimage = await generateDarkExpeditionStatsCanvasAsync(
@@ -245,9 +246,9 @@ export async function generate(
     start2URL: string;
     shipURL: string;
   } = {
-    start2URL: `${MASTER_URL}/START2.json`,
-    shipURL: `${MASTER_URL}/ship`,
-  }
+      start2URL: `${MASTER_URL}/START2.json`,
+      shipURL: `${MASTER_URL}/ship`,
+    }
 ): Promise<Canvas> {
   const original = await createAsync(deckbuilder, options);
   const src = await steg.encode(

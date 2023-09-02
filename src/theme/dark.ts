@@ -19,6 +19,7 @@ import {
   ShipImageKind,
   Item,
   Apidata,
+  DeckBuilderOptions,
 } from "../type";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -46,7 +47,8 @@ Chart.register(ChartDataLabels);
 async function generateDarkShipInfoCanvasAsync(
   shipIdx: number,
   ship: Ship,
-  lang: Lang = "jp"
+  lang: Lang = "jp",
+  options?: DeckBuilderOptions,
 ): Promise<Canvas> {
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
@@ -56,7 +58,7 @@ async function generateDarkShipInfoCanvasAsync(
   // overlay
   ctx.fillStyle = "#1A1A1A";
   ctx.fillRect(0, 0, 650, 176);
-  if (ship.id > 0) {
+  if (ship.id > 0 && !options?.hideShipImage) {
     const image = await ship.fetchImage(ShipImageKind.REMODEL);
     // ship
     ctx.drawImage(
@@ -119,26 +121,38 @@ async function generateDarkShipInfoCanvasAsync(
     if (ship.items[i].id > 0) {
       ctx.fillText(
         toTranslateEquipmentName(ship.items[i].name, items),
-        420,
+        options?.hideShipImage ? 64 : 420,
         52 + 23 * i
       );
       if (equipmentIcons[String(ship.items[i].type[3])]) {
         ctx.drawImage(
           equipmentIcons[String(ship.items[i].type[3])],
-          389,
+          options?.hideShipImage ? 32 : 389,
           33 + 23 * i
         );
       }
     } else {
       const none = NONE[lang];
-      ctx.fillText(`(${none})`, 420, 52 + 23 * i);
-      ctx.fillText("-", 402, 53 + 23 * i);
+      ctx.fillText(
+        `(${none})`,
+        options?.hideShipImage ? 64 : 420,
+        52 + 23 * i
+      );
+      ctx.fillText(
+        "-",
+        options?.hideShipImage ? 44 : 402,
+        53 + 23 * i
+      );
     }
     if (ship.slotNum > i) {
       if (ship.items[i] && ship.items[i].type[4] !== 0) {
         ctx.textAlign = "right";
         ctx.fillStyle = "#c3c3c3";
-        ctx.fillText(String(ship.slots[i]), 389, 52 + 23 * i);
+        ctx.fillText(
+          String(ship.slots[i]),
+          options?.hideShipImage ? 28 : 389,
+          52 + 23 * i
+        );
         ctx.textAlign = "left";
         ctx.fillStyle = "#fff";
       }
@@ -171,13 +185,15 @@ async function generateDarkShipInfoCanvasAsync(
 async function generateDarkShipCanvasAsync(
   shipIdx: number,
   ship: Ship,
-  lang: Lang = "jp"
+  lang: Lang = "jp",
+  options?: DeckBuilderOptions,
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(654, 180);
   const shipInfoCanvas = await generateDarkShipInfoCanvasAsync(
     shipIdx,
     ship,
-    lang
+    lang,
+    options,
   );
   ctx.drawImage(shipInfoCanvas, 2, 2);
   ctx.strokeStyle = "#434343";
@@ -202,7 +218,8 @@ export async function generateDarkFleetCanvasAsync(
   los: LoS,
   airPower: AirPower,
   speed: Speed,
-  lang: Lang = "jp"
+  lang: Lang = "jp",
+  options?: DeckBuilderOptions,
 ): Promise<Canvas> {
   const parameterIcons = await loadOfficialParameterIcons();
   const { canvas, ctx } = createCanvas2D(
@@ -216,7 +233,7 @@ export async function generateDarkFleetCanvasAsync(
       .map((ship, shipIdx) => ({ ship: ship, idx: shipIdx }))
       .filter(({ ship }) => ship.id > 0)
       .map(async ({ ship, idx }) => {
-        const shipCanvas = await generateDarkShipCanvasAsync(idx, ship, lang);
+        const shipCanvas = await generateDarkShipCanvasAsync(idx, ship, lang, options);
         return { id: idx, canvas: shipCanvas };
       })
   );
