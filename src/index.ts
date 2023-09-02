@@ -5,7 +5,7 @@ import {
   generateDarkExpeditionStatsCanvasAsync,
 } from "./theme/dark";
 import { parse, Ship, DeckBuilder, Speed, LoS, GenerateOptions } from "./type";
-import { getLoSValue, MASTER_URL } from "./utils";
+import { getLoSValue } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
@@ -20,6 +20,7 @@ import {
   generateLightFleetCanvasAsync,
   generateLightParameterCanvasAsync,
 } from "./theme/light";
+import { config } from "./config";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lzjs = require("lzjs");
 
@@ -33,7 +34,7 @@ export {
 
 async function createAsync(
   deckbuilder: DeckBuilder,
-  options: Required<GenerateOptions>,
+  options: Required<Pick<GenerateOptions, 'start2URL' | 'shipURL'>>,
 ): Promise<Canvas> {
   const apidata = await (await fetch(options.start2URL)).json();
   const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
@@ -241,12 +242,16 @@ export async function generate(
   deckbuilder: DeckBuilder,
   options?: GenerateOptions,
 ): Promise<Canvas> {
+  if (options?.masterUrl) {
+    config.masterUrl = options?.masterUrl;
+  }
+
   const original = await createAsync(
     deckbuilder,
     Object.assign(
       {
-        start2URL: `${MASTER_URL}/START2.json`,
-        shipURL: `${MASTER_URL}/ship`,
+        start2URL: `${config.masterUrl}/START2.json`,
+        shipURL: `${config.masterUrl}/ship`,
       },
       options,
     )

@@ -817,6 +817,7 @@ export interface DeckBuilderAirbase {
 }
 
 export interface GenerateOptions {
+  readonly masterUrl?: string;
   readonly start2URL?: string;
   readonly shipURL?: string;
 }

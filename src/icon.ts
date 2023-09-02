@@ -1,5 +1,5 @@
 import { fetchImage, Image, createCanvas2D, Canvas } from "./canvas";
-import { MASTER_URL } from "./utils";
+import { config } from "./config";
 
 const EQUIPMENT_ICON_SOURCE = {
   1: "MainGunS",
@@ -76,7 +76,7 @@ export async function loadOfficialParameterIcons(): Promise<{
         "airdh",
         "drum",
       ].map(async (name) => {
-        const src = `${MASTER_URL}/dark/${name}.png`;
+        const src = `${config.masterUrl}/dark/${name}.png`;
         const image = await fetchImage(src);
         return { name, image };
       })
@@ -90,7 +90,7 @@ export async function load74eoAircraftLevelIcons(): Promise<{
   return (
     await Promise.all(
       [0, 1, 2, 3, 4, 5, 6, 7].map(async (level: number) => {
-        const src = `${MASTER_URL}/74eo/AircraftLevel/AircraftLevel${level}.png`;
+        const src = `${config.masterUrl}/74eo/AircraftLevel/AircraftLevel${level}.png`;
         const image = await fetchImage(src);
         return { id: level, image };
       })
@@ -123,7 +123,7 @@ export async function load74eoParameterIcons(): Promise<{
         "Speed",
         "Torpedo",
       ].map(async (id: string) => {
-        const src = `${MASTER_URL}/74eo/${id}.png`;
+        const src = `${config.masterUrl}/74eo/${id}.png`;
         const image = await fetchImage(src);
         return { id, image };
       })
@@ -138,7 +138,7 @@ export async function loadOfficialEquipmentIcons(
   return (
     await Promise.all(
       Object.keys(EQUIPMENT_ICON_SOURCE).map(async (id: string) => {
-        const src = `${MASTER_URL}/common_icon_weapon/common_icon_weapon_id_${id}.png`;
+        const src = `${config.masterUrl}/common_icon_weapon/common_icon_weapon_id_${id}.png`;
         const img = await fetchImage(src);
         if (originalSize) {
           return { id, image: img };
@@ -183,7 +183,7 @@ export async function load74eoEquipmentIcons(
     await Promise.all(
       [...Object.values(EQUIPMENT_ICON_SOURCE), "Unknown"].map(
         async (id: string, idx: number) => {
-          const src = `${MASTER_URL}/74eo/Equipment/${id}.png`;
+          const src = `${config.masterUrl}/74eo/Equipment/${id}.png`;
           const img = await fetchImage(src);
           const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
           // offset
@@ -227,7 +227,7 @@ export async function loadOfficialCommonMainIcons(): Promise<{
         12, 14, 18, 19, 26, 27, 28, 29, 41, 42, 48, 49, 50, 51, 52, 53, 54, 55,
         56, 57, 58, 61, 62,
       ].map(async (name) => {
-        const src = `${MASTER_URL}/common_main/common_main_${name}.png`;
+        const src = `${config.masterUrl}/common_main/common_main_${name}.png`;
         const image = await fetchImage(src);
         return { name, image };
       })
@@ -241,7 +241,7 @@ export async function loadOfficialCommonMiscIcons(): Promise<{
   return (
     await Promise.all(
       [169, 170, 171, 172, 173, 174, 175, 180].map(async (name) => {
-        const src = `${MASTER_URL}/common_misc/common_misc_${name}.png`;
+        const src = `${config.masterUrl}/common_misc/common_misc_${name}.png`;
         const image = await fetchImage(src);
         return { name, image };
       })
@@ -255,7 +255,7 @@ export async function loadOfficialHpGaugeIcons(): Promise<{
   return (
     await Promise.all(
       ["hp_gauge_mask", "hp_s_bg2"].map(async (name) => {
-        const src = `${MASTER_URL}/hpgauge/${name}.png`;
+        const src = `${config.masterUrl}/hpgauge/${name}.png`;
         const image = await fetchImage(src);
         return { name, image };
       })
