@@ -816,6 +816,11 @@ export interface DeckBuilderAirbase {
   };
 }
 
+export interface GenerateOptions {
+  readonly start2URL?: string;
+  readonly shipURL?: string;
+}
+
 export function parse(
   deckbuilder: DeckBuilder,
   apidata: Apidata,

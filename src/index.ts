@@ -4,7 +4,7 @@ import {
   generateDarkParameterCanvasAsync,
   generateDarkExpeditionStatsCanvasAsync,
 } from "./theme/dark";
-import { parse, Ship, DeckBuilder, Speed, LoS } from "./type";
+import { parse, Ship, DeckBuilder, Speed, LoS, GenerateOptions } from "./type";
 import { getLoSValue, MASTER_URL } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
@@ -33,10 +33,7 @@ export {
 
 async function createAsync(
   deckbuilder: DeckBuilder,
-  options: {
-    start2URL: string;
-    shipURL: string;
-  }
+  options: Required<GenerateOptions>,
 ): Promise<Canvas> {
   const apidata = await (await fetch(options.start2URL)).json();
   const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
@@ -242,15 +239,18 @@ async function createAsync(
  */
 export async function generate(
   deckbuilder: DeckBuilder,
-  options: {
-    start2URL: string;
-    shipURL: string;
-  } = {
-      start2URL: `${MASTER_URL}/START2.json`,
-      shipURL: `${MASTER_URL}/ship`,
-    }
+  options?: GenerateOptions,
 ): Promise<Canvas> {
-  const original = await createAsync(deckbuilder, options);
+  const original = await createAsync(
+    deckbuilder,
+    Object.assign(
+      {
+        start2URL: `${MASTER_URL}/START2.json`,
+        shipURL: `${MASTER_URL}/ship`,
+      },
+      options,
+    )
+  );
   const src = await steg.encode(
     lzjs.compress(JSON.stringify(deckbuilder)),
     original.toDataURL()
