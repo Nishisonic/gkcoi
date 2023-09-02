@@ -1,6 +1,7 @@
 import { fetchImage, Image } from "./canvas";
+import { config } from "./config";
 import { Lang } from "./lang";
-import { getAirPower, MASTER_URL } from "./utils";
+import { getAirPower } from "./utils";
 
 export type Theme =
   | "dark"
@@ -133,7 +134,7 @@ export class Ship {
     speed: Speed,
     slots: number[],
     items: Item[],
-    url: string = MASTER_URL
+    url: string = config.masterUrl
   ) {
     this.id = id;
     this.name = name;
