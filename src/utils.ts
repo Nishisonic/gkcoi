@@ -2,17 +2,15 @@ import { Ship, Item, AirState, AirPower, Apidata } from "./type";
 import { Lang } from "./lang";
 import getAACIRate from "aaci-prop";
 
-export const MASTER_URL = "https://gkcoi.vercel.app";
-
 const RECON_PLANE = [9, 10, 41, 49, 94];
 
 export async function fetchLangData(lang: Lang): Promise<{
   ships: {
     [key: string]:
-      | string
-      | {
-          [key: string]: string;
-        };
+    | string
+    | {
+      [key: string]: string;
+    };
     suffixes: {
       [key: string]: string;
     };
@@ -104,7 +102,7 @@ export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
               }
             })
             .reduce((p, v) => p + v, 0) *
-            cn +
+          cn +
           Math.sqrt(ship.los - itemBonus(ship))
         );
       })
@@ -235,31 +233,31 @@ export function getAirbaseAirPower(
             SKILLED_BONUS_LIST[item.type[2]] ||
             SKILLED_BONUS_LIST[9999])[7] +
           Math.sqrt(slot(item)) *
-            (item.aa +
-              (item.type[2] === 48
-                ? airDefense
-                  ? item.evasion + 2 * item.accuracy
-                  : 1.5 * item.evasion
-                : 0) +
-              getImprovementBonus(item));
+          (item.aa +
+            (item.type[2] === 48
+              ? airDefense
+                ? item.evasion + 2 * item.accuracy
+                : 1.5 * item.evasion
+              : 0) +
+            getImprovementBonus(item));
         return {
           // 311: 二式陸上偵察機
           // 312: 二式陸上偵察機(熟練)
           min: Math.floor(
             bonus +
-              Math.sqrt(
-                SKILLED_BONUS.MIN[
-                  item.id === 311 ? 0 : item.id === 312 ? 2 : 7
-                ] / 10
-              )
+            Math.sqrt(
+              SKILLED_BONUS.MIN[
+              item.id === 311 ? 0 : item.id === 312 ? 2 : 7
+              ] / 10
+            )
           ),
           max: Math.floor(
             bonus +
-              Math.sqrt(
-                SKILLED_BONUS.MIN[
-                  item.id === 311 ? 0 : item.id === 312 ? 2 : 7
-                ] / 10
-              )
+            Math.sqrt(
+              SKILLED_BONUS.MIN[
+              item.id === 311 ? 0 : item.id === 312 ? 2 : 7
+              ] / 10
+            )
           ),
         };
       }
@@ -386,7 +384,7 @@ export function getContactValue(
           .reduce((p, v) => p + v, 0)
       )
       .reduce((p, v) => p + v, 1) /
-      (70 - 15 * airStateValue)
+    (70 - 15 * airStateValue)
   );
 
   const touchSelect = (mag: number): number => {

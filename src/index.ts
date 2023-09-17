@@ -4,8 +4,8 @@ import {
   generateDarkParameterCanvasAsync,
   generateDarkExpeditionStatsCanvasAsync,
 } from "./theme/dark";
-import { parse, Ship, DeckBuilder, Speed, LoS } from "./type";
-import { getLoSValue, MASTER_URL } from "./utils";
+import { parse, Ship, DeckBuilder, Speed, LoS, GenerateOptions } from "./type";
+import { getLoSValue } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
 import { generate74eoSmallBannerFleetCanvasAsync } from "./theme/74eoSB";
@@ -20,6 +20,7 @@ import {
   generateLightFleetCanvasAsync,
   generateLightParameterCanvasAsync,
 } from "./theme/light";
+import { config } from "./config";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lzjs = require("lzjs");
 
@@ -33,10 +34,7 @@ export {
 
 async function createAsync(
   deckbuilder: DeckBuilder,
-  options: {
-    start2URL: string;
-    shipURL: string;
-  }
+  options: Required<Pick<GenerateOptions, 'start2URL' | 'shipURL'>>,
 ): Promise<Canvas> {
   const apidata = await (await fetch(options.start2URL)).json();
   const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
@@ -104,7 +102,8 @@ async function createAsync(
                 los,
                 airPower,
                 speed,
-                lang
+                lang,
+                deckbuilder?.options,
               );
             case "74lc":
               return await generate74eoLargeCardFleetCanvasAsync(
@@ -144,10 +143,10 @@ async function createAsync(
     theme === "dark"
       ? "#212121"
       : theme === "official"
-      ? "#ece3d7"
-      : theme === "light"
-      ? "#FAFAFA"
-      : "white"
+        ? "#ece3d7"
+        : theme === "light"
+          ? "#FAFAFA"
+          : "white"
   );
   if (theme === "dark-ex") {
     const eimage = await generateDarkExpeditionStatsCanvasAsync(
@@ -241,15 +240,22 @@ async function createAsync(
  */
 export async function generate(
   deckbuilder: DeckBuilder,
-  options: {
-    start2URL: string;
-    shipURL: string;
-  } = {
-    start2URL: `${MASTER_URL}/START2.json`,
-    shipURL: `${MASTER_URL}/ship`,
-  }
+  options?: GenerateOptions,
 ): Promise<Canvas> {
-  const original = await createAsync(deckbuilder, options);
+  if (options?.masterUrl) {
+    config.masterUrl = options?.masterUrl;
+  }
+
+  const original = await createAsync(
+    deckbuilder,
+    Object.assign(
+      {
+        start2URL: `${config.masterUrl}/START2.json`,
+        shipURL: `${config.masterUrl}/ship`,
+      },
+      options,
+    )
+  );
   const src = await steg.encode(
     lzjs.compress(JSON.stringify(deckbuilder)),
     original.toDataURL()
