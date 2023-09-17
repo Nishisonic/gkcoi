@@ -4,6 +4,7 @@ on:
   pull_request:
   schedule:
   - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   auto-commit:
@@ -12,9 +13,9 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: latest
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Run update
       run: node ci/update.mjs
-    - uses: EndBug/add-and-commit@v7
+    - uses: EndBug/add-and-commit@v9
