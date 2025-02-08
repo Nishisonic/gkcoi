@@ -22,7 +22,7 @@ import {
 } from "./theme/light";
 import { config } from "./config";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lzjs = require("lzjs");
+import LZString from 'lz-string';
 
 export {
   DeckBuilder,
@@ -35,6 +35,8 @@ export {
 async function createAsync(
   deckbuilder: DeckBuilder,
   options: Required<Pick<GenerateOptions, 'start2URL' | 'shipURL'>>,
+	los?: LoS,
+	speed?: Speed,
 ): Promise<Canvas> {
   const apidata = await (await fetch(options.start2URL)).json();
   const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
@@ -52,12 +54,11 @@ async function createAsync(
           ["dark-ex", "light-ex"].includes(theme) ? i === 0 : true
         )
         .map(async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
-          const los: LoS = {
+          if (!los) los = {
             1: getLoSValue(ships, hqlv, 1),
             2: getLoSValue(ships, hqlv, 2),
             3: getLoSValue(ships, hqlv, 3),
             4: getLoSValue(ships, hqlv, 4),
-            5: getLoSValue(ships, hqlv, 5),
           };
           const airPower = ships
             .filter((ship) => ship.id > 0)
@@ -73,7 +74,7 @@ async function createAsync(
                 max: 0,
               }
             );
-          const speed: Speed = ships
+          if (!speed) speed = ships
             .filter((ship) => ship.id > 0)
             .map((ship) => ship.speed)
             .reduce(
@@ -240,6 +241,8 @@ async function createAsync(
  */
 export async function generate(
   deckbuilder: DeckBuilder,
+  los?: LoS,
+  speed?: Speed,
   options?: GenerateOptions,
 ): Promise<Canvas> {
   if (options?.masterUrl) {
@@ -254,10 +257,12 @@ export async function generate(
         shipURL: `${config.masterUrl}/ship`,
       },
       options,
-    )
+    ),
+			los,
+			speed,
   );
   const src = await steg.encode(
-    lzjs.compress(JSON.stringify(deckbuilder)),
+    LZString.compress(JSON.stringify(deckbuilder)),
     original.toDataURL()
   );
   const { canvas, ctx } = createCanvas2D(original.width, original.height);
@@ -271,5 +276,5 @@ export async function generate(
  * @return フォーマット
  */
 export async function decode(src: string) {
-  return JSON.parse(lzjs.decompress(await steg.decode(src)));
+  return JSON.parse(LZString.decompress(await steg.decode(src)));
 }
