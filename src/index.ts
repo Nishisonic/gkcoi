@@ -241,9 +241,9 @@ async function createAsync(
  */
 export async function generate(
   deckbuilder: DeckBuilder,
-  los?: LoS,
-  speed?: Speed,
   options?: GenerateOptions,
+	los?: LoS,
+	speed?: Speed,
 ): Promise<Canvas> {
   if (options?.masterUrl) {
     config.masterUrl = options?.masterUrl;
