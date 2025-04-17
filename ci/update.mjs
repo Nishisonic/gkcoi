@@ -1,83 +1,83 @@
 import { writeFile, existsSync, mkdirSync, accessSync } from "fs";
 
 const SERVER_LIST = [{
-  ip: "w01y.kancolle-server.com",
+  ip: "203.104.209.71",
   name: "横須賀鎮守府",
 },
 {
-  ip: "w02k.kancolle-server.com",
+  ip: "203.104.209.87",
   name: "呉鎮守府",
 },
 {
-  ip: "w03s.kancolle-server.com",
+  ip: "125.6.184.215",
   name: "佐世保鎮守府",
 },
 {
-  ip: "w04m.kancolle-server.com",
+  ip: "203.104.209.183",
   name: "舞鶴鎮守府",
 },
 {
-  ip: "w05o.kancolle-server.com",
+  ip: "203.104.209.150",
   name: "大湊警備府",
 },
 {
-  ip: "w06t.kancolle-server.com",
+  ip: "203.104.209.134",
   name: "トラック泊地",
 },
 {
-  ip: "w07l.kancolle-server.com",
+  ip: "203.104.209.167",
   name: "リンガ泊地",
 },
 {
-  ip: "w08r.kancolle-server.com",
+  ip: "203.104.209.199",
   name: "ラバウル基地",
 },
 {
-  ip: "w09s.kancolle-server.com",
+  ip: "125.6.189.7",
   name: "ショートランド泊地",
 },
 {
-  ip: "w10b.kancolle-server.com",
+  ip: "125.6.189.39",
   name: "ブイン基地",
 },
 {
-  ip: "w11t.kancolle-server.com",
+  ip: "125.6.189.71",
   name: "タウイタウイ泊地",
 },
 {
-  ip: "w12p.kancolle-server.com",
+  ip: "125.6.189.103",
   name: "パラオ泊地",
 },
 {
-  ip: "w13b.kancolle-server.com",
+  ip: "125.6.189.135",
   name: "ブルネイ泊地",
 },
 {
-  ip: "w14h.kancolle-server.com",
+  ip: "125.6.189.167",
   name: "単冠湾泊地",
 },
 {
-  ip: "w15p.kancolle-server.com",
+  ip: "125.6.189.215",
   name: "幌筵泊地",
 },
 {
-  ip: "w16s.kancolle-server.com",
+  ip: "125.6.189.247",
   name: "宿毛湾泊地",
 },
 {
-  ip: "w17k.kancolle-server.com",
+  ip: "203.104.209.23",
   name: "鹿屋基地",
 },
 {
-  ip: "w18i.kancolle-server.com",
+  ip: "203.104.209.39",
   name: "岩川基地",
 },
 {
-  ip: "w19s.kancolle-server.com",
+  ip: "203.104.209.55",
   name: "佐伯湾泊地",
 },
 {
-  ip: "w20h.kancolle-server.com",
+  ip: "203.104.209.102",
   name: "柱島泊地",
 },
 ];

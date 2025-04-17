@@ -21,7 +21,6 @@ import {
   generateLightParameterCanvasAsync,
 } from "./theme/light";
 import { config } from "./config";
-import { generateDark2FleetCanvasAsync } from "./theme/dark2";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import LZString from 'lz-string';
 
@@ -52,8 +51,7 @@ async function createAsync(
     await Promise.all(
       fleets
         .filter((v, i) =>
-          // ["dark-ex", "light-ex"].includes(theme) ? i === 0 : true
-          i === 0
+          ["dark-ex", "light-ex"].includes(theme) ? i === 0 : true
         )
         .map(async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
           if (!los) los = {
@@ -99,16 +97,7 @@ async function createAsync(
               );
             case "dark":
             case "dark-ex":
-              // return await generateDarkFleetCanvasAsync(
-              //   i,
-              //   ships,
-              //   los,
-              //   airPower,
-              //   speed,
-              //   lang,
-              //   deckbuilder?.options,
-              // );
-              return await generateDark2FleetCanvasAsync(
+              return await generateDarkFleetCanvasAsync(
                 i,
                 ships,
                 los,
@@ -160,7 +149,6 @@ async function createAsync(
           ? "#FAFAFA"
           : "white"
   );
-  return fimage;
   if (theme === "dark-ex") {
     const eimage = await generateDarkExpeditionStatsCanvasAsync(
       fleets[0].ships,
