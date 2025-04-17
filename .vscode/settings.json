@@ -1,8 +1,8 @@
 {
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit"
-	},
+    "source.fixAll.eslint": "explicit"
+  },
   "editor.tabSize": 2,
   "files.eol": "\n",
   "liveServer.settings.port": 5501
