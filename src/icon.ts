@@ -57,6 +57,8 @@ const EQUIPMENT_ICON_SOURCE = {
   54: "SmokeGenerator",
   55: "BarrageBalloon",
   56: "LandBasedFighterJet",
+  57: "LandBasedFighterShinden",
+  58: "NightBomber",
 };
 
 export async function loadOfficialParameterIcons(): Promise<{
