@@ -12,7 +12,8 @@ export type Theme =
   | "74lc"
   | "74mc"
   | "74sb"
-  | "official";
+  | "official"
+  | "flat";
 export type Range = 0 | 1 | 2 | 3 | 4;
 export type Speed = 0 | 5 | 10 | 15 | 20;
 export type AirState = "AS+" | "AS" | "AP";
@@ -23,6 +24,7 @@ export type LoS = {
   2: number;
   3: number;
   4: number;
+  5: number;
 };
 type ExpeditionParameter = "firepower" | "aa" | "asw" | "los";
 
@@ -133,7 +135,7 @@ export class Ship {
     speed: Speed,
     slots: number[],
     items: Item[],
-    url: string = config.masterUrl
+    url: string = config.masterUrl,
   ) {
     this.id = id;
     this.name = name;
@@ -179,7 +181,7 @@ export class Ship {
       0,
       0,
       [0, 0, 0, 0, 0],
-      []
+      [],
     );
   }
 
@@ -269,7 +271,7 @@ export class Ship {
     const newBoiler = this.items.filter((item) => item.id === 87).length;
     // 雑
     const newBoiler7 = this.items.filter(
-      (item) => item.id === 87 && item.lv >= 7
+      (item) => item.id === 87 && item.lv >= 7,
     ).length;
 
     // 高速グループ
@@ -288,8 +290,12 @@ export class Ship {
         if (turbine && (newBoiler >= 2 || (newBoiler && boiler))) return 20;
         if (turbine && (newBoiler || boiler)) return 15;
       }
-      // 高速C群:加賀、水母、夕張/夕張改
-      else if ([16].includes(this.stype) || [3, 34].includes(this.ctype)) {
+      // 高速C群:加賀、水母、夕張/夕張改、Samuel B.Roberts Mk.II
+      else if (
+        [16].includes(this.stype) ||
+        [3, 34].includes(this.ctype) ||
+        this.id === 920
+      ) {
         if (turbine && (newBoiler || boiler)) return 15;
       }
       // 高速B2群(汎用):Bismarck、Littorio等、赤城、葛城、重巡、軽空母、軽巡、雷巡、駆逐
@@ -318,17 +324,17 @@ export class Ship {
         if (turbine && (newBoiler >= 2 || newBoiler + boiler >= 3)) return 15;
         if (turbine) return 10;
       }
+      // 低速D群:伊201、伊203、稲木改二
+      else if (["い201", "い203"].includes(this.yomi) || this.id === 979) {
+        if (turbine && newBoiler) return 15;
+        if (newBoiler || (boiler && turbine)) return 10;
+      }
       // 低速C群:潜水艦、潜水空母、あきつ丸、速吸、明石
       else if (
         [13, 14].includes(this.stype) ||
         [45, 60, 49].includes(this.ctype)
       ) {
         if (turbine && (newBoiler || boiler)) return 10;
-      }
-      // 低速D群:伊201、伊203
-      else if (["い201", "い203"].includes(this.yomi)) {
-        if (turbine && newBoiler) return 15;
-        if (newBoiler || (boiler && turbine)) return 10;
       }
       // 低速E群:鳳翔改二、鳳翔改二戦
       else if ([894, 899].includes(this.id)) {
@@ -356,7 +362,7 @@ export class Ship {
         if (this.items[i] && this.items[i].type[4] > 0) {
           if (slot > 0) {
             return Math.floor(
-              this.items[i][param] * (-0.35 + Math.sqrt(Math.max(0, slot - 2)))
+              this.items[i][param] * (-0.35 + Math.sqrt(Math.max(0, slot - 2))),
             );
           }
           return -this.items[i][param];
@@ -661,7 +667,7 @@ interface FormatData {
 }
 
 export interface DeckBuilderOptions {
-  hideShipImage?: boolean
+  hideShipImage?: boolean;
 }
 
 /**
@@ -825,7 +831,7 @@ export interface GenerateOptions {
 export function parse(
   deckbuilder: DeckBuilder,
   apidata: Apidata,
-  url: string
+  url: string,
 ): FormatData {
   const masterShip: {
     [key: number]: MasterShip;
@@ -834,7 +840,7 @@ export function parse(
       previous[current.api_id] = current;
       return previous;
     },
-    {}
+    {},
   );
   const masterItem: {
     [key: number]: MasterItem;
@@ -843,7 +849,7 @@ export function parse(
       previous[current.api_id] = current;
       return previous;
     },
-    {}
+    {},
   );
 
   function parseItem(item?: DeckBuilderItem): Item {
@@ -904,7 +910,7 @@ export function parse(
       masterShip[id].api_soku,
       masterShip[id].api_maxeq,
       items,
-      url
+      url,
     );
   }
 
@@ -932,7 +938,7 @@ export function parse(
               fleet.s6,
               fleet.s7,
             ].map((ship) => parseShip(ship)),
-            fleet.name || ""
+            fleet.name || "",
           );
         }
         return new Fleet([]);
@@ -945,8 +951,8 @@ export function parse(
           const items = airbase.items;
           return new Airbase(
             [items.i1, items.i2, items.i3, items.i4].map((item) =>
-              parseItem(item)
-            )
+              parseItem(item),
+            ),
           );
         }
         return new Airbase([]);

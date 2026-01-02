@@ -12,7 +12,7 @@ export const createCanvas = (width: number, height: number): Canvas => {
 
 export const createCanvas2D = (
   width: number,
-  height: number
+  height: number,
 ): { canvas: Canvas; ctx: CanvasRenderingContext2D } => {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
@@ -45,4 +45,32 @@ export const fetchImage = async (src: string): Promise<Image> => {
 
     image.src = src;
   });
+};
+
+export type FontOptions = {
+  family: string;
+  source: string; // url(...) or local file
+  weight?: string;
+  style?: string;
+};
+
+export const loadFont = async ({
+  family,
+  source,
+  weight = undefined,
+  style = undefined,
+}: FontOptions): Promise<void> => {
+  const font = new FontFace(family, source, {
+    weight,
+    style,
+  });
+
+  // フォント読み込み
+  const loadedFont = await font.load();
+
+  // document に登録
+  document.fonts.add(loadedFont);
+
+  // 念のため ready を待つ
+  await document.fonts.ready;
 };

@@ -1,10 +1,18 @@
 import {
   generateDarkFleetCanvasAsync,
-  generateDarkAirbaseCanvasAsync,
   generateDarkParameterCanvasAsync,
   generateDarkExpeditionStatsCanvasAsync,
+  generateDarkAirbaseCanvasAsync,
 } from "./theme/dark";
-import { parse, Ship, DeckBuilder, Speed, LoS, GenerateOptions } from "./type";
+import {
+  parse,
+  Ship,
+  DeckBuilder,
+  Speed,
+  LoS,
+  GenerateOptions,
+  Theme,
+} from "./type";
 import { getLoSValue } from "./utils";
 import { generate74eoLargeCardFleetCanvasAsync } from "./theme/74eoLC";
 import { generate74eoMediumCutinFleetCanvasAsync } from "./theme/74eoMC";
@@ -22,7 +30,11 @@ import {
 } from "./theme/light";
 import { config } from "./config";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import LZString from 'lz-string';
+import LZString from "lz-string";
+import {
+  generateFlatAirbaseCanvasAsync,
+  generateFlatFleetCanvasAsync,
+} from "./theme/flat";
 
 export {
   DeckBuilder,
@@ -34,32 +46,34 @@ export {
 
 async function createAsync(
   deckbuilder: DeckBuilder,
-  options: Required<Pick<GenerateOptions, 'start2URL' | 'shipURL'>>,
-	los?: LoS,
-	speed?: Speed,
+  options: Required<Pick<GenerateOptions, "start2URL" | "shipURL">>,
+  los?: LoS,
+  speed?: Speed,
 ): Promise<Canvas> {
   const apidata = await (await fetch(options.start2URL)).json();
   const { lang, theme, hqlv, fleets, airbases, airState, comment } = parse(
     deckbuilder,
     apidata,
-    options.shipURL
+    options.shipURL,
   );
   const has5slot = fleets.some(({ ships }) =>
-    ships.some((ship) => ship.slotNum === 5)
+    ships.some((ship) => ship.slotNum === 5),
   );
   const fimage = stick(
     await Promise.all(
       fleets
         .filter((v, i) =>
-          ["dark-ex", "light-ex"].includes(theme) ? i === 0 : true
+          ["dark-ex", "light-ex"].includes(theme) ? i === 0 : true,
         )
         .map(async ({ ships, name }: { ships: Ship[]; name: string }, i) => {
-          if (!los) los = {
-            1: getLoSValue(ships, hqlv, 1),
-            2: getLoSValue(ships, hqlv, 2),
-            3: getLoSValue(ships, hqlv, 3),
-            4: getLoSValue(ships, hqlv, 4),
-          };
+          if (!los)
+            los = {
+              1: getLoSValue(ships, hqlv, 1),
+              2: getLoSValue(ships, hqlv, 2),
+              3: getLoSValue(ships, hqlv, 3),
+              4: getLoSValue(ships, hqlv, 4),
+              5: getLoSValue(ships, hqlv, 5),
+            };
           const airPower = ships
             .filter((ship) => ship.id > 0)
             .map((ship) => ship.airPower)
@@ -72,15 +86,16 @@ async function createAsync(
               {
                 min: 0,
                 max: 0,
-              }
+              },
             );
-          if (!speed) speed = ships
-            .filter((ship) => ship.id > 0)
-            .map((ship) => ship.speed)
-            .reduce(
-              (previous, speed) => (previous > speed ? speed : previous),
-              20
-            );
+          if (!speed)
+            speed = ships
+              .filter((ship) => ship.id > 0)
+              .map((ship) => ship.speed)
+              .reduce(
+                (previous, speed) => (previous > speed ? speed : previous),
+                20,
+              );
 
           switch (theme) {
             case "white":
@@ -93,7 +108,7 @@ async function createAsync(
                 los,
                 airPower,
                 speed,
-                lang
+                lang,
               );
             case "dark":
             case "dark-ex":
@@ -112,7 +127,7 @@ async function createAsync(
                 ships,
                 los,
                 airPower,
-                lang
+                lang,
               );
             case "74mc":
               return await generate74eoMediumCutinFleetCanvasAsync(
@@ -121,7 +136,7 @@ async function createAsync(
                 los,
                 airPower,
                 lang,
-                has5slot
+                has5slot,
               );
             case "74sb":
               return await generate74eoSmallBannerFleetCanvasAsync(
@@ -130,12 +145,22 @@ async function createAsync(
                 los,
                 airPower,
                 lang,
-                has5slot
+                has5slot,
               );
             case "official":
               return await generateOfficialFleetCanvasAsync(ships, lang);
+            case "flat":
+              return await generateFlatFleetCanvasAsync(
+                i,
+                ships,
+                los,
+                airPower,
+                speed,
+                lang,
+                deckbuilder?.options,
+              );
           }
-        })
+        }),
     ),
     ["74lc", "74sb", "official"].includes(theme) ||
       fleets.filter(({ ships }) => ships.length > 0).length > 2
@@ -147,16 +172,16 @@ async function createAsync(
         ? "#ece3d7"
         : theme === "light"
           ? "#FAFAFA"
-          : "white"
+          : "white",
   );
   if (theme === "dark-ex") {
     const eimage = await generateDarkExpeditionStatsCanvasAsync(
       fleets[0].ships,
-      lang
+      lang,
     );
     const { canvas, ctx } = createCanvas2D(
       fimage.width + eimage.width + 2,
-      fimage.height
+      fimage.height,
     );
     ctx.fillStyle = "#212121";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -167,11 +192,11 @@ async function createAsync(
   } else if (theme === "light-ex") {
     const eimage = await generateLightExpeditionStatsCanvasAsync(
       fleets[0].ships,
-      lang
+      lang,
     );
     const { canvas, ctx } = createCanvas2D(
       fimage.width + eimage.width + 2,
-      fimage.height
+      fimage.height,
     );
     ctx.fillStyle = "#FAFAFA";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -188,7 +213,7 @@ async function createAsync(
       const aimage = await generateDarkAirbaseCanvasAsync(airbases, lang);
       const { canvas, ctx } = createCanvas2D(
         fimage.width + aimage.width + 2,
-        fimage.height
+        fimage.height,
       );
       ctx.fillStyle = "#212121";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -201,7 +226,7 @@ async function createAsync(
           [fleets[0].ships, fleets[1].ships].flat(),
           airState,
           comment,
-          lang
+          lang,
         );
         ctx.drawImage(pimage, fimage.width + 2, aimage.height);
       }
@@ -210,7 +235,7 @@ async function createAsync(
       const aimage = await generateLightAirbaseCanvasAsync(airbases, lang);
       const { canvas, ctx } = createCanvas2D(
         fimage.width + aimage.width + 2,
-        fimage.height
+        fimage.height,
       );
       ctx.fillStyle = "#FAFAFA";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -223,10 +248,26 @@ async function createAsync(
           [fleets[0].ships, fleets[1].ships].flat(),
           airState,
           comment,
-          lang
+          lang,
         );
         ctx.drawImage(pimage, fimage.width + 2, aimage.height);
       }
+      return canvas;
+    } else if (theme === "flat") {
+      const aimage = await generateFlatAirbaseCanvasAsync(
+        airbases,
+        lang,
+        comment,
+        fleets[0].ships.filter((ship) => ship.id > 0).length > 6 &&
+          fleets.length === 1,
+      );
+      const { canvas, ctx } = createCanvas2D(
+        fimage.width + aimage.width,
+        fimage.height,
+      );
+
+      ctx.drawImage(fimage, 0, 0);
+      ctx.drawImage(aimage, fimage.width, 0);
       return canvas;
     }
   }
@@ -242,8 +283,8 @@ async function createAsync(
 export async function generate(
   deckbuilder: DeckBuilder,
   options?: GenerateOptions,
-	los?: LoS,
-	speed?: Speed,
+  los?: LoS,
+  speed?: Speed,
 ): Promise<Canvas> {
   if (options?.masterUrl) {
     config.masterUrl = options?.masterUrl;
@@ -258,12 +299,12 @@ export async function generate(
       },
       options,
     ),
-			los,
-			speed,
+    los,
+    speed,
   );
   const src = await steg.encode(
-    LZString.compress(JSON.stringify(deckbuilder)),
-    original.toDataURL()
+    LZString.compressToBase64(JSON.stringify(deckbuilder)),
+    original.toDataURL(),
   );
   const { canvas, ctx } = createCanvas2D(original.width, original.height);
   ctx.drawImage(await fetchImage(src), 0, 0);
@@ -276,5 +317,5 @@ export async function generate(
  * @return フォーマット
  */
 export async function decode(src: string) {
-  return JSON.parse(LZString.decompress(await steg.decode(src)));
+  return JSON.parse(LZString.decompressFromBase64(await steg.decode(src)));
 }

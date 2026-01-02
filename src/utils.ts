@@ -102,8 +102,7 @@ export function getLoSValue(ships: Ship[], hqLv: number, cn: number): number {
               }
             })
             .reduce((p, v) => p + v, 0) *
-          cn +
-          Math.sqrt(ship.los - itemBonus(ship))
+          cn + Math.sqrt(ship.los - itemBonus(ship))
         );
       })
       .reduce((p, v) => p + v, 0) -

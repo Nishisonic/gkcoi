@@ -80,20 +80,32 @@ export const AIR_DEFENSE_POWER = new Language(
   "Air Defense Power",
   "기지 방공치",
   "防空战力",
-  "防空戰力"
+  "防空戰力",
 );
 
-export const HIGH_ALTITUDE = new Language("高高度", "HA", "고고도", "高空", "高空");
+export const HIGH_ALTITUDE = new Language(
+  "高高度",
+  "HA",
+  "고고도",
+  "高空",
+  "高空",
+);
 
 export const DISTANCE = new Language(
   "航続距離",
   "Distance",
   "항속거리",
   "巡航距离",
-  "巡航距離"
+  "巡航距離",
 );
 
-export const LOS = new Language("索敵能力", "LoS(1)", "색적능력", "索敌容量", "索敵能力");
+export const LOS = new Language(
+  "索敵能力",
+  "LoS(1)",
+  "색적능력",
+  "索敌容量",
+  "索敵能力",
+);
 
 export const CONTACT = {
   LABEL: new Language("触接率", "Contact", "촉접율", "接触率", "觸接率"),
@@ -102,4 +114,36 @@ export const CONTACT = {
   AP: new Language("劣勢", "AP", "열세", "劣势", "空劣"),
 };
 
-export const AA_CI = new Language("対空CI", "AA CI ", "대공 CI", "对空CI", "對空CI");
+export const AA_CI = new Language(
+  "対空CI",
+  "AA CI ",
+  "대공 CI",
+  "对空CI",
+  "對空CI",
+);
+
+export const STYPE = [
+  "",
+  "DE",
+  "DD",
+  "CL",
+  "CLT",
+  "CA",
+  "CAV",
+  "CVL",
+  "FBB",
+  "BB",
+  "BBV",
+  "CV",
+  "BB",
+  "SS",
+  "SSV",
+  "AO",
+  "AV",
+  "LHA",
+  "CVB",
+  "AR",
+  "AS",
+  "CT",
+  "AO",
+];
