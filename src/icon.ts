@@ -1,4 +1,4 @@
-import { fetchImage, Image, createCanvas2D, Canvas } from "./canvas";
+import { Canvas, createCanvas2D, fetchImage, Image } from "./canvas";
 import { config } from "./config";
 
 const EQUIPMENT_ICON_SOURCE = {
@@ -59,6 +59,8 @@ const EQUIPMENT_ICON_SOURCE = {
   56: "LandBasedFighterJet",
   57: "LandBasedFighterShinden",
   58: "NightBomber",
+  59: "Unknown",
+  60: "Unknown",
 };
 
 export async function loadOfficialParameterIcons(): Promise<{
