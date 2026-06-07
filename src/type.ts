@@ -666,8 +666,15 @@ interface FormatData {
   readonly comment: string;
 }
 
+export interface TextOverlayConfig {
+  getStyle?: (ctx: CanvasRenderingContext2D) => string | CanvasGradient | CanvasPattern;
+}
+
 export interface DeckBuilderOptions {
   hideShipImage?: boolean;
+  shipImageOffsetX?: number;
+  equipTextOffsetX?: number;
+  equipTextOverlay?: TextOverlayConfig;
 }
 
 /**

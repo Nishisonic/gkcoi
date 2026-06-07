@@ -7,6 +7,7 @@ import {
   getAirbaseAirPower,
   calcCanAACIList,
   getContactValue,
+  calcEquipTextX,
 } from "../utils";
 import { createCanvas2D, Canvas } from "../canvas";
 import {
@@ -67,7 +68,7 @@ async function generateDarkShipInfoCanvasAsync(
       3,
       image.width,
       image.height,
-      -100,
+      -100 + (options?.shipImageOffsetX || 0),
       0,
       image.width,
       image.height
@@ -79,7 +80,7 @@ async function generateDarkShipInfoCanvasAsync(
   grd2.addColorStop(0.45, "#1A1A1A");
   grd2.addColorStop(0.8, "#1A1A1A");
   grd2.addColorStop(1, "rgba(255,255,255,1)");
-  ctx.fillStyle = grd2;
+  ctx.fillStyle = options?.equipTextOverlay?.getStyle?.(ctx) ?? grd2;
   ctx.fillRect(0, 0, 650, 176);
   // overlay
   const grd3 = ctx.createLinearGradient(499, 0, 499, 173);
@@ -121,13 +122,13 @@ async function generateDarkShipInfoCanvasAsync(
     if (ship.items[i].id > 0) {
       ctx.fillText(
         toTranslateEquipmentName(ship.items[i].name, items),
-        options?.hideShipImage ? 64 : 420,
+        calcEquipTextX(options, 64, 420),
         52 + 23 * i
       );
       if (equipmentIcons[String(ship.items[i].type[3])]) {
         ctx.drawImage(
           equipmentIcons[String(ship.items[i].type[3])],
-          options?.hideShipImage ? 32 : 389,
+          calcEquipTextX(options, 32, 389),
           33 + 23 * i
         );
       }
@@ -135,22 +136,22 @@ async function generateDarkShipInfoCanvasAsync(
       const none = NONE[lang];
       ctx.fillText(
         `(${none})`,
-        options?.hideShipImage ? 64 : 420,
+        calcEquipTextX(options, 64, 420),
         52 + 23 * i
       );
       ctx.fillText(
         "-",
-        options?.hideShipImage ? 44 : 402,
+        calcEquipTextX(options, 44, 402),
         53 + 23 * i
       );
     }
     if (ship.slotNum > i) {
       if (ship.items[i] && ship.items[i].type[4] !== 0) {
         ctx.textAlign = "right";
-        ctx.fillStyle = "#c3c3c3";
+        // ctx.fillStyle = "#c3c3c3";
         ctx.fillText(
           String(ship.slots[i]),
-          options?.hideShipImage ? 28 : 389,
+          calcEquipTextX(options, 28, 389),
           52 + 23 * i
         );
         ctx.textAlign = "left";

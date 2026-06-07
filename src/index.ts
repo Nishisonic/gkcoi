@@ -109,6 +109,7 @@ async function createAsync(
                 airPower,
                 speed,
                 lang,
+                deckbuilder?.options,
               );
             case "dark":
             case "dark-ex":

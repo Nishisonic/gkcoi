@@ -1,4 +1,4 @@
-import { Ship, Item, AirState, AirPower, Apidata } from "./type";
+import { Ship, Item, AirState, AirPower, Apidata, DeckBuilderOptions } from "./type";
 import { Lang } from "./lang";
 import getAACIRate from "aaci-prop";
 
@@ -475,4 +475,16 @@ export function calcCanAACIList(
     ...result,
     { kind: 0, rate: 1 - result.reduce((p, { rate }) => p + rate, 0) },
   ];
+}
+
+export function calcEquipTextX(
+  options: DeckBuilderOptions | null | undefined,
+  offsetNoImage: number,
+  offsetDefault: number,
+) {
+  let offset = (options?.hideShipImage ? offsetNoImage : offsetDefault) || 0
+  if (options?.equipTextOffsetX && !Number.isNaN(options.equipTextOffsetX) && Number.isFinite(options.equipTextOffsetX)) {
+    offset += options.equipTextOffsetX
+  }
+  return offset
 }
