@@ -59,6 +59,8 @@ const EQUIPMENT_ICON_SOURCE = {
   56: "LandBasedFighterJet",
   57: "LandBasedFighterShinden",
   58: "NightBomber",
+  59: "JetFightingBomberHo229",
+  60: "JetFighterShinden",
 };
 
 export async function loadOfficialParameterIcons(): Promise<{
@@ -133,6 +135,17 @@ export async function load74eoParameterIcons(): Promise<{
   ).reduce((p, { id, image }) => Object.assign(p, { [id]: image }), {});
 }
 
+// アイコン画像が未追加の装備種別(新規実装直後の装備等)でも
+// 全体の読み込みが失敗しないよう、取得できなかった分は透明画像で代替する
+async function fetchImageOrBlank(src: string, size = 54): Promise<Image> {
+  try {
+    return await fetchImage(src);
+  } catch {
+    const { canvas } = createCanvas2D(size, size);
+    return await fetchImage(canvas.toDataURL());
+  }
+}
+
 export async function loadOfficialEquipmentIcons(
   originalSize = false,
   imgSize = 30
@@ -141,7 +154,7 @@ export async function loadOfficialEquipmentIcons(
     await Promise.all(
       Object.keys(EQUIPMENT_ICON_SOURCE).map(async (id: string) => {
         const src = `${config.masterUrl}/common_icon_weapon/common_icon_weapon_id_${id}.png`;
-        const img = await fetchImage(src);
+        const img = await fetchImageOrBlank(src);
         if (originalSize) {
           return { id, image: img };
         }
@@ -186,7 +199,12 @@ export async function load74eoEquipmentIcons(
       [...Object.values(EQUIPMENT_ICON_SOURCE), "Unknown"].map(
         async (id: string, idx: number) => {
           const src = `${config.masterUrl}/74eo/Equipment/${id}.png`;
-          const img = await fetchImage(src);
+          const img =
+            id === "Unknown"
+              ? await fetchImageOrBlank(src)
+              : await fetchImage(src).catch(() =>
+                  fetchImageOrBlank(`${config.masterUrl}/74eo/Equipment/Unknown.png`)
+                );
           const { canvas, ctx } = createCanvas2D(imgSize, imgSize);
           // offset
           const { canvas: oc, ctx: octx } = createCanvas2D(54, 54);
