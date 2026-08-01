@@ -160,17 +160,19 @@ function getImprovementBonus(item: Item): number {
     154, // 零戦62型(爆戦/岩井隊)
     219, // 零式艦戦63型(爆戦)
     447, // 零式艦戦64型(複座KMX搭載機)
+    487, // 零式艦戦64型(熟練爆戦)
   ];
 
   if (item.lv > 0) {
     switch (item.type[2]) {
       case 6: // 艦上戦闘機
-      case 45: // 夜間戦闘機
+      case 45: // 水上戦闘機
+      case 48: // 局地戦闘機
         return 0.2 * item.lv;
       case 7: // 艦上爆撃機
-      case 57: // 噴式戦闘爆撃機
         return fighterBomber.includes(item.id) ? 0.25 * item.lv : 0;
       case 47: // 陸上攻撃機
+      case 53: // 大型陸上機
         return 0.5 * Math.sqrt(item.lv);
       case 49: // 陸上偵察機
         return 1; // 暫定
@@ -239,25 +241,12 @@ export function getAirbaseAirPower(
                 : 1.5 * item.evasion
               : 0) +
             getImprovementBonus(item));
+        // 311: 二式陸上偵察機
+        // 312: 二式陸上偵察機(熟練)
+        const expTier = item.id === 311 ? 0 : item.id === 312 ? 2 : 7;
         return {
-          // 311: 二式陸上偵察機
-          // 312: 二式陸上偵察機(熟練)
-          min: Math.floor(
-            bonus +
-            Math.sqrt(
-              SKILLED_BONUS.MIN[
-              item.id === 311 ? 0 : item.id === 312 ? 2 : 7
-              ] / 10
-            )
-          ),
-          max: Math.floor(
-            bonus +
-            Math.sqrt(
-              SKILLED_BONUS.MIN[
-              item.id === 311 ? 0 : item.id === 312 ? 2 : 7
-              ] / 10
-            )
-          ),
+          min: Math.floor(bonus + Math.sqrt(SKILLED_BONUS.MIN[expTier] / 10)),
+          max: Math.floor(bonus + Math.sqrt(SKILLED_BONUS.MAX[expTier] / 10)),
         };
       }
       return { min: 0, max: 0 };

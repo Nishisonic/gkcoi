@@ -276,16 +276,20 @@ export class Ship {
 
     // 高速グループ
     if (this.sp === 10) {
-      // 高速A群:大鳳、翔鶴型、利根型、最上型、島風、天津風改二、Ташкент
-      if ([43, 33, 31, 9, 22, 81].includes(this.ctype) || this.id === 951) {
+      // 高速A群:大鳳、翔鶴型、利根型、最上型、飛龍改三、吹雪改三護(六式)、島風、天津風改二、Ташкент
+      if (
+        [43, 33, 31, 9, 22, 81].includes(this.ctype) ||
+        [951, 1031, 1040].includes(this.id)
+      ) {
         if ((turbine && (newBoiler || boiler >= 2)) || newBoiler7 >= 2)
           return 20;
         if ((turbine && boiler) || newBoiler7) return 15;
       }
-      // 高速B1群:Iowa、大和改二、金剛型、蒼龍、飛龍、雲龍、天城、阿賀野型、天津風/改
+      // 高速B1群:Iowa、大和改二、金剛型、蒼龍、飛龍、雲龍、天城、阿賀野型、天津風/改、吹雪改三
       else if (
         [65, 37, 6, 17, 25, 41].includes(this.ctype) ||
-        ["あまつかぜ", "うんりゅう", "あまぎ"].includes(this.yomi)
+        ["あまつかぜ", "うんりゅう", "あまぎ"].includes(this.yomi) ||
+        this.id === 1035
       ) {
         if (turbine && (newBoiler >= 2 || (newBoiler && boiler))) return 20;
         if (turbine && (newBoiler || boiler)) return 15;
