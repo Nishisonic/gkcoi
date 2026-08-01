@@ -5,6 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node10",
     "ignoreDeprecations": "6.0",
+    "rootDir": "src",
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
