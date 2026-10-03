@@ -41,6 +41,7 @@ import {
   loadOfficialEquipmentIcons,
 } from "../icon";
 import { Context } from "chartjs-plugin-datalabels";
+import { callHookAsync, callHook } from "../hook";
 
 Chart.register(ChartDataLabels);
 
@@ -50,6 +51,7 @@ async function generateDarkShipInfoCanvasAsync(
   lang: Lang = "jp",
   options?: DeckBuilderOptions,
 ): Promise<Canvas> {
+  const hooks = options?.drawHooks;
   const { ships, items } =
     lang === "jp" ? { ships: null, items: null } : await fetchLangData(lang);
   const parameterIcons = await loadOfficialParameterIcons();
@@ -59,36 +61,54 @@ async function generateDarkShipInfoCanvasAsync(
   ctx.fillStyle = "#1A1A1A";
   ctx.fillRect(0, 0, 650, 176);
   if (ship.id > 0 && !options?.hideShipImage) {
-    const image = await ship.fetchImage(ShipImageKind.REMODEL);
-    // ship
-    ctx.drawImage(
-      image,
-      0,
-      3,
-      image.width,
-      image.height,
-      -100,
-      0,
-      image.width,
-      image.height
+    const drawShipImage = async () => {
+      const image = await ship.fetchImage(ShipImageKind.REMODEL);
+      // ship
+      ctx.drawImage(
+        image,
+        0,
+        3,
+        image.width,
+        image.height,
+        -100,
+        0,
+        image.width,
+        image.height
+      );
+    };
+    await callHookAsync(
+      hooks?.drawShipImage,
+      { ctx, ship, defaultDraw: drawShipImage },
     );
   }
   // overlay
-  const grd2 = ctx.createLinearGradient(0, 65, 998, 65);
-  grd2.addColorStop(0.2, "rgba(26,26,26,0)");
-  grd2.addColorStop(0.45, "#1A1A1A");
-  grd2.addColorStop(0.8, "#1A1A1A");
-  grd2.addColorStop(1, "rgba(255,255,255,1)");
-  ctx.fillStyle = grd2;
-  ctx.fillRect(0, 0, 650, 176);
+  const drawShipEquipOverlay = () => {
+    const grd2 = ctx.createLinearGradient(0, 65, 998, 65);
+    grd2.addColorStop(0.2, "rgba(26,26,26,0)");
+    grd2.addColorStop(0.45, "#1A1A1A");
+    grd2.addColorStop(0.8, "#1A1A1A");
+    grd2.addColorStop(1, "rgba(255,255,255,1)");
+    ctx.fillStyle = grd2;
+    ctx.fillRect(0, 0, 650, 176);
+  };
+  callHook(
+    hooks?.drawShipEquipOverlay,
+    { ctx, defaultDraw: drawShipEquipOverlay },
+  );
   // overlay
-  const grd3 = ctx.createLinearGradient(499, 0, 499, 173);
-  grd3.addColorStop(0, "#1A1A1A");
-  grd3.addColorStop(0.3, "rgba(26,26,26,0)");
-  grd3.addColorStop(0.8, "rgba(255,255,255,0)");
-  grd3.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = grd3;
-  ctx.fillRect(0, 0, 499, 176);
+  const drawShipHeaderOverlay = () => {
+    const grd3 = ctx.createLinearGradient(499, 0, 499, 173);
+    grd3.addColorStop(0, "#1A1A1A");
+    grd3.addColorStop(0.3, "rgba(26,26,26,0)");
+    grd3.addColorStop(0.8, "rgba(255,255,255,0)");
+    grd3.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = grd3;
+    ctx.fillRect(0, 0, 499, 176);
+  };
+  callHook(
+    hooks?.drawShipHeaderOverlay,
+    { ctx, defaultDraw: drawShipHeaderOverlay },
+  );
   // name
   ctx.font = "20px Meiryo";
   ctx.fillStyle = "#49A7A2";
@@ -119,39 +139,63 @@ async function generateDarkShipInfoCanvasAsync(
   ctx.textAlign = "left";
   for (let i = 0; i < 6; i++) {
     if (ship.items[i].id > 0) {
-      ctx.fillText(
-        toTranslateEquipmentName(ship.items[i].name, items),
-        options?.hideShipImage ? 64 : 420,
-        52 + 23 * i
-      );
-      if (equipmentIcons[String(ship.items[i].type[3])]) {
+      const drawEquipText = () => {
+        ctx.fillText(
+          toTranslateEquipmentName(ship.items[i].name, items),
+          options?.hideShipImage ? 64 : 420,
+          52 + 23 * i
+        );
+      };
+      const drawEquipImage = () => {
         ctx.drawImage(
           equipmentIcons[String(ship.items[i].type[3])],
           options?.hideShipImage ? 32 : 389,
           33 + 23 * i
         );
+      };
+      callHook(
+        hooks?.drawEquipText,
+        { ctx, index: i, text: toTranslateEquipmentName(ship.items[i].name, items), defaultDraw: drawEquipText },
+      );
+      if (equipmentIcons[String(ship.items[i].type[3])]) {
+        callHook(
+          hooks?.drawEquipImage,
+          { ctx, index: i, image: equipmentIcons[String(ship.items[i].type[3])], defaultDraw: drawEquipImage },
+        );
       }
     } else {
       const none = NONE[lang];
-      ctx.fillText(
-        `(${none})`,
-        options?.hideShipImage ? 64 : 420,
-        52 + 23 * i
-      );
-      ctx.fillText(
-        "-",
-        options?.hideShipImage ? 44 : 402,
-        53 + 23 * i
+      const drawEquipEmpty = () => {
+        ctx.fillText(
+          `(${none})`,
+          options?.hideShipImage ? 64 : 420,
+          52 + 23 * i
+        );
+        ctx.fillText(
+          "-",
+          options?.hideShipImage ? 44 : 402,
+          53 + 23 * i
+        );
+      };
+      callHook(
+        hooks?.drawEquipEmpty,
+        { ctx, index: i, text: none, defaultDraw: drawEquipEmpty },
       );
     }
     if (ship.slotNum > i) {
       if (ship.items[i] && ship.items[i].type[4] !== 0) {
+        const drawEquipSlotNum = () => {
+          ctx.fillText(
+            String(ship.slots[i]),
+            options?.hideShipImage ? 28 : 389,
+            52 + 23 * i
+          );
+        };
         ctx.textAlign = "right";
         ctx.fillStyle = "#c3c3c3";
-        ctx.fillText(
-          String(ship.slots[i]),
-          options?.hideShipImage ? 28 : 389,
-          52 + 23 * i
+        callHook(
+          hooks?.drawEquipSlotNum,
+          { ctx, index: i, text: String(ship.slots[i]), defaultDraw: drawEquipSlotNum },
         );
         ctx.textAlign = "left";
         ctx.fillStyle = "#fff";
@@ -278,12 +322,14 @@ export async function generateDarkFleetCanvasAsync(
 
 export async function generateDarkAirbaseCanvasAsync(
   airbases: Airbase[],
-  lang: Lang = "jp"
+  lang: Lang = "jp",
+  options?: DeckBuilderOptions,
 ): Promise<Canvas> {
   const langs = lang === "jp" ? null : (await fetchLangData(lang)).items;
   const parameterIcons = await loadOfficialParameterIcons();
   const equipmentIcons = await loadOfficialEquipmentIcons();
-  const { canvas, ctx } = createCanvas2D(265, 586);
+  const extraWidth = options?.lbasExtraWidth || 0;
+  const { canvas, ctx } = createCanvas2D(265 + extraWidth, 586);
   ctx.fillStyle = "#212121";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -343,7 +389,7 @@ export async function generateDarkAirbaseCanvasAsync(
       ? airbases[i].items
       : new Array(4).fill(Item.UNKNOWN);
     ctx.fillStyle = "#1A1A1A";
-    ctx.fillRect(1, 41 + i * 182, 263, 178);
+    ctx.fillRect(1, 41 + i * 182, 263 + extraWidth, 178);
     // equipment
     ctx.fillStyle = "#fff";
     ctx.textAlign = "left";
@@ -352,10 +398,16 @@ export async function generateDarkAirbaseCanvasAsync(
     ctx.font = "14px Meiryo";
     items.forEach(({ id, name, type }, j) => {
       if (id > 0) {
-        ctx.fillText(
-          toTranslateEquipmentName(name, langs),
-          35,
-          90 + i * 182 + 23 * j
+        const drawLbEquipText = () => {
+          ctx.fillText(
+            toTranslateEquipmentName(name, langs),
+            35,
+            90 + i * 182 + 23 * j
+          );
+        };
+        callHook(
+          options?.drawHooks?.drawLbEquipText,
+          { ctx, indexes: [i, j], text: toTranslateEquipmentName(name, langs), defaultDraw: drawLbEquipText },
         );
         if (equipmentIcons[String(type[3])]) {
           ctx.drawImage(
@@ -371,12 +423,12 @@ export async function generateDarkAirbaseCanvasAsync(
       }
     });
     // overlay
-    const grd2 = ctx.createLinearGradient(0, 0, 263, 0);
+    const grd2 = ctx.createLinearGradient(0, 0, 263 + extraWidth, 0);
     grd2.addColorStop(0, "rgba(26,26,26,0)");
     grd2.addColorStop(0.8, "rgba(26,26,26,0)");
     grd2.addColorStop(0.9, "rgba(26,26,26,1)");
     ctx.fillStyle = grd2;
-    ctx.fillRect(0, 73 + i * 182, 263, 95);
+    ctx.fillRect(0 + extraWidth, 73 + i * 182, 263, 95);
     // star
     ctx.font = "16px Meiryo";
     ctx.fillStyle = "#49A7A2";
@@ -385,9 +437,9 @@ export async function generateDarkAirbaseCanvasAsync(
       if (id > 0 && lv > 0) {
         // overlay
         ctx.textAlign = "left";
-        ctx.fillText("★", 225, 91 + i * 182 + 23 * j);
+        ctx.fillText("★", 225 + extraWidth, 91 + i * 182 + 23 * j);
         ctx.textAlign = "center";
-        ctx.fillText(LV_STRING[lv], 249, 91 + i * 182 + 23 * j);
+        ctx.fillText(LV_STRING[lv], 249 + extraWidth, 91 + i * 182 + 23 * j);
       }
     });
     // param
@@ -429,7 +481,7 @@ export async function generateDarkAirbaseCanvasAsync(
 
     ctx.strokeStyle = "#434343";
     ctx.lineWidth = 2;
-    ctx.strokeRect(1, 41 + i * 182, 263, 178);
+    ctx.strokeRect(1, 41 + i * 182, 263 + extraWidth, 178);
   }
   return canvas;
 }
@@ -467,7 +519,8 @@ export async function generateDarkParameterCanvasAsync(
   ships: Ship[],
   airState: AirState,
   comment: string,
-  lang: Lang = "jp"
+  lang: Lang = "jp",
+  options?: DeckBuilderOptions,
 ): Promise<Canvas> {
   const { canvas, ctx } = createCanvas2D(265, 586);
   ctx.fillStyle = "#212121";
@@ -605,7 +658,13 @@ export async function generateDarkParameterCanvasAsync(
     },
   });
   ctx.drawImage(aaciCanvases.canvas, -265 * (1 - zoomLevel) * 0.1, 237);
-  fillTextLine(ctx, comment, 12, 430, 250);
+  const drawComment = () => {
+    fillTextLine(ctx, comment, 12, 430, 250);
+  };
+  callHook(
+    options?.drawHooks?.drawComment,
+    { ctx, text: comment, defaultDraw: drawComment },
+  );
   return canvas;
 }
 
