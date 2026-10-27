@@ -1,5 +1,6 @@
 import { fetchImage, Image } from "./canvas";
 import { config } from "./config";
+import { DrawHooks } from "./hook";
 import { Lang } from "./lang";
 import { getAirPower } from "./utils";
 
@@ -672,6 +673,8 @@ interface FormatData {
 
 export interface DeckBuilderOptions {
   hideShipImage?: boolean;
+  lbasExtraWidth?: number;
+  drawHooks?: DrawHooks;
 }
 
 /**
