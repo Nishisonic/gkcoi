@@ -44,6 +44,8 @@ export {
   DeckBuilderAirbase,
 } from "./type";
 
+export { DrawHooks } from "./hook";
+
 async function createAsync(
   deckbuilder: DeckBuilder,
   options: Required<Pick<GenerateOptions, "start2URL" | "shipURL">>,
@@ -109,6 +111,7 @@ async function createAsync(
                 airPower,
                 speed,
                 lang,
+                deckbuilder?.options,
               );
             case "dark":
             case "dark-ex":
@@ -210,7 +213,7 @@ async function createAsync(
     .some((items) => items.some(({ id }) => id > 0));
   if (useAirbase) {
     if (theme === "dark") {
-      const aimage = await generateDarkAirbaseCanvasAsync(airbases, lang);
+      const aimage = await generateDarkAirbaseCanvasAsync(airbases, lang, deckbuilder.options);
       const { canvas, ctx } = createCanvas2D(
         fimage.width + aimage.width + 2,
         fimage.height,
@@ -227,12 +230,13 @@ async function createAsync(
           airState,
           comment,
           lang,
+          deckbuilder.options,
         );
         ctx.drawImage(pimage, fimage.width + 2, aimage.height);
       }
       return canvas;
     } else if (theme === "light") {
-      const aimage = await generateLightAirbaseCanvasAsync(airbases, lang);
+      const aimage = await generateLightAirbaseCanvasAsync(airbases, lang, deckbuilder.options);
       const { canvas, ctx } = createCanvas2D(
         fimage.width + aimage.width + 2,
         fimage.height,
@@ -249,6 +253,7 @@ async function createAsync(
           airState,
           comment,
           lang,
+          deckbuilder.options,
         );
         ctx.drawImage(pimage, fimage.width + 2, aimage.height);
       }
@@ -259,7 +264,7 @@ async function createAsync(
         lang,
         comment,
         fleets[0].ships.filter((ship) => ship.id > 0).length > 6 &&
-          fleets.length === 1,
+        fleets.length === 1,
       );
       const { canvas, ctx } = createCanvas2D(
         fimage.width + aimage.width,
